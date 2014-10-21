@@ -6,7 +6,6 @@ import hevs.aislab.magpie.context.ContextEntity;
 import hevs.aislab.magpie.context.RestClientContextEntity;
 import hevs.aislab.magpie.event.LogicTupleEvent;
 import hevs.aislab.magpie.event.MagpieEvent;
-import hevs.aislab.magpie.support.MultiMap;
 
 import java.util.HashMap;
 import java.util.List;
