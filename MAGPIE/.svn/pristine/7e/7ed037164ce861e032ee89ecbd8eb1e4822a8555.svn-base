@@ -1,0 +1,6 @@
+<resources>
+
+    <string name="error_only_numbers_allowed">Only numeric values are allowed</string>
+    <string name="error_int_out_of_range">Numeric value out of range</string>
+
+</resources>

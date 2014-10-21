@@ -1,0 +1,10 @@
+int attr logicTupleName 0x7f010001
+int attr service 0x7f010000
+int drawable ic_launcher 0x7f020000
+int string error_int_out_of_range 0x7f030001
+int string error_only_numbers_allowed 0x7f030000
+int style AppBaseTheme 0x7f040000
+int style AppTheme 0x7f040001
+int[] styleable EditTextContextEntity { 0x7f010000, 0x7f010001 }
+int styleable EditTextContextEntity_logicTupleName 1
+int styleable EditTextContextEntity_service 0

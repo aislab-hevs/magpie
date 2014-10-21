@@ -1,0 +1,237 @@
+package hevs.aislab.magpie.environment;
+
+import hevs.aislab.magpie.agent.MagpieAgent;
+import hevs.aislab.magpie.android.MagpieService;
+import hevs.aislab.magpie.context.ContextEntity;
+import hevs.aislab.magpie.context.GPSContextEntity;
+import hevs.aislab.magpie.event.MagpieEvent;
+import hevs.aislab.magpie.support.MultiMap;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import android.util.Log;
+import android.util.SparseArray;
+import android.widget.Toast;
+
+public class Environment implements IEnvironment {
+
+	/**
+	 * Used for debugging
+	 */
+	private final String TAG = getClass().getName();
+
+	private static volatile Environment instance;
+
+	private SparseArray<MagpieAgent> mListOfAgents = new SparseArray<MagpieAgent>();
+	
+	//Move this to a new class Activator (called ServiceManager) to manage this stuff
+	private MultiMap<String, Integer> agentsInterests = new MultiMap<String, Integer>(); 
+
+	private Map<String, ContextEntity> mListOfContextEntities = new HashMap<String, ContextEntity>();
+	//private Map<String,Boolean> mListOfProvidedServices = new HashMap<String,Boolean>();
+
+	/**
+	 * Queue for storing the events produced by the ContextEntities 
+	 */
+	private ConcurrentLinkedQueue<MagpieEvent> mQueueOfEvents = new ConcurrentLinkedQueue<MagpieEvent>();
+	
+	private AtomicInteger agentId = new AtomicInteger(0);
+
+	/**
+	 * Class running the Environment life-cycle in a thread
+	 */
+	private EnvironmentThread mEnvThread;
+
+	private Environment() {
+		//mListOfProvidedServices.put(Services.GPS_LOCATION, false);
+		
+		Log.i(TAG, "Starting the Environment's thread");
+		mEnvThread = new EnvironmentThread();
+		new Thread(mEnvThread).start();
+	}
+
+	public static Environment getInstance() {
+		if (instance == null) {
+			synchronized (Environment.class) {
+				instance = new Environment();
+			}
+		}
+		
+		//Start the Environment life-cycle if it is not started
+		/*
+		if (instance.mEnvThread.isCancelled()) {
+			instance.mEnvThread.setCancelled(false);
+			new Thread(instance.mEnvThread).start();
+		}
+		*/
+		return instance;
+	}
+	
+	/**
+	 * Used to stop the Environment life-cycle 
+	 */
+	/*
+	public void shutDown() {
+		mEnvThread.cancel();
+	}
+	*/
+
+	@Override
+	public void registerAgent(MagpieAgent agent) {
+		
+		agent.setId(agentId.incrementAndGet());
+		agent.setEnvironment(this);
+		
+		mListOfAgents.put(agent.getId(), agent);
+
+		// Register the interests of the new agent joining the environment
+		ArrayList<String> interests = agent.getInterests();
+		for (String interest : interests) {
+			agentsInterests.put(interest, agent.getId());
+
+			// Activate the GPSContextEntity if the new agent is interested in GPS events
+			if (interest.equals(Services.GPS_LOCATION) && mListOfContextEntities.containsKey(Services.GPS_LOCATION)) {
+				GPSContextEntity gps = (GPSContextEntity) mListOfContextEntities.get(Services.GPS_LOCATION);
+				gps.init();
+			}
+		}
+
+		Log.i(TAG, "Agent " + agent.getName() + " with ID " + agent.getId() + " registered\n"
+				+ "Total num. of agents: " + mListOfAgents.size());
+
+		/* TEST */
+		Toast.makeText(MagpieService.getContext(), 
+				"Number of agents " + mListOfAgents.size(),
+				Toast.LENGTH_LONG)
+				.show();
+		/* TEST */	
+	}
+
+	@Override
+	public void unregisterAgent(MagpieAgent agent) {
+		mListOfAgents.remove(agent.getId());
+	}
+
+	@Override
+	public void registerContextEntity(ContextEntity contextEntity) {
+		mListOfContextEntities.put(contextEntity.getService(), contextEntity);
+		Log.i(TAG, "New ContextEntity registered. Total: " + mListOfContextEntities.size());
+
+	}
+
+	@Override
+	public void unregisterContextEntity(ContextEntity contextEntity) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<MagpieAgent> getRegisteredAgents() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, ContextEntity> getRegisteredContextEntities() {
+		return mListOfContextEntities;
+	}
+
+	@Override
+	public ContextEntity getContextEntity() {
+		return null;
+	}
+
+	public MultiMap<String, Integer> getAgentsInterests() {
+		return agentsInterests;
+	}
+
+	public void registeredAgents() {
+		Log.i(TAG, "Number of registered agents: " + mListOfAgents.size());
+	}
+
+	/**
+	 * Register a new event in the Environment queue
+	 */
+	public void registerEvent(MagpieEvent event) {
+		mQueueOfEvents.add(event);
+		mEnvThread.newEventReceived();
+	}
+
+	public void setServices(String ... platformServices) {
+		Log.i(TAG, "Environment - setServices(String ... platformServices)");
+		for (String service : platformServices) {
+			if (service.equals(Services.GPS_LOCATION)) { // && (!mListOfProvidedServices.get(Services.GPS_LOCATION)) ) {
+				setGpsLocationService();
+			}
+			// Add the rest of the services
+		}
+	}
+
+	// Add a class acting as Activator to put this stuff
+	private void setGpsLocationService() {
+		if (!mListOfContextEntities.containsKey(Services.GPS_LOCATION)) {
+			GPSContextEntity gps = new GPSContextEntity();
+			registerContextEntity(gps);
+			// gps.init(); // Sending gps events even if there is no agent interested
+		}
+		// else if agents want gps data then activate the gps
+
+		// mListOfProvidedServices.put(Services.GPS_LOCATION, true);
+	}
+
+	// Methods to change the state of the services
+
+
+	private class EnvironmentThread implements Runnable {
+
+		private Lock mLock = new ReentrantLock();
+		
+		private Condition mCondition;
+		
+		private EnvironmentThread() {
+			mCondition = mLock.newCondition();
+		}
+		
+		/**
+		 * This method runs the Environment life-cycle forever which may
+		 * may consume a lot of battery. However this doesn't happen as 
+		 * it applies the guarded suspension pattern, where the condition
+		 * to wake up the thread is to receive a new event in the
+		 * environment.
+		 */
+		@Override
+		public void run() {
+			while (true) {
+				mLock.lock();
+				while (Environment.this.mQueueOfEvents.isEmpty()) {
+					Log.i(TAG, "Waiting for new Events");
+					mCondition.awaitUninterruptibly();
+				}
+				mLock.unlock();
+				Log.i(TAG, "Agents should be awaken");
+				MagpieEvent event = Environment.this.mQueueOfEvents.poll();
+				Log.i(TAG, "Events in the queue: " + mQueueOfEvents.size());
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		private void newEventReceived() {
+			mLock.lock();
+			Log.i(TAG, "New Event received");
+			mCondition.signal();
+			mLock.unlock();
+		}	
+	}
+}
