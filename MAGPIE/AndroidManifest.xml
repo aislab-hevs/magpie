@@ -6,8 +6,8 @@
     <!-- Mobile computing with AGents and Publish/subscribe for Intelligent u-hEalthcare (MAGPIE) -->
     
     <uses-sdk
-        android:minSdkVersion="10"
-        android:targetSdkVersion="10" />
+        android:minSdkVersion="15"
+        android:targetSdkVersion="15" />
 
     <application
         android:allowBackup="true"
