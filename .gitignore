@@ -28,9 +28,13 @@ proguard/
 # Eclipse project files
 .classpath
 .project
+.metadata
 
 # Intellij project files
 *.iml
 *.ipr
 *.iws
 .idea/
+
+#MAC file
+.DS_Store
