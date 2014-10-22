@@ -26,9 +26,9 @@ public class PrologAgentMind implements IAgentMind {
 	private final String  TAG = getClass().getName();
 	
 	private Prolog prolog;
-	
 	private HashMap<Long,Rule> rulesMap = new HashMap<Long, Rule>();
 	
+	// Used for debugging (print the prolog output in Android's LogCat)
 	private String prologOutput;
 	
 	public PrologAgentMind(String theory){		
@@ -52,16 +52,12 @@ public class PrologAgentMind implements IAgentMind {
 	}	
 	
 	/**
-	 * 
-	 * This perception in the Prolog agent
-	 * is going to be processed only in the case
-	 * it is a LogicTuple. Events that are not
-	 * LogicTuples cannot be handled by this particular
-	 * mind. We suggest to use the SubsumptionMind to 
-	 * work with events that are not logic tuples.
-	 * 
+	 * This perception in the Prolog agent is going to be
+	 * processed only in the case it is a LogicTuple. Events
+	 * that are not LogicTuples cannot be handled by this
+	 * particular mind. We suggest to use the SubsumptionMind
+	 * to work with events that are not logic tuples.
 	 */
-	
 	@Override
 	public void updatePerception(MagpieEvent event) {		
 		if(event instanceof LogicTupleEvent) {
@@ -125,13 +121,13 @@ public class PrologAgentMind implements IAgentMind {
 	public MagpieEvent produceAction() {
 		Log.i(TAG, "produceAction()");
 		
-		LogicTupleEvent toMagpie = null;
+		LogicTupleEvent action = null;
 		
 		try {
 			SolveInfo sol = prolog.solve("act(A).");
 			if (sol.isSuccess()) {
 				Log.i(TAG, sol.getSolution().toString());
-				toMagpie = new LogicTupleEvent(sol.getSolution());
+				action = new LogicTupleEvent(sol.getSolution());
 			} 
 		} catch (MalformedGoalException e) {
 			Log.e(TAG, "MalformedGoalException");
@@ -139,15 +135,13 @@ public class PrologAgentMind implements IAgentMind {
 			Log.e(TAG, "NoSolutionException");
 		}
 		
-		return toMagpie;
+		return action;
 	}
-
 
 	@Override
 	public void update() {		
 		try {
 			SolveInfo info = prolog.solve("update.");
-			//Log.i(TAG, "The output is " + prologOutput);
 			Log.i(TAG, "The update is " + info.isSuccess());
 			Log.i(TAG, "Theory after update:\n" + prolog.getTheory().toString() );
 		} catch (MalformedGoalException e) {
