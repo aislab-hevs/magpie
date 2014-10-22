@@ -38,3 +38,7 @@ proguard/
 
 #MAC file
 .DS_Store
+
+#ohter files
+.settings/
+.svn/
