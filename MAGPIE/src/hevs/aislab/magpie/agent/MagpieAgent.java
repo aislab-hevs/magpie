@@ -85,7 +85,7 @@ public class MagpieAgent implements IAgentBody {
 	}
 
 	@Override
-	public void doAction() {
+	public void doBehaviour() {
 		//do something with the environment
 		MagpieEvent alert = this.mind.produceAction();	
 		if (alert != null) {
@@ -93,7 +93,7 @@ public class MagpieAgent implements IAgentBody {
 		}			
 	}
 
-	public void update() {
+	public void doAction() {
 		//it may be that the mind needs to update.
 		this.mind.update();
 	}
@@ -101,8 +101,8 @@ public class MagpieAgent implements IAgentBody {
 	public void activate() {
 		Log.i(TAG, "Agent " + name + " active");
 		this.doPerception();
+		this.doBehaviour();
 		this.doAction();
-		this.update();
 	}
 
 	@Override

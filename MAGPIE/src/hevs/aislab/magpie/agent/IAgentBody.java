@@ -11,9 +11,9 @@ public interface IAgentBody {
 	
 	public void doPerception();
 	
-	public void doAction();
+	public void doBehaviour();
 	
-	public void update();
+	public void doAction();
 	
 	public void setEnvironment(IEnvironment env);
 }
