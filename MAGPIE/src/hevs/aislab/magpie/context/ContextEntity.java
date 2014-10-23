@@ -1,8 +1,20 @@
 package hevs.aislab.magpie.context;
 
-public class ContextEntity {
+/**
+ * A context entity is an abstraction that encapsulates a source of 
+ * information from the external world or from the phone itself, i.e.
+ * a Bluetooth sensor. A context entity provides a particular service
+ * in form of MagpieEvents that are registered in the Environment.
+ * 
+ * @author abrugues
+ *
+ */
+public abstract class ContextEntity {
 
-protected static final String TAG = "Magpie-ContextEntity"; 
+	/**
+	 * Used for debugging
+	 */
+	protected static final String TAG = "Magpie-ContextEntity"; 
 	
 	protected final String service;
 	
