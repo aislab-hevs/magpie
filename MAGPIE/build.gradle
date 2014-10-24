@@ -8,14 +8,21 @@ buildscript {
 }
 apply plugin: 'android-library'
 
+repositories{
+    mavenCentral()
+}
+
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
+    compile 'com.squareup.retrofit:retrofit:1.6.1',
+            'it.unibo.alice.tuprolog:tuprolog:2.1.1'
+
 }
 
 android {
-    compileSdkVersion 16
+    compileSdkVersion 15
     buildToolsVersion "20.0.0"
 
+    //use eclipse structure
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -27,6 +34,10 @@ android {
             assets.srcDirs = ['assets']
         }
 
+        defaultConfig{
+            minSdkVersion 15
+            targetSdkVersion 15
+        }
 
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
