@@ -12,16 +12,19 @@ public class LogicTupleEvent extends MagpieEvent {
 		this.logicRepresentation = t.toString();	
 	}
 	
-	public LogicTupleEvent(String name, String[] arguments) {
+	public LogicTupleEvent(String name, String[] args) {
 		this.type = Services.LOGIC_TUPLE;
 		
-		String tuple = "" + name + "(";
+		String tuple = name + "(";
 		
-		for(int i=0; i<arguments.length; i++){
-			tuple = tuple + arguments[i];
+		for(int i=0; i<args.length; i++) {
+			tuple = tuple + args[i] + ",";
 		}
 		
+		// Remove the last comma and close the parenthesis
+		tuple = tuple.substring(0, tuple.length() - 1);
 		tuple = tuple + ")";
+		
 		this.logicRepresentation = tuple;
 	}
 	
