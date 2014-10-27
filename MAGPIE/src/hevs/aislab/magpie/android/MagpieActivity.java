@@ -9,7 +9,8 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 
-public abstract class MagpieActivity extends Activity implements ServiceConnection {
+public abstract class MagpieActivity extends Activity 
+		implements ServiceConnection, MagpieConnection {
 
 	/**
 	 * Used for debugging
@@ -42,13 +43,9 @@ public abstract class MagpieActivity extends Activity implements ServiceConnecti
 	public void onServiceConnected(ComponentName className, IBinder service) {
 		Log.i(TAG, "onServiceConnected()");
 		mService = ((MagpieBinder) service).getService();
-		serviceConnected();
+		onEnvironmentConnected();
 	}
 
-	protected void serviceConnected() {
-		Log.i(TAG, "serviceConnected()");
-	}
-	
 	@Override
 	public void onServiceDisconnected(ComponentName arg0) {
 
