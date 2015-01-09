@@ -1,0 +1,62 @@
+How to import the project in eclipse
+===========================
+
+This guide assumes that you have installed the Android SDK and the ADT plugin 
+for eclipse. If not please see this page (https://developer.android.com/sdk/index.html?hl=i).
+
+
+Install the necessary software
+==============================
+
+First you need to add Gradle to your eclipse IDE (https://github.com/spring-projects/eclipse-integration-gradle/):
+   1) - install Groovy Eclipse from this update site: 
+        http://dist.codehaus.org/groovy/distributions/greclipse/snapshot/e4.2/
+      - install everything on the update site except 'm2e Configurator ...'
+
+   2) - install Eclipse Integration Gradle tooling from this update site:
+        http://dist.springsource.com/snapshot/TOOLS/gradle/nightly
+
+To get the code you can use egit in your eclipse:
+   1) - install egit from this update site:
+        http://download.eclipse.org/egit/updates
+
+Getting the code
+==============================
+The code is stored on github. You can either use the git command line to
+get the code or use the egit eclipse plugin:
+   1) Select "File/Import"
+   2) Choose the option "Projects from Git" under the Git folder
+   3) Click on "Next"
+   4) Select Clone URI
+   5) Enter the URI in the URI field: https://github.com/aislab-hevs/magpie.git
+   6) Click on "Next"
+   7) Select the "master" branch
+   8) Click on "Next"
+   9) Select "Use the New Project wizard"
+  10) Click on Finish
+
+Create a Gradle build
+==============================
+To run the tests an Emulator or a Device must be connected. If a Device is connected
+you can run the tests:
+   1) Right click on the Project 
+   2) Select "Run As" -> Gradle Build
+   3) In the tab "Gradle Tasks" add the following:
+      clean build connectedCheck
+   4) Click on Run
+
+
+Add dependencies to the Eclipse Project
+==============================
+   1) Right click on the Project
+   2) Select "Properties"
+   3) Select "Java Build Path"
+   4) In the tab "Source" add the following folders:
+      "src" / "res" / "gen"
+   5) Check if you see the libraries "retrofit-1.6.1.jar" and "tupolog-2.1.1.jar"
+      under "Android Private Libraries"
+   6) If you don't see the libraries add them by clicking on "Add JARS..."
+   7) Select the "libs" folder under the MAGPIE project
+   8) Click on "Ok"
+
+Rerun the project.
