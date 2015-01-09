@@ -6,9 +6,6 @@ android:
     # The SDK version used to compile your project
     - android-19
 
-env:
-  - TESTFOLDER=MAGPIE
-
 before_install:
     - chmod +x gradlew
 
@@ -19,4 +16,4 @@ before_script:
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
 
-#script: gradle build connectedCheck
+script: cd MAGPIE/ ; ./gradlew build connectedCheck
