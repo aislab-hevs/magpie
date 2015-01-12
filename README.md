@@ -51,3 +51,5 @@ Two quick start options are available:
 
  For testing a running emulator or a connected device is needed.
   
+## Copyright and license
+Code and documentation copyright 2014-2015 [AISLab HES-SO Valais](http://www.hevs.ch/fr/mini-sites/projets-produits/aislab/). Code released under [the BSD license](https://github.com/aislab-hevs/magpie/blob/master/LICENSE).
