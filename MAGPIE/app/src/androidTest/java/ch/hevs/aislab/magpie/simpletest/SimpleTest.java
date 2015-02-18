@@ -1,16 +1,28 @@
 package ch.hevs.aislab.magpie.simpletest;
 
+import android.content.Context;
+import android.test.AndroidTestCase;
+import android.test.ApplicationTestCase;
+import android.test.ServiceTestCase;
+import android.util.Log;
+
 import junit.framework.TestCase;
 
+import java.lang.reflect.Method;
+
 import alice.tuprolog.Term;
+import ch.hevs.aislab.magpie.agent.PrologAgentMind;
+import ch.hevs.aislab.magpie.android.MagpieApp;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 
-public class SimpleTest extends TestCase{
+public class SimpleTest extends AndroidTestCase {
+
+    private final static String TAG = "SimpleTest";
 
     public void testPass(){
         assertTrue(true);
     }
-    
+
     /**
      * Test if a LogicTuple is created correctly
      */
@@ -34,5 +46,20 @@ public class SimpleTest extends TestCase{
     	String tupleFromTerm = bp2.toTuple();
     	
     	assertEquals(logicTuple, tupleFromTerm);
+    }
+
+    public void testAgentMind() {
+
+        PrologAgentMind mind = new PrologAgentMind(getTestContext());
+    }
+
+    private Context getTestContext() {
+        try {
+            Method getTestContext = AndroidTestCase.class.getMethod("getTestContext");
+            return (Context) getTestContext.invoke(this);
+        } catch (final Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 }
