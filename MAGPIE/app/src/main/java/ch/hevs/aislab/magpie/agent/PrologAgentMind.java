@@ -1,16 +1,16 @@
 package ch.hevs.aislab.magpie.agent;
 
+import android.content.Context;
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import ch.hevs.aislab.magpie.event.LogicTupleEvent;
-import ch.hevs.aislab.magpie.event.MagpieEvent;
-import ch.hevs.aislab.magpie.event.RuleSetEvent;
-import ch.hevs.aislab.magpie.event.UpdateMindModelEvent;
-import ch.hevs.aislab.magpie.support.Rule;
 import alice.tuprolog.InvalidTheoryException;
 import alice.tuprolog.MalformedGoalException;
 import alice.tuprolog.NoSolutionException;
@@ -19,37 +19,88 @@ import alice.tuprolog.SolveInfo;
 import alice.tuprolog.Theory;
 import alice.tuprolog.event.OutputEvent;
 import alice.tuprolog.event.OutputListener;
-import android.util.Log;
+import ch.hevs.aislab.magpie.event.LogicTupleEvent;
+import ch.hevs.aislab.magpie.event.MagpieEvent;
+import ch.hevs.aislab.magpie.event.RuleSetEvent;
+import ch.hevs.aislab.magpie.event.UpdateMindModelEvent;
+import ch.hevs.aislab.magpie.support.Rule;
 
 public class PrologAgentMind implements IAgentMind {
 
 	private final String  TAG = getClass().getName();
+
+    private static final String EC_PREDICATES = "ec_predicates";
+    private static final String EC_FOR_INDEXING4 = "ec_for_indexing4";
 	
 	private Prolog prolog;
 	private HashMap<Long,Rule> rulesMap = new HashMap<Long, Rule>();
 	
 	// Used for debugging (print the prolog output in Android's LogCat)
 	private String prologOutput;
-	
-	public PrologAgentMind(String theory){		
-		Log.i(TAG, "Theory loaded:\n" + theory);
-		
-		prologOutput="";
-		try {
-			prolog = new Prolog();
-			prolog.setTheory(new Theory(theory));
-			
+
+    /**
+     * Create a mind that works with EC and the indexer
+     *
+     * @param context
+     */
+    public PrologAgentMind(Context context) {
+
+        prolog = new Prolog();
+        try {
+            prolog.addTheory(parseTheory(context, EC_PREDICATES));
+            prolog.addTheory(parseTheory(context, EC_FOR_INDEXING4));
+        } catch (InvalidTheoryException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Converts a resource file into a Theory object
+     *
+     * @param context
+     * @param file
+     * @return
+     */
+    private Theory parseTheory(Context context, String file) {
+        int resourceId = context.getResources().getIdentifier(
+                file,
+                "raw",
+                context.getPackageName()
+        );
+        InputStream is = context.getResources().openRawResource(resourceId);
+
+        try {
+            return new Theory(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Create a mind with a custom Prolog theory
+     *
+     * @param theory
+     */
+    public PrologAgentMind(String theory){
+        Log.i(TAG, "Theory loaded:\n" + theory);
+
+        prologOutput="";
+        try {
+            prolog = new Prolog();
+            prolog.setTheory(new Theory(theory));
+
 			/* Listener for testing purposes */
-			prolog.addOutputListener(new OutputListener() {
-				@Override
-				public void onOutput(OutputEvent e) {
-					prologOutput += e.getMsg();
-				}
-			});
-		} catch (InvalidTheoryException e) {
-			e.printStackTrace();
-		}	
-	}	
+            prolog.addOutputListener(new OutputListener() {
+                @Override
+                public void onOutput(OutputEvent e) {
+                    prologOutput += e.getMsg();
+                }
+            });
+        } catch (InvalidTheoryException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	/**
 	 * This perception in the Prolog agent is going to be
