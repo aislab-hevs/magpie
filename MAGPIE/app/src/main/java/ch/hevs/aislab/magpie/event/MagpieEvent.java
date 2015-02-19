@@ -14,6 +14,10 @@ public class MagpieEvent {
 		return timeStamp;
 	}
 
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
 	public String getType() { 
 		return type;
 	}
