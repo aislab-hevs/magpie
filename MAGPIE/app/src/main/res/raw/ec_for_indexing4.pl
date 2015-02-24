@@ -1,9 +1,3 @@
-
-
-
-
-
-
 mymember(X,[X|_]).
 mymember(X,[_|T]) :- mymember(X,T).
 
@@ -14,8 +8,6 @@ set([H|T],[H|Out]) :-
 set([H|T],Out) :-
     mymember(H,T),
     set(T,Out).
-
-
 
 
 /**
@@ -29,21 +21,18 @@ The assumption here is that Ev is not a variable.
 */
 
 
-
-
-
 add(happensAt(Ev,T)):- 
 		\+ var(Ev), 
 		functor(Ev,Name,Ar),
 		Ev =.. [Name|Arguments],
 		index(happensAt(Ev,T),Name, Ar, 1, Arguments, T), 
-		findall(period(A=V,Ts), terminates_at(A=V,T), ListToAddPeriods), println(one(ListToAddPeriods)), 
-		findall(period(A=V,T), initiates_at(A=V,T), ListToAddInfPeriods),println(two(ListToAddInfPeriods)),
-		set(ListToAddPeriods, ListOut), println(adding1),
-		set(ListToAddInfPeriods,ListOut2), println(adding2),
-		addAll(ListToAdd,T), println(adding3),
-		addPeriods(ListOut,T), println(adding4),
-		addInfPeriods(ListOut2,T), println(adding5). 
+		findall(period(A=V,Ts), terminates_at(A=V,T), ListToAddPeriods),
+		findall(period(A=V,T), initiates_at(A=V,T), ListToAddInfPeriods),
+		set(ListToAddPeriods, ListOut),
+		set(ListToAddInfPeriods,ListOut2),
+		addAll(ListToAdd,T),
+		addPeriods(ListOut,T),
+		addInfPeriods(ListOut2,T).
 		
 addAll([],T).	
 		
@@ -152,7 +141,6 @@ intersect_query(A=V,[Ts,Tend], T):-
 	text_term(Vtextform,V),
 	indexer<-intersect_query2(Vtextform,T) returns Iterator, member_iterator_special(20,Iterator, List),member([A,V,Ts,Tend],List).
 
-	
 intersect_query(A=V,[Ts,Tend], T):-
 	not ground(V), 
 	not ground(A), 
@@ -160,21 +148,18 @@ intersect_query(A=V,[Ts,Tend], T):-
 	var(Tend),
 	text_term(Vtextform,V), 
 	indexer<-intersect_query3(T) returns Iterator, member_iterator_special(20,Iterator, List),member([A,V,Ts,Tend],List).
- 
-	
+
 intersect_query_test(A=V,[Ts,Tend], T):-
 	not ground(V), 
 	not ground(A), 
 	var(Ts), 
 	var(Tend),
-	text_term(Vtextform,V), 
+	text_term(Vtextform,V),
 	indexer<-intersect_query3(T) returns Iterator, member_iterator_special(20,Iterator, List),member([A,V,Ts,Tend],List).
 
-
-
-range_query(A=V,[Ts,Tend], Tstarsliding, Tendsliding):-
-	ground(A), 
-	ground(V), 
+range_query(A=V,[Ts,Tend], Tstarsliding, Tendliding):-
+    ground(A),
+	ground(V),
 	var(Ts), 
 	var(Tend),
 	indexer<-range_querySW1(A,V, Tstarsliding, Tendsliding) returns Iterator, 
@@ -418,8 +403,3 @@ compare(point(Type,ID,Class,T1),Member):-
 	Member<-getCoord(1) returns ClassM,text_term(ClassM,Class),
 	Member<-getCoord(2) returns TM,text_term(TM,T1),
 	Member<-getCoord(3) returns TypeM, text_term(TypeM,Type).
-			
-				
-			
-			
-			
