@@ -7,12 +7,26 @@ public class LogicTupleEvent extends MagpieEvent {
 
 	private String logicRepresentation;
 	
-	public LogicTupleEvent(Term t) {
+	public LogicTupleEvent(Term term) {
 		this.type = Services.LOGIC_TUPLE;
-		this.logicRepresentation = t.toString();	
+		this.logicRepresentation = term.toString();
 	}
-	
-	public LogicTupleEvent(String name, String[] args) {
+
+    public LogicTupleEvent(String logicEvent) {
+        this.type = Services.LOGIC_TUPLE;
+
+        // This checks if the Term is correct
+        Term term = Term.createTerm(logicEvent);
+        this.logicRepresentation = term.toString();
+
+    }
+
+    /**
+     * Creates a logic tuple with format: name(arg1,arg2,...,argN)
+     * @param name
+     * @param args
+     */
+	public LogicTupleEvent(String name, String ... args) {
 		this.type = Services.LOGIC_TUPLE;
 		
 		String tuple = name + "(";
@@ -29,11 +43,11 @@ public class LogicTupleEvent extends MagpieEvent {
 	}
 	
 	/**
-	 * It gives the tuple representation of the event.
+	 * It returns the tuple representation of the event
 	 * 
 	 * @return
 	 */
 	public String toTuple(){
-		return this.logicRepresentation;
+		return logicRepresentation;
 	}
 }
