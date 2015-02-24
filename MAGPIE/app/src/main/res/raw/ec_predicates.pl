@@ -11,15 +11,14 @@ now(T):-
 
 %2Prolog specific 
 println(S):-
-	class('java.lang.System').out<-get(Out),
+	class('android.util.Log').i<-get(Out),
 	Out<-println(S).
 
 add(holdsAtSDFluent( F=Value,  Time )):-
 	F =.. [Name|Args], 
 	append(Args,[Value],ArgsNew),
 	NewF =.. [Name|ArgsNew],
-	add(happensAt(NewF,Time)),
-	println(NewF).
+	add(happensAt(NewF,Time)).
 
 
 holdsForSI(A=V,Result, between(T1,T2)):-
@@ -35,17 +34,14 @@ holdsForSI(A=V,Result):-
 	query_kdt(mholds_for(A=V,Result)). 
 	%((Period = [Ts,inf], Result = since(Ts));(Period = [Ts,9223372036854775807], Result = since(Ts)); (Period=[Tstart,Tend], Tend \= 9223372036854775807, Tend\=inf, Result = Period)).
 
-	
 
 holdsFor(U,PeriodList):-
 	findall(Period, holdsForSI(U,Period), PeriodList).
 
 
-
 %holdsAt(U,T):-
  %\+ ground(U),
   %holdsForSI(U,[Ts,Tend]),println(here(holdsForSI(U,[Ts,Tend]), T)), T>Ts, T=< Tend.	
-
 
 
 holds_at(F=V,T):-
@@ -69,7 +65,6 @@ query_kd(happens_at(Ev,Ts),T):-
 		nearest_event(Ev, Name, Ar, 1, Arguments, Ts, T). 
 		 
 
-
 happens_at(Ev,Ts):-
 	query_kd(happens_at(Ev,_), [Ts,Ts]).
 		 
@@ -81,7 +76,6 @@ query_kd(happens_at(Ev,Ts), [WTstart, WTend]):-
  		functor(Ev,Name,Ar), 
 		Ev =.. [Name|Arguments], 
 		retrieve_range(Ev,Name, Ar, 1, Arguments, Ts, [WTstart, WTend]).
-		
 		
 
 %returns all the periods
@@ -100,9 +94,6 @@ query_kd(mholds_for(F=V,[Ts,Tend]),T):-
 %returns all the periods INTERSECTING the time window
 query_kd(mholds_for(F=V,[Ts,Tend]),[WTstart, WTend]):-
 					range_query(F=V, [Ts,Tend],WTstart, WTend).
-
-
-
 
 
 %%%%%  fluent atoms %%%%%%%%
@@ -153,12 +144,9 @@ show_holds(_,_) :- nl.
 
 % for backward compatability:
 
-
 show_holds(T) :-
    fluent_list(FluentList),
    show_holds(FluentList,T).
-
-
 
 show_happens(T) :-
   happens2(E,T),
