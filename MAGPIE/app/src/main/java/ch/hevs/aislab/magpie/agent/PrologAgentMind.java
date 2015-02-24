@@ -16,27 +16,28 @@ import alice.tuprolog.MalformedGoalException;
 import alice.tuprolog.NoSolutionException;
 import alice.tuprolog.Prolog;
 import alice.tuprolog.SolveInfo;
+import alice.tuprolog.Struct;
 import alice.tuprolog.Theory;
 import alice.tuprolog.event.OutputEvent;
 import alice.tuprolog.event.OutputListener;
+import alice.tuprolog.lib.InvalidObjectIdException;
+import alice.tuprolog.lib.JavaLibrary;
+import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
 import ch.hevs.aislab.magpie.event.RuleSetEvent;
 import ch.hevs.aislab.magpie.event.UpdateMindModelEvent;
 import ch.hevs.aislab.magpie.support.Rule;
+import hevs.aislab.magpie.R;
 
 public class PrologAgentMind implements IAgentMind {
 
 	private final String  TAG = getClass().getName();
 
-    private static final String EC_PREDICATES = "ec_predicates";
-    private static final String EC_FOR_INDEXING4 = "ec_for_indexing4";
-	
+    private static final StringECKDTreeIndexer INDEX = new StringECKDTreeIndexer();
+
 	private Prolog prolog;
 	private HashMap<Long,Rule> rulesMap = new HashMap<Long, Rule>();
-	
-	// Used for debugging (print the prolog output in Android's LogCat)
-	private String prologOutput;
 
     /**
      * Create a mind that works with EC and the indexer
@@ -46,35 +47,26 @@ public class PrologAgentMind implements IAgentMind {
     public PrologAgentMind(Context context) {
 
         prolog = new Prolog();
-        try {
-            prolog.addTheory(parseTheory(context, EC_PREDICATES));
-            prolog.addTheory(parseTheory(context, EC_FOR_INDEXING4));
-        } catch (InvalidTheoryException e) {
-            e.printStackTrace();
-        }
-    }
 
-    /**
-     * Converts a resource file into a Theory object
-     *
-     * @param context
-     * @param file
-     * @return
-     */
-    private Theory parseTheory(Context context, String file) {
-        int resourceId = context.getResources().getIdentifier(
-                file,
-                "raw",
-                context.getPackageName()
-        );
-        InputStream is = context.getResources().openRawResource(resourceId);
+        JavaLibrary lib = (JavaLibrary) prolog.getLibrary("alice.tuprolog.lib.JavaLibrary");
+        try {
+            lib.register(new Struct("indexer"), INDEX);
+        } catch (InvalidObjectIdException ex) {
+            ex.printStackTrace();
+        }
 
         try {
-            return new Theory(is);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            prolog.addTheory(parseTheory(context, R.raw.ec_predicates));
+            prolog.addTheory(parseTheory(context, R.raw.ec_for_indexing4));
+            prolog.addTheory(parseTheory(context, R.raw.agent_cycle));
+
+        } catch (InvalidTheoryException ex) {
+            Log.e(TAG, "Prolog theory is not valid: " + ex.getMessage());
         }
-        return null;
+
+        // Add the output listener for debugging
+        startPrologOutput();
     }
 
     /**
@@ -85,21 +77,65 @@ public class PrologAgentMind implements IAgentMind {
     public PrologAgentMind(String theory){
         Log.i(TAG, "Theory loaded:\n" + theory);
 
-        prologOutput="";
         try {
             prolog = new Prolog();
             prolog.setTheory(new Theory(theory));
-
-			/* Listener for testing purposes */
-            prolog.addOutputListener(new OutputListener() {
-                @Override
-                public void onOutput(OutputEvent e) {
-                    prologOutput += e.getMsg();
-                }
-            });
-        } catch (InvalidTheoryException e) {
-            e.printStackTrace();
+        } catch (InvalidTheoryException ex) {
+            Log.e(TAG, "Prolog theory is not valid: " + ex.getMessage());
         }
+
+        startPrologOutput();
+    }
+
+    /**
+     * Used to print the engine's theory in the logcat
+     * @param str
+     */
+    private static void longInfo(String str) {
+        if(str.length() > 4000) {
+            Log.i("PrologAgentMind", str.substring(0, 4000));
+            longInfo(str.substring(4000));
+        } else {
+            Log.i("PrologAgentMind", str);
+        }
+    }
+
+    /**
+     * Converts a resource file into a Theory object
+     *
+     * @param context
+     * @param resourceId
+     * @return
+     */
+    private Theory parseTheory(Context context, int resourceId) {
+
+        InputStream is = context.getResources().openRawResource(resourceId);
+
+        try {
+            return new Theory(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Adds a listener for testing purposes
+     */
+    private void startPrologOutput() {
+
+        prolog.addOutputListener(new OutputListener() {
+            @Override
+            public void onOutput(OutputEvent ev) {
+                Log.i("Prolog Output: ", ev.getMsg());
+            }
+        });
     }
 	
 	/**
@@ -113,12 +149,15 @@ public class PrologAgentMind implements IAgentMind {
 	public void updatePerception(MagpieEvent event) {		
 		if(event instanceof LogicTupleEvent) {
 			try {
-				//Log.i(TAG, "Tuple received: " + ((LogicTupleEvent)event).toTuple());
-				prolog.solve("perceive("+((LogicTupleEvent)event).toTuple()+").");
-				Log.i(TAG, prologOutput);
-				prologOutput="";
-			} catch (MalformedGoalException e) {
-				e.printStackTrace();
+                LogicTupleEvent ev = (LogicTupleEvent) event;
+				SolveInfo infoPerceive = prolog.solve("perceive(" + ev.toTuple() + "," + ev.getTimeStamp() + ").");
+
+                // Print the perception and its solution
+                Log.i(TAG, "perceive(" + ev.toTuple() + "," + ev.getTimeStamp() + ").");
+                Log.i(TAG, "perceive solution: " + infoPerceive.toString());
+
+			} catch (MalformedGoalException ex) {
+				Log.e(TAG, "MalformedGoalException: " + ex.getMessage());
 			}
 		} if (event instanceof RuleSetEvent) {
 			Log.i(TAG, "New RuleSetEvent received");
@@ -168,24 +207,32 @@ public class PrologAgentMind implements IAgentMind {
 		}
 	}
 
-	@Override
-	public MagpieEvent produceAction() {
-		Log.i(TAG, "produceAction()");
+    @Override
+    public MagpieEvent produceAction() {
+        return null;
+    }
+
+	public MagpieEvent produceAction(long timeStamp) {
 		
 		LogicTupleEvent action = null;
-		
+		timeStamp = timeStamp + 1;
+
 		try {
-			SolveInfo sol = prolog.solve("act(A).");
-			if (sol.isSuccess()) {
-				Log.i(TAG, sol.getSolution().toString());
-				action = new LogicTupleEvent(sol.getSolution());
+			SolveInfo infoAct = prolog.solve("act(A," + timeStamp + ").");
+
+            //Print the act and its solution
+            Log.i(TAG, "act(A," + timeStamp + ").");
+            Log.i(TAG, "act solution: " + infoAct.toString());
+
+			if (infoAct.isSuccess()) {
+				action = new LogicTupleEvent(infoAct.getSolution());
 			} 
-		} catch (MalformedGoalException e) {
-			Log.e(TAG, "MalformedGoalException");
-		} catch (NoSolutionException e) {
-			Log.e(TAG, "NoSolutionException");
+		} catch (MalformedGoalException ex) {
+			Log.e(TAG, "MalformedGoalException: " + ex.getMessage());
+		} catch (NoSolutionException ex) {
+			Log.e(TAG, "NoSolutionException: " + ex.getMessage());
 		}
-		
+
 		return action;
 	}
 
