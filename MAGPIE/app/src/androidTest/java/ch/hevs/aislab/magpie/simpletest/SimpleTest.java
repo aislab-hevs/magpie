@@ -30,12 +30,8 @@ public class SimpleTest extends AndroidTestCase {
     	
     	final String logicTuple = "blood_pressure(Sys,Dias)";  
     	
-    	// Creation with multiple arguments 
-    	String[] args = new String[2];
-    	args[0] = "Sys";
-    	args[1] = "Dias";
-
-    	LogicTupleEvent bp1 = new LogicTupleEvent("blood_pressure", args);
+    	// Creation with multiple arguments
+    	LogicTupleEvent bp1 = new LogicTupleEvent("blood_pressure", "Sys", "Dias");
     	String tupleFromArgs = bp1.toTuple();
     	
     	assertEquals(logicTuple, tupleFromArgs);
@@ -46,13 +42,41 @@ public class SimpleTest extends AndroidTestCase {
     	String tupleFromTerm = bp2.toTuple();
     	
     	assertEquals(logicTuple, tupleFromTerm);
+
+        // Creation from String
+        LogicTupleEvent bp3 = new LogicTupleEvent(logicTuple);
+        String tupleFromString = bp3.toTuple();
+
+        assertEquals(logicTuple, tupleFromString);
     }
 
     public void testAgentMind() {
 
+        // Events triggering a 'Brittle diabetes' alert
+        LogicTupleEvent ev1 = new LogicTupleEvent("glucose(3.5)"); // Term
+        LogicTupleEvent ev2 = new LogicTupleEvent("glucose", "9"); // Strings
+        ev1.setTimeStamp(1418646780000L);
+        ev2.setTimeStamp(1418660940000L);
+
         PrologAgentMind mind = new PrologAgentMind(getTestContext());
+
+        // First event
+        mind.updatePerception(ev1);
+        mind.produceAction(1418646780000L);
+
+        // Second event
+        mind.updatePerception(ev2);
+        LogicTupleEvent alert = (LogicTupleEvent) mind.produceAction(1418660940000L);
+
+        Log.i(TAG, alert.toTuple());
+
+        assertEquals(alert.toTuple(), "act(act(produce_alert(second,'Brittle diabetes')),1418660940001)");
     }
 
+    /**
+     * Gets the context
+     * @return
+     */
     private Context getTestContext() {
         try {
             Method getTestContext = AndroidTestCase.class.getMethod("getTestContext");
