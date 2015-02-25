@@ -14,6 +14,7 @@ import alice.tuprolog.Term;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
 import ch.hevs.aislab.magpie.android.MagpieApp;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
+import ch.hevs.aislab.magpie.event.MagpieEvent;
 
 public class SimpleTest extends AndroidTestCase {
 
@@ -55,8 +56,8 @@ public class SimpleTest extends AndroidTestCase {
         // Events triggering a 'Brittle diabetes' alert
         LogicTupleEvent ev1 = new LogicTupleEvent("glucose(3.5)"); // Term
         LogicTupleEvent ev2 = new LogicTupleEvent("glucose", "9"); // Strings
-        ev1.setTimeStamp(1418646780000L);
-        ev2.setTimeStamp(1418660940000L);
+        ev1.setTimeStamp(1418646780000L); // Mon, 15 Dec 2014 13:33:00
+        ev2.setTimeStamp(1418660940000L); // Mon, 15 Dec 2014 17:29:00
 
         PrologAgentMind mind = new PrologAgentMind(getTestContext());
 
@@ -68,9 +69,31 @@ public class SimpleTest extends AndroidTestCase {
         mind.updatePerception(ev2);
         LogicTupleEvent alert = (LogicTupleEvent) mind.produceAction(1418660940000L);
 
-        Log.i(TAG, alert.toTuple());
-
         assertEquals(alert.toTuple(), "act(act(produce_alert(second,'Brittle diabetes')),1418660940001)");
+
+        // Events triggering a 'pre-hypertension' alert
+        LogicTupleEvent ev3 = new LogicTupleEvent("blood_pressure", "150", "84");
+        LogicTupleEvent ev4 = new LogicTupleEvent("blood_pressure", "134", "82");
+        ev3.setTimeStamp(1407778799000L); // Mon, 11 Aug 2014 19:39:59
+        ev4.setTimeStamp(1407900429000L); // Wed, 13 Aug 2014 05:27:09
+
+        // Event within the same time window
+        LogicTupleEvent ev5 = new LogicTupleEvent("blood_pressure(134,83)");
+        ev5.setTimeStamp(1407951178000L); // Wed, 13 Aug 2014 19:32:58
+
+        // Update the events
+        mind.updatePerception(ev3);
+        mind.produceAction(1407778799000L);
+
+        mind.updatePerception(ev4);
+        LogicTupleEvent alertTwo = (LogicTupleEvent) mind.produceAction(1407900429000L);
+
+        // Last event should not trigger an alert
+        mind.updatePerception(ev5);
+        mind.produceAction(1407951178000L);
+
+        assertEquals(alertTwo.toTuple(), "act(act(produce_alert(third,'pre-hypertension, consider lifestyle modification')),1407900429001)");
+
     }
 
     /**
