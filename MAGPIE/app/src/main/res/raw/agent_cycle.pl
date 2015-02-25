@@ -23,8 +23,8 @@ act(A,T):-
 
 
 revise_me(A,T):-!,
-    A = act(produce_alert(Number,Something)),
-    add(happensAt(alert(Number,Something),T)).
+        A = act(produce_alert(Number,Something)),
+        add(happensAt(alert(Number,Something),T)).
 
 initiates_at(alert(Number)=situation(no_alert),T):-
         holds_at(alert(Number)=situation(Something),T),
@@ -32,30 +32,26 @@ initiates_at(alert(Number)=situation(no_alert),T):-
 
 
 terminates_at(alert(Number)=situation(V1),T):-
-      holds_at(alert(Number)=situation(V1),T), println(terminating1),
-      initiates_at(alert(Number)=situation(V2),T), println(terminating2),
-      not V2 =V1, println(terminating3(V2,V1)).
+        holds_at(alert(Number)=situation(V1),T),
+        initiates_at(alert(Number)=situation(V2),T),
+        not V2 =V1.
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/*
-initiates_at(alert(first)='DM treatment is not efective',T):-
-	more_or_equals_to(2,(
-		happens_at(glucose(Value1),Tev1),
-		Value1 >= 10,
-		last_two_weeks(Tev1,T)
-	)),
+
+initiates_at(alert(first)=situation('DM treatment is not efective'),T):-
+	    last_two_weeks_ago(Tago,T),
+        (happens_at(glucose(Va),T), Va >= 10; happens_at(weight(We),T), We >= 87),
+        not query_kd(happens_at(alert(first,'DM treatment is not efective'),Tev0), [Tago, T]),
+	    more_or_equals_to(2,(
+		        query_kd(happens_at(glucose(Value1),Tev1), [Tago, T]),
+		        Value1 >= 10
+	    )),
         more_or_equals_to(1,(
-                happens_at(weight(Value2),Tev2),
-                Value2 >= 80,
-                last_two_weeks(Tev2,T)
-    )),
-    findall(Tev1,(happens_at(glucose(Value1),Tev1),Value1 >= 10),List1),
-	findall(Tev2,(happens_at(weight(Value2),Tev2),Value2 >= 80),List2),
-	(member(T,List1);
-	member(T,List2)).
-*/
+                query_kd(happens_at(weight(Value2),Tev2), [Tago, T]),
+                Value2 >= 87
+        )).
 
 initiates_at(alert(second)=situation('Brittle diabetes'),T):-
         six_hours_ago(Tago,T),
@@ -68,6 +64,7 @@ initiates_at(alert(second)=situation('Brittle diabetes'),T):-
 initiates_at(alert(third)=situation('pre-hypertension, consider lifestyle modification'),T):-
         more_or_equals_to(2,(
                 last_week_ago(Tago,T),
+                not query_kd(happens_at(alert(third,'pre-hypertension, consider lifestyle modification'),Tev0), [Tago, T]),
                 query_kd(happens_at(blood_pressure(Sys,Dias),Tev), [Tago, T]),
                 Sys >= 130,
                 Dias >= 80
@@ -86,9 +83,9 @@ initiates_at(alert(fourth)='Gaining weight',T):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 more_or_equals_to(Number,Expr):-
-	findall(_,Expr,List),
-	length(List,Val),
-	Val >= Number.
+	    findall(_,Expr,List),
+	    length(List,Val),
+	    Val >= Number.
 
 last_six_hours(Tev,Tfinal):-
         Tinit is Tfinal - 6 * 3600 * 1000,
@@ -99,19 +96,22 @@ six_hours_ago(Tago,Tfinal):-
         Tago is Tfinal - 6 * 3600 * 1000.
 
 last_day(Tev,Tfinal):-
-	Tinit is Tfinal - 24 * 3600 * 1000,
-	Tev =< Tfinal,
-	Tev >= Tinit.
+        Tinit is Tfinal - 24 * 3600 * 1000,
+	    Tev =< Tfinal,
+	    Tev >= Tinit.
 
 last_week(Tev,Tfinal):-
         Tinit is Tfinal - 7 * 24 * 3600 * 1000,
         Tev =< Tfinal,
-	Tev >= Tinit.
+	    Tev >= Tinit.
 
 last_week_ago(Tago,Tfinal):-
         Tago is Tfinal - 7 * 24 * 3600 * 1000.
 
+last_two_weeks_ago(Tago,Tfinal):-
+        Tago is Tfinal - 14 * 24 * 3600 * 1000.
+
 last_two_weeks(Tev,Tfinal):-
         Tinit is Tfinal - 2 * 7 * 24 * 3600 * 1000,
         Tev =< Tfinal,
-	Tev >= Tinit.
+	    Tev >= Tinit.
