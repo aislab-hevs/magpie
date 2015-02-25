@@ -6,5 +6,4 @@ public interface IAgentMind {
 	
 	public void updatePerception(MagpieEvent event);
 	public MagpieEvent produceAction();
-	public void update();
 }
