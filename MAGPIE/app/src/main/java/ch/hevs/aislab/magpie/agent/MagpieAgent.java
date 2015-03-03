@@ -75,10 +75,17 @@ public class MagpieAgent implements IAgentBody {
 		}
 	}
 
+    @Override
+    public void activate() {
+        Log.i(TAG, "Agent " + name + " active");
+        this.doPerception();
+        this.doBehaviour();
+    }
+
 	@Override
 	public void doPerception() {
-		for(int i=0;i<this.events.size(); i++) {
-			this.mind.updatePerception(this.events.poll());
+		for(int i=0; i<this.events.size(); i++) {
+			this.mind.updatePerception(this.events.peek());
 		}
 		
 		Log.i(TAG, "Events in the agent queue after perception:" + events.size());
@@ -87,22 +94,14 @@ public class MagpieAgent implements IAgentBody {
 	@Override
 	public void doBehaviour() {
 		//do something with the environment
-		MagpieEvent alert = this.mind.produceAction();	
-		if (alert != null) {
-			this.env.registerAlert(alert);
-		}			
-	}
-
-	public void doAction() {
-		//it may be that the mind needs to update.
-		this.mind.update();
-	}
-
-	public void activate() {
-		Log.i(TAG, "Agent " + name + " active");
-		this.doPerception();
-		this.doBehaviour();
-		this.doAction();
+        for (int i=0; i<this.events.size(); i++) {
+            MagpieEvent alert = this.mind.produceAction(
+                    this.events.poll().getTimeStamp()
+            );
+            if (alert != null) {
+                this.env.registerAlert(alert);
+            }
+        }
 	}
 
 	@Override
