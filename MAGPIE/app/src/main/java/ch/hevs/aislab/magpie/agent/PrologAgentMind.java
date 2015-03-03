@@ -23,6 +23,8 @@ import alice.tuprolog.event.OutputListener;
 import alice.tuprolog.lib.InvalidObjectIdException;
 import alice.tuprolog.lib.JavaLibrary;
 import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
+import ch.hevs.aislab.magpie.android.MagpieApp;
+import ch.hevs.aislab.magpie.android.MagpieService;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
 import ch.hevs.aislab.magpie.event.RuleSetEvent;
@@ -34,7 +36,7 @@ public class PrologAgentMind implements IAgentMind {
 
 	private final String  TAG = getClass().getName();
 
-    private static final StringECKDTreeIndexer INDEX = new StringECKDTreeIndexer();
+    //private static final StringECKDTreeIndexer INDEX = new StringECKDTreeIndexer();
 
 	private Prolog prolog;
 	private HashMap<Long,Rule> rulesMap = new HashMap<Long, Rule>();
@@ -44,13 +46,13 @@ public class PrologAgentMind implements IAgentMind {
      *
      * @param context
      */
-    public PrologAgentMind(Context context) {
+    public PrologAgentMind(Context context, StringECKDTreeIndexer indexer) {
 
         prolog = new Prolog();
 
         JavaLibrary lib = (JavaLibrary) prolog.getLibrary("alice.tuprolog.lib.JavaLibrary");
         try {
-            lib.register(new Struct("indexer"), INDEX);
+            lib.register(new Struct("indexer"), indexer);
         } catch (InvalidObjectIdException ex) {
             ex.printStackTrace();
         }
@@ -60,6 +62,7 @@ public class PrologAgentMind implements IAgentMind {
             prolog.addTheory(parseTheory(context, R.raw.ec_predicates));
             prolog.addTheory(parseTheory(context, R.raw.ec_for_indexing4));
             prolog.addTheory(parseTheory(context, R.raw.agent_cycle));
+
 
         } catch (InvalidTheoryException ex) {
             Log.e(TAG, "Prolog theory is not valid: " + ex.getMessage());
@@ -137,7 +140,7 @@ public class PrologAgentMind implements IAgentMind {
             }
         });
     }
-	
+
 	/**
 	 * This perception in the Prolog agent is going to be
 	 * processed only in the case it is a LogicTuple. Events
@@ -208,10 +211,6 @@ public class PrologAgentMind implements IAgentMind {
 	}
 
     @Override
-    public MagpieEvent produceAction() {
-        return null;
-    }
-
 	public MagpieEvent produceAction(long timeStamp) {
 		
 		LogicTupleEvent action = null;
@@ -233,17 +232,12 @@ public class PrologAgentMind implements IAgentMind {
 			Log.e(TAG, "NoSolutionException: " + ex.getMessage());
 		}
 
-		return action;
-	}
+        try {
+            //INDEX.printTrees();
+        } catch (NullPointerException ex){
+            Log.e("Tree", "The tree caused a NullPointer Exception, probably because it is empty" );
+        }
 
-	@Override
-	public void update() {		
-		try {
-			SolveInfo info = prolog.solve("update.");
-			Log.i(TAG, "The update is " + info.isSuccess());
-			Log.i(TAG, "Theory after update:\n" + prolog.getTheory().toString() );
-		} catch (MalformedGoalException e) {
-			e.printStackTrace();
-		}
+		return action;
 	}
 }
