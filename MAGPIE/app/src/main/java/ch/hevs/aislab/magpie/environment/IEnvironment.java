@@ -12,12 +12,12 @@ public interface IEnvironment {
 	public void registerAgent(MagpieAgent agent);
 	
 	public void unregisterAgent(MagpieAgent agent);
+
+    public Map<Integer, MagpieAgent> getRegisteredAgents();
 	
 	public void registerContextEntity(ContextEntity contextEntity);
 	
 	public void unregisterContextEntity(ContextEntity contextEntity);
-	
-	public List<MagpieAgent> getRegisteredAgents();
 	
 	public Map<String, ContextEntity> getRegisteredContextEntities();
 	
