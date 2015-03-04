@@ -1,14 +1,8 @@
 package ch.hevs.aislab.magpie.environment;
 
-import ch.hevs.aislab.magpie.agent.MagpieAgent;
-import ch.hevs.aislab.magpie.android.MagpieService;
-import ch.hevs.aislab.magpie.context.ContextEntity;
-import ch.hevs.aislab.magpie.context.RestClientContextEntity;
-import ch.hevs.aislab.magpie.event.LogicTupleEvent;
-import ch.hevs.aislab.magpie.event.MagpieEvent;
+import android.util.Log;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,8 +10,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import android.util.Log;
-import android.widget.Toast;
+import ch.hevs.aislab.magpie.agent.MagpieAgent;
+import ch.hevs.aislab.magpie.context.ContextEntity;
+import ch.hevs.aislab.magpie.context.RestClientContextEntity;
+import ch.hevs.aislab.magpie.event.LogicTupleEvent;
+import ch.hevs.aislab.magpie.event.MagpieEvent;
 
 public class Environment implements IEnvironment {
 
@@ -43,7 +40,6 @@ public class Environment implements IEnvironment {
 	private ConcurrentLinkedQueue<MagpieEvent> mQueueOfAlerts = new ConcurrentLinkedQueue<MagpieEvent>();
 	
 	private AtomicInteger agentId = new AtomicInteger(0);
-	
 
 	/**
 	 * Class running the Environment life-cycle in a thread
@@ -64,8 +60,7 @@ public class Environment implements IEnvironment {
 				instance = new Environment();
 			}
 		}
-		
-		//Start the Environment life-cycle if it is not started
+        //Start the Environment life-cycle if it is not started
 		/*
 		if (instance.mEnvThread.isCancelled()) {
 			instance.mEnvThread.setCancelled(false);
@@ -74,7 +69,6 @@ public class Environment implements IEnvironment {
 		*/
 		return instance;
 	}
-	
 	/**
 	 * Used to stop the Environment life-cycle 
 	 */
@@ -97,13 +91,6 @@ public class Environment implements IEnvironment {
 		
 		Log.i(TAG, "Agent " + agent.getName() + " with ID " + agent.getId() + " registered\n"
 				+ "Total num. of agents: " + mListOfAgents.size());
-
-		/* TEST */
-		Toast.makeText(MagpieService.getContext(), 
-				"Number of agents " + mListOfAgents.size(),
-				Toast.LENGTH_LONG)
-				.show();
-		/* TEST */	
 	}
 
 	@Override
@@ -124,9 +111,8 @@ public class Environment implements IEnvironment {
 	}
 
 	@Override
-	public List<MagpieAgent> getRegisteredAgents() {
-
-		return null;
+	public Map<Integer, MagpieAgent> getRegisteredAgents() {
+		return mListOfAgents;
 	}
 
 	@Override
@@ -162,8 +148,8 @@ public class Environment implements IEnvironment {
 		mQueueOfAlerts.add(event);
 		Log.i(TAG, "Number of alerts produced by the Agents: " + mQueueOfAlerts.size());
 	}
-	
-	// Methods to change the state of the services
+
+    // Methods to change the state of the services
 
 	private class EnvironmentThread implements Runnable {
 
