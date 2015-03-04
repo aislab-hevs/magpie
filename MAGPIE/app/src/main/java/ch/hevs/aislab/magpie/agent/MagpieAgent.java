@@ -22,7 +22,7 @@ public class MagpieAgent implements IAgentBody {
 	public MagpieAgent(String name, String ... interests) {
 		this.name = name;
 		this.interests = new ArrayList<String>(interests.length);
-		for (String interest: interests) {
+		for (String interest : interests) {
 			this.interests.add(interest);
 		}
 		this.events = new ConcurrentLinkedQueue<MagpieEvent>();
@@ -37,13 +37,6 @@ public class MagpieAgent implements IAgentBody {
 
 	public void senseEvent(MagpieEvent event) {
 		Log.i(TAG, "Event type '" + event.getType() + "' perceived by agent " + this.name);
-		/*
-		Toast.makeText(
-				MagpieService.getContext(), 
-				"Event type '" + event.getType() + "' perceived by agent " + this.name, 
-				Toast.LENGTH_LONG)
-				.show();
-		*/
 		this.events.add(event);
 		Log.i(TAG, "Events in the agent queue after sensing: " + events.size());
 	}
