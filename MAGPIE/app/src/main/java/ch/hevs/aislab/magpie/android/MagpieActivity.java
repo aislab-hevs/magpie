@@ -10,7 +10,7 @@ import android.util.Log;
 
 import ch.hevs.aislab.magpie.android.MagpieService.MagpieBinder;
 
-public abstract class MagpieActivity extends Activity 
+public abstract class MagpieActivity extends Activity
 		implements ServiceConnection, MagpieConnection {
 
 	/**
@@ -19,15 +19,13 @@ public abstract class MagpieActivity extends Activity
 	private final String TAG = getClass().getName();
 		
 	protected MagpieService mService;
-		
+
 	public MagpieActivity() {
 
 	}
-	
 	@Override
 	protected void onStart() {
 		super.onStart();
-		
 		Log.i(TAG, "onStart()");
 		Intent intent = MagpieService.makeIntent(this);
 		bindService(intent, this, Context.BIND_AUTO_CREATE);
@@ -35,9 +33,9 @@ public abstract class MagpieActivity extends Activity
 	
 	@Override
 	protected void onStop() {
-		Log.i(TAG, "onStop()");
-		unbindService(this);
-		super.onStop();
+        super.onStop();
+        Log.i(TAG, "onStop()");
+        unbindService(this);
 	}
 
 	@Override
@@ -48,7 +46,7 @@ public abstract class MagpieActivity extends Activity
 	}
 
 	@Override
-	public void onServiceDisconnected(ComponentName arg0) {
-
+	public void onServiceDisconnected(ComponentName className) {
+        Log.i(TAG,"onSeviceDisconnected()");
 	}
 }
