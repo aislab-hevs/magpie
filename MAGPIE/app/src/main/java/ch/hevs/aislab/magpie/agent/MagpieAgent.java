@@ -2,43 +2,45 @@ package ch.hevs.aislab.magpie.agent;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import ch.hevs.aislab.magpie.environment.IEnvironment;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
 
-public class MagpieAgent implements IAgentBody {
+public class MagpieAgent implements IAgentBody, Serializable {
 
 	private final String TAG = getClass().getName();
 
-	private String name;
-	private int id;
+    public static final String BODY_KEY = "_body";
+    public static final String THEORY_KEY = "_theory";
+    public static final String ECKDTREE_KEY = "_indexer";
+
+	/** Fields set by the developer */
+    private String name;
 	private ArrayList<String> interests;
-	private IAgentMind mind;
-	private ConcurrentLinkedQueue<MagpieEvent> events;
-	private IEnvironment env;
+	private transient IAgentMind mind;
+
+    /** Fields initialized in the constructor */
+    private transient ConcurrentLinkedQueue<MagpieEvent> events;
+
+    /** Fields set by the Environment */
+    private transient int id;
+    private transient IEnvironment mEnv;
 
 	public MagpieAgent(String name, String ... interests) {
 		this.name = name;
-		this.interests = new ArrayList<String>(interests.length);
+		this.interests = new ArrayList<>(interests.length);
 		for (String interest : interests) {
 			this.interests.add(interest);
 		}
-		this.events = new ConcurrentLinkedQueue<MagpieEvent>();
-		// Assign the mind too
-		//this.mind = new PrologAgentMind();
+		this.events = new ConcurrentLinkedQueue<>();
 	}
 
 	public MagpieAgent(String name, ArrayList<String> interests) {
 		this.name = name;
 		this.interests = interests;
-	}
-
-	public void senseEvent(MagpieEvent event) {
-		Log.i(TAG, "Event type '" + event.getType() + "' perceived by agent " + this.name);
-		this.events.add(event);
-		Log.i(TAG, "Events in the agent queue after sensing: " + events.size());
 	}
 
 	public void setMind(IAgentMind mind){
@@ -68,6 +70,12 @@ public class MagpieAgent implements IAgentBody {
 		}
 	}
 
+    public void senseEvent(MagpieEvent event) {
+        Log.i(TAG, "Event type '" + event.getType() + "' perceived by agent " + this.name);
+        this.events.add(event);
+        Log.i(TAG, "Events in the agent queue after sensing: " + events.size());
+    }
+
     @Override
     public void activate() {
         Log.i(TAG, "Agent " + name + " active");
@@ -92,13 +100,13 @@ public class MagpieAgent implements IAgentBody {
                     this.events.poll().getTimeStamp()
             );
             if (alert != null) {
-                this.env.registerAlert(alert);
+                this.mEnv.registerAlert(alert);
             }
         }
 	}
 
 	@Override
 	public void setEnvironment(IEnvironment env) {
-		this.env = env;
+		this.mEnv = env;
 	}
 }
