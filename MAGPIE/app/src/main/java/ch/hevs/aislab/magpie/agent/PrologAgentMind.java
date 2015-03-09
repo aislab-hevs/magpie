@@ -23,8 +23,6 @@ import alice.tuprolog.event.OutputListener;
 import alice.tuprolog.lib.InvalidObjectIdException;
 import alice.tuprolog.lib.JavaLibrary;
 import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
-import ch.hevs.aislab.magpie.android.MagpieApp;
-import ch.hevs.aislab.magpie.android.MagpieService;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
 import ch.hevs.aislab.magpie.event.RuleSetEvent;
@@ -36,9 +34,9 @@ public class PrologAgentMind implements IAgentMind {
 
 	private final String  TAG = getClass().getName();
 
-    //private static final StringECKDTreeIndexer INDEX = new StringECKDTreeIndexer();
-
 	private Prolog prolog;
+    private StringECKDTreeIndexer index;
+
 	private HashMap<Long,Rule> rulesMap = new HashMap<Long, Rule>();
 
     /**
@@ -48,11 +46,12 @@ public class PrologAgentMind implements IAgentMind {
      */
     public PrologAgentMind(Context context, StringECKDTreeIndexer indexer) {
 
+        index = indexer;
         prolog = new Prolog();
 
         JavaLibrary lib = (JavaLibrary) prolog.getLibrary("alice.tuprolog.lib.JavaLibrary");
         try {
-            lib.register(new Struct("indexer"), indexer);
+            lib.register(new Struct("indexer"), index);
         } catch (InvalidObjectIdException ex) {
             ex.printStackTrace();
         }
@@ -63,13 +62,19 @@ public class PrologAgentMind implements IAgentMind {
             prolog.addTheory(parseTheory(context, R.raw.ec_for_indexing4));
             prolog.addTheory(parseTheory(context, R.raw.agent_cycle));
 
-
         } catch (InvalidTheoryException ex) {
             Log.e(TAG, "Prolog theory is not valid: " + ex.getMessage());
         }
 
         // Add the output listener for debugging
         startPrologOutput();
+    }
+
+    /**
+     * Constructor used in MagpieService to recreate the mind
+     */
+    public PrologAgentMind() {
+
     }
 
     /**
