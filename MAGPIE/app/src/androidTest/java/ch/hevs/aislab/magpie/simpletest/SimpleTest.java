@@ -1,24 +1,14 @@
 package ch.hevs.aislab.magpie.simpletest;
 
 import android.content.Context;
-import android.content.Intent;
-import android.test.ActivityUnitTestCase;
 import android.test.AndroidTestCase;
-import android.test.ApplicationTestCase;
-import android.test.ServiceTestCase;
-import android.util.Log;
-
-import junit.framework.TestCase;
 
 import java.lang.reflect.Method;
 
 import alice.tuprolog.Term;
 import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
-import ch.hevs.aislab.magpie.android.MagpieActivity;
-import ch.hevs.aislab.magpie.android.MagpieApp;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
-import ch.hevs.aislab.magpie.event.MagpieEvent;
 
 public class SimpleTest extends AndroidTestCase {
 
