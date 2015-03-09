@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -17,7 +18,9 @@ public abstract class MagpieActivity extends Activity
 	 * Used for debugging
 	 */
 	private final String TAG = getClass().getName();
-		
+
+    private static final String MAGPIE_PREFS = "magpie_prefs";
+
 	protected MagpieService mService;
 
 	public MagpieActivity() {
@@ -42,7 +45,23 @@ public abstract class MagpieActivity extends Activity
 	public void onServiceConnected(ComponentName className, IBinder service) {
 		Log.i(TAG, "onServiceConnected()");
 		mService = ((MagpieBinder) service).getService();
-		onEnvironmentConnected();
+
+        SharedPreferences settings = getSharedPreferences(MAGPIE_PREFS, MODE_PRIVATE);
+        boolean firstTime = settings.getBoolean(TAG, true);
+
+        Log.i(TAG, "Activity first time? " + firstTime);
+
+        if (firstTime) {
+            onEnvironmentConnected();
+        }
+
+        /**
+         * Register this Activity as bounded in SharedPreferences, so that in the next
+         * binding the method onEnvironmentConnected() is not called again
+         */
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(TAG, false);
+        editor.commit();
 	}
 
 	@Override
