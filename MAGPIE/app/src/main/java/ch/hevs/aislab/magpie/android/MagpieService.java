@@ -79,6 +79,14 @@ public class MagpieService extends Service {
                     Log.e(TAG, "IOException with the ObjectInputStream");
                 } catch (ClassNotFoundException ex) {
                     Log.e(TAG, "Class 'MagpieAgent' not found");
+                } finally {
+                    if (ois != null) {
+                        try {
+                            ois.close();
+                        } catch (IOException ex) {
+                            Log.e(TAG, "IOException when closing the ObjectInputStream");
+                        }
+                    }
                 }
             }
         }
