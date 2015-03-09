@@ -116,28 +116,10 @@ public class MagpieService extends Service {
             String agentName = agent.getName();
             agentNames.add(agentName);
 
-            ObjectOutputStream oos = null;
-            try {
-                // Serialize the body
-                FileOutputStream fos = getApplicationContext()
-                        .openFileOutput(agentName + MagpieAgent.BODY_KEY, MODE_PRIVATE);
-                oos = new ObjectOutputStream(fos);
-                oos.writeObject(agent);
-                // Serialize the mind
-                // Serialize the KDTree
-            } catch (FileNotFoundException ex) {
-                Log.e(TAG, "File '" + agentName + MagpieAgent.BODY_KEY + "' not found");
-            } catch (IOException ex) {
-                Log.e(TAG, "IOException with the ObjectOutputStream");
-            } finally {
-                if (oos != null) {
-                    try {
-                        oos.close();
-                    } catch (IOException ex) {
-                        Log.e(TAG, "IOException when closing the ObjectOutputStream");
-                    }
-                }
-            }
+            // Serialize the body
+            serialize(agentName + MagpieAgent.BODY_KEY, agent);
+            // Serialize the mind
+            // Serialize the KDTree
         }
 
         editor.putBoolean(FIRST_TIME_KEY, false);
@@ -145,6 +127,32 @@ public class MagpieService extends Service {
         editor.commit();
 
         System.exit(0);
+    }
+
+    private void serialize(String fileName, Object object) {
+        ObjectOutputStream oos = null;
+        try {
+            FileOutputStream fos = getApplicationContext()
+                    .openFileOutput(fileName, MODE_PRIVATE);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(object);
+        } catch (FileNotFoundException ex) {
+            Log.e(TAG, "File '" + fileName + "' not found");
+        } catch (IOException ex) {
+            Log.e(TAG, "IOException with the ObjectOutputStream");
+        } finally {
+            if (oos != null) {
+                try {
+                    oos.close();
+                } catch (IOException ex) {
+                    Log.e(TAG, "IOException when closing the ObjectOutputStream");
+                }
+            }
+        }
+    }
+
+    private Object deserialize(String fileName) {
+        return null;
     }
 	
 	/**
