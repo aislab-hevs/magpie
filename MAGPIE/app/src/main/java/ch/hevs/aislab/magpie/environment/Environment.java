@@ -81,7 +81,6 @@ public class Environment implements IEnvironment {
 	@Override
 	public void registerAgent(MagpieAgent agent) {
 		
-		// Should check first if the agent already exists  
 		agent.setId(agentId.incrementAndGet());
 		agent.setEnvironment(this);
 		mListOfAgents.put(agent.getId(), agent);
@@ -89,7 +88,7 @@ public class Environment implements IEnvironment {
 		// Register the interests of the new agent joining the environment
 		ServiceActivator.registerInterests(agent);
 		
-		Log.i(TAG, "Agent " + agent.getName() + " with ID " + agent.getId() + " registered\n"
+		Log.i(TAG, "Agent '" + agent.getName() + "' with ID " + agent.getId() + " registered\n"
 				+ "Total num. of agents: " + mListOfAgents.size());
 	}
 
