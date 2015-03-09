@@ -1,19 +1,3 @@
-perceive(P):-
-	current_time(T),
-	perceive(P,T).
-
-%for other Prologs.
-current_time(T):- now(T).
-
-%2Prolog specific.
-now(T):-
-	class('java.lang.System')<-currentTimeMillis returns T  .
-
-%2Prolog specific
-println(S):-
-	class('android.util.Log').i<-get(Out),
-	Out<-println(S).
-
 add(holdsAtSDFluent( F=Value,  Time )):-
 	F =.. [Name|Args],
 	append(Args,[Value],ArgsNew),
