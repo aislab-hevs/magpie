@@ -73,8 +73,14 @@ public class PrologAgentMind implements IAgentMind {
     /**
      * Constructor used in MagpieService to recreate the mind
      */
-    public PrologAgentMind() {
-
+    public PrologAgentMind(String theory, StringECKDTreeIndexer indexer) {
+        prolog = new Prolog();
+        try {
+            prolog.setTheory(new Theory(theory));
+        } catch (InvalidTheoryException ex) {
+            Log.e(TAG, "Prolog theory is not valid: " + ex.getMessage());
+        }
+        index = indexer;
     }
 
     /**
@@ -144,6 +150,16 @@ public class PrologAgentMind implements IAgentMind {
                 Log.i("Prolog Output: ", ev.getMsg());
             }
         });
+    }
+
+    @Override
+    public String getTheory() {
+        return prolog.getTheory().toString();
+    }
+
+    @Override
+    public StringECKDTreeIndexer getECKDTree() {
+        return index;
     }
 
 	/**
