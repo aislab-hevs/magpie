@@ -19,7 +19,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
+import ch.hevs.aislab.magpie.agent.PrologAgentMind;
 import ch.hevs.aislab.magpie.context.ContextEntity;
 import ch.hevs.aislab.magpie.environment.Environment;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
@@ -63,31 +65,16 @@ public class MagpieService extends Service {
             while (iterator.hasNext()) {
                 String agentName = iterator.next();
 
-                ObjectInputStream ois = null;
-                try {
-                    FileInputStream fis = getApplicationContext()
-                            .openFileInput(agentName + MagpieAgent.BODY_KEY);
-                    ois = new ObjectInputStream(fis);
-                    MagpieAgent agent = (MagpieAgent) ois.readObject();
-                    Log.i(TAG, "INTEREST 0: " + agent.getInterests().get(0));
-                    registerAgent(agent);
-                } catch (FileNotFoundException ex) {
-                    Log.e(TAG, "File '" + agentName + MagpieAgent.BODY_KEY + "' not found");
-                } catch (StreamCorruptedException ex) {
-                    Log.e(TAG, "StreamCorruptedException when trying to unserialize the agent");
-                } catch (IOException ex) {
-                    Log.e(TAG, "IOException with the ObjectInputStream");
-                } catch (ClassNotFoundException ex) {
-                    Log.e(TAG, "Class 'MagpieAgent' not found");
-                } finally {
-                    if (ois != null) {
-                        try {
-                            ois.close();
-                        } catch (IOException ex) {
-                            Log.e(TAG, "IOException when closing the ObjectInputStream");
-                        }
-                    }
-                }
+                // Deserialize the body
+                MagpieAgent agent = (MagpieAgent) deserialize(agentName + MagpieAgent.BODY_KEY);
+                // Deserialize the mind's theory
+                String theory = (String) deserialize(agentName + MagpieAgent.THEORY_KEY);
+                // Deserialize the KDTree
+                StringECKDTreeIndexer indexer = (StringECKDTreeIndexer) deserialize(agentName + MagpieAgent.ECKDTREE_KEY);
+                // Register the mind into the body
+                PrologAgentMind mind = new PrologAgentMind(theory, indexer);
+                agent.setMind(mind);
+                registerAgent(agent);
             }
         }
 	}
@@ -118,8 +105,10 @@ public class MagpieService extends Service {
 
             // Serialize the body
             serialize(agentName + MagpieAgent.BODY_KEY, agent);
-            // Serialize the mind
+            // Serialize the mind's theory
+            serialize(agentName + MagpieAgent.THEORY_KEY, agent.getMind().getTheory());
             // Serialize the KDTree
+            serialize(agentName + MagpieAgent.ECKDTREE_KEY, agent.getMind().getECKDTree());
         }
 
         editor.putBoolean(FIRST_TIME_KEY, false);
@@ -137,7 +126,7 @@ public class MagpieService extends Service {
             oos = new ObjectOutputStream(fos);
             oos.writeObject(object);
         } catch (FileNotFoundException ex) {
-            Log.e(TAG, "File '" + fileName + "' not found");
+            Log.e(TAG, "File '" + fileName + "' not found in serialization");
         } catch (IOException ex) {
             Log.e(TAG, "IOException with the ObjectOutputStream");
         } finally {
@@ -152,7 +141,31 @@ public class MagpieService extends Service {
     }
 
     private Object deserialize(String fileName) {
-        return null;
+        Object newInstance = null;
+        ObjectInputStream ois = null;
+        try {
+            FileInputStream fis = getApplicationContext()
+                    .openFileInput(fileName);
+            ois = new ObjectInputStream(fis);
+            newInstance = ois.readObject();
+        } catch (FileNotFoundException ex) {
+            Log.e(TAG, "File '" + fileName + "' not found in deserialization");
+        } catch (StreamCorruptedException ex) {
+            Log.e(TAG, "StreamCorruptedException when deserializing the object");
+        } catch (IOException ex) {
+            Log.e(TAG, "IOException with the ObjectInputStream");
+        } catch (ClassNotFoundException ex) {
+            Log.wtf(TAG, "Class Object not found");
+        } finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException ex) {
+                    Log.e(TAG, "IOException when closing the ObjectInputStream");
+                }
+            }
+        }
+        return newInstance;
     }
 	
 	/**
