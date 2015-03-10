@@ -47,6 +47,10 @@ public class MagpieAgent implements IAgentBody, Serializable {
 		this.mind = mind;
 	}
 
+    public IAgentMind getMind() {
+        return mind;
+    }
+
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -70,6 +74,7 @@ public class MagpieAgent implements IAgentBody, Serializable {
 		}
 	}
 
+    @Override
     public void senseEvent(MagpieEvent event) {
         Log.i(TAG, "Event type '" + event.getType() + "' perceived by agent " + this.name);
         this.events.add(event);
