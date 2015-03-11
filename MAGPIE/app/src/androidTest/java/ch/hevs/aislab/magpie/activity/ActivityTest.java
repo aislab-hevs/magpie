@@ -2,7 +2,8 @@ package ch.hevs.aislab.magpie.activity;
 
 
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
+
+import ch.hevs.aislab.magpie.environment.Environment;
 
 public class ActivityTest extends ActivityInstrumentationTestCase2<MagpieActivityTest>{
 
@@ -17,21 +18,21 @@ public class ActivityTest extends ActivityInstrumentationTestCase2<MagpieActivit
         magpieActivityTest = getActivity();
     }
 
-    public void testPreconditions() {
+    public void testPreConditions() {
         assertNotNull("magpieActivity is null", magpieActivityTest);
-        magpieActivityTest.finish();
-        Log.i("MagpieActivityTest", "Last call...");
     }
 
-    //public void testAgents() {
-        //int numAgents = Environment.getInstance().getRegisteredAgents().size();
-        //assertEquals(1,numAgents);
+    public void testAddAgents() {
+        // First time: the agent is registered from the activity
+        int numAgents = Environment.getInstance().getRegisteredAgents().size();
+        assertEquals(1,numAgents);
+        magpieActivityTest.finish();
 
-        //magpieActivityTest.finish();
-        //magpieActivityTest = this.getActivity();
+        // Second time: the agent is registered from the service
+        magpieActivityTest = getActivity();
+        numAgents = Environment.getInstance().getRegisteredAgents().size();
+        assertEquals(1,numAgents);
+        magpieActivityTest.finish();
 
-        //int agentsAfterDestroy = Environment.getInstance().getRegisteredAgents().size();
-        //Log.i("ActivityTest", "Num. of agents: " + agentsAfterDestroy);
-        //Log.i("ActivityTest", "" + Environment.getInstance().getRegisteredAgents().get(2).getId());
-    //}
+    }
 }
