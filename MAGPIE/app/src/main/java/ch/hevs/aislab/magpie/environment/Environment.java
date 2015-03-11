@@ -11,6 +11,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
+import ch.hevs.aislab.magpie.android.MagpieService;
 import ch.hevs.aislab.magpie.context.ContextEntity;
 import ch.hevs.aislab.magpie.context.RestClientContextEntity;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
@@ -32,12 +33,12 @@ public class Environment implements IEnvironment {
 	/**
 	 * Queue for storing the events produced by the ContextEntities 
 	 */
-	private ConcurrentLinkedQueue<MagpieEvent> mQueueOfEvents = new ConcurrentLinkedQueue<MagpieEvent>();
+	private ConcurrentLinkedQueue<MagpieEvent> mQueueOfEvents = new ConcurrentLinkedQueue<>();
 	
 	/**
 	 * Queue for storing the alerts produced by the MagpieAgents
 	 */
-	private ConcurrentLinkedQueue<MagpieEvent> mQueueOfAlerts = new ConcurrentLinkedQueue<MagpieEvent>();
+	private ConcurrentLinkedQueue<MagpieEvent> mQueueOfAlerts = new ConcurrentLinkedQueue<>();
 	
 	private AtomicInteger agentId = new AtomicInteger(0);
 
@@ -188,12 +189,9 @@ public class Environment implements IEnvironment {
 				
 				/* Send the alerts produced by the agents */
 				if (!mQueueOfAlerts.isEmpty()) {
-					// The server must be running to receive the alert!
-					RestClientContextEntity restClient = (RestClientContextEntity) 
-							getContextEntity(Services.REST_CLIENT);
-					LogicTupleEvent alert = (LogicTupleEvent) mQueueOfAlerts.poll();
-					LogicTupleEvent response = restClient.postAlert(alert);
-					Log.i(TAG, "Alert received back: " + response.toTuple());
+                    // Just print the alert in the Logcat
+                    LogicTupleEvent alert = (LogicTupleEvent) mQueueOfAlerts.poll();
+                    Log.i(TAG, alert.toTuple());
 				}
 			}
 		}
