@@ -46,9 +46,11 @@ public class PrologAgentMind implements IAgentMind {
      */
     public PrologAgentMind(Context context, StringECKDTreeIndexer indexer) {
 
+        // Assign the indexer and a new prolog engine
         index = indexer;
         prolog = new Prolog();
 
+        // Register the indexer in tuProlog
         JavaLibrary lib = (JavaLibrary) prolog.getLibrary("alice.tuprolog.lib.JavaLibrary");
         try {
             lib.register(new Struct("indexer"), index);
@@ -56,17 +58,16 @@ public class PrologAgentMind implements IAgentMind {
             ex.printStackTrace();
         }
 
+        // Add to the prolog engine the theories from the files
         try {
-
             prolog.addTheory(parseTheory(context, R.raw.ec_predicates));
             prolog.addTheory(parseTheory(context, R.raw.ec_for_indexing4));
             prolog.addTheory(parseTheory(context, R.raw.agent_cycle));
-
         } catch (InvalidTheoryException ex) {
             Log.e(TAG, "Prolog theory is not valid: " + ex.getMessage());
         }
 
-        // Add the output listener for debugging
+        // Optional: Add the output listener for debugging
         startPrologOutput();
     }
 
@@ -74,13 +75,24 @@ public class PrologAgentMind implements IAgentMind {
      * Constructor used in MagpieService to recreate the mind
      */
     public PrologAgentMind(String theory, StringECKDTreeIndexer indexer) {
+
+        index = indexer;
         prolog = new Prolog();
+
+        JavaLibrary lib = (JavaLibrary) prolog.getLibrary("alice.tuprolog.lib.JavaLibrary");
         try {
-            prolog.setTheory(new Theory(theory));
+            lib.register(new Struct("indexer"), indexer);
+        } catch (InvalidObjectIdException ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            prolog.addTheory(new Theory(theory));
         } catch (InvalidTheoryException ex) {
             Log.e(TAG, "Prolog theory is not valid: " + ex.getMessage());
         }
-        index = indexer;
+
+        startPrologOutput();
     }
 
     /**
@@ -93,7 +105,7 @@ public class PrologAgentMind implements IAgentMind {
 
         try {
             prolog = new Prolog();
-            prolog.setTheory(new Theory(theory));
+            prolog.addTheory(new Theory(theory));
         } catch (InvalidTheoryException ex) {
             Log.e(TAG, "Prolog theory is not valid: " + ex.getMessage());
         }
@@ -252,12 +264,6 @@ public class PrologAgentMind implements IAgentMind {
 		} catch (NoSolutionException ex) {
 			Log.e(TAG, "NoSolutionException: " + ex.getMessage());
 		}
-
-        try {
-            //INDEX.printTrees();
-        } catch (NullPointerException ex){
-            Log.e("Tree", "The tree caused a NullPointer Exception, probably because it is empty" );
-        }
 
 		return action;
 	}
