@@ -1,18 +1,20 @@
 package ch.hevs.aislab.magpie.android;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import ch.hevs.aislab.magpie.android.MagpieService.MagpieBinder;
 
-public abstract class MagpieActivity extends Activity
+public abstract class MagpieActivity extends FragmentActivity
 		implements ServiceConnection, MagpieConnection {
+
+    // Register a Broadcast receiver to receive alerts back from the Environment??
 
 	/**
 	 * Used for debugging
