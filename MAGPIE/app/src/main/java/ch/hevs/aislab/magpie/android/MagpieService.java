@@ -50,6 +50,7 @@ public class MagpieService extends Service {
 
 		// Get the instance of the environment
         mEnvironment = Environment.getInstance();
+        mContext = getContext();
 
         Log.i(TAG, "Agents onCreate(): " + mEnvironment.getRegisteredAgents().keySet().size());
 
@@ -74,6 +75,7 @@ public class MagpieService extends Service {
                 // Register the mind into the body
                 PrologAgentMind mind = new PrologAgentMind(theory, indexer);
                 agent.setMind(mind);
+                // Add the agent into the Environment
                 registerAgent(agent);
             }
         }
@@ -181,7 +183,7 @@ public class MagpieService extends Service {
 	 * Factory method to make an intent to connect with this service
 	 */
 	public static Intent makeIntent(Context context) {
-		mContext = context;
+		//mContext = context;
 		return new Intent(context, MagpieService.class);
 	}
 	
