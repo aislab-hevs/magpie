@@ -43,4 +43,86 @@
         android:layout_toRightOf="@id/glucoseTimestampBtn"
         android:onClick="sendGlucoseEvent"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Timestamp: "
+        android:textSize="15dp"
+        android:id="@+id/glucoseTimestampLabelTxtView"
+        android:layout_below="@id/glucoseEditTxt"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-"
+        android:textSize="15dp"
+        android:id="@+id/glucoseTimestampTxtView"
+        android:layout_below="@id/glucoseEditTxt"
+        android:layout_toRightOf="@id/glucoseTimestampLabelTxtView"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Weight (kg)"
+        android:textSize="20dp"
+        android:id="@+id/weightTxtView"
+        android:layout_below="@id/glucoseTimestampLabelTxtView"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="8dp"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="3"
+        android:id="@+id/weightEditTxt"
+        android:layout_below="@id/weightTxtView"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Timestamp"
+        android:id="@+id/weightTimestampBtn"
+        android:layout_below="@id/weightTxtView"
+        android:layout_toRightOf="@id/weightEditTxt"
+        android:layout_marginLeft="8dp"
+        android:onClick="setWeightTimestamp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send Event"
+        android:id="@+id/weightSendBtn"
+        android:layout_below="@id/weightTxtView"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/weightTimestampBtn"
+        android:onClick="sendWeightEvent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Timestamp: "
+        android:textSize="15dp"
+        android:id="@+id/weightTimestampLabelTxtView"
+        android:layout_below="@id/weightEditTxt"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-"
+        android:textSize="15dp"
+        android:id="@+id/weightTimestampTxtView"
+        android:layout_below="@id/weightEditTxt"
+        android:layout_toRightOf="@id/weightTimestampLabelTxtView"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"/>
+
 </RelativeLayout>
