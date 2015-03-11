@@ -23,7 +23,7 @@ public class MagpieAgent implements IAgentBody, Serializable {
 	private transient IAgentMind mind;
 
     /** Fields initialized in the constructor */
-    private transient ConcurrentLinkedQueue<MagpieEvent> events;
+    private ConcurrentLinkedQueue<MagpieEvent> events;
 
     /** Fields set by the Environment */
     private transient int id;
@@ -78,12 +78,12 @@ public class MagpieAgent implements IAgentBody, Serializable {
     public void senseEvent(MagpieEvent event) {
         Log.i(TAG, "Event type '" + event.getType() + "' perceived by agent " + this.name);
         this.events.add(event);
-        Log.i(TAG, "Events in the agent queue after sensing: " + events.size());
+        Log.i(TAG, "Events in the body's queue after sensing: " + events.size());
     }
 
     @Override
     public void activate() {
-        Log.i(TAG, "Agent " + name + " active");
+        Log.i(TAG, "Agent '" + name + "' active");
         this.doPerception();
         this.doBehaviour();
     }
@@ -94,7 +94,7 @@ public class MagpieAgent implements IAgentBody, Serializable {
 			this.mind.updatePerception(this.events.peek());
 		}
 		
-		Log.i(TAG, "Events in the agent queue after perception:" + events.size());
+		Log.i(TAG, "Events in the body's queue after perception: " + events.size());
 	}
 
 	@Override
