@@ -1,4 +1,4 @@
-package ch.hevs.aislab.magpie.simpletest;
+package ch.hevs.aislab.magpie.agentlogic;
 
 import android.content.Context;
 import android.test.AndroidTestCase;
@@ -10,9 +10,9 @@ import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 
-public class SimpleTest extends AndroidTestCase {
+public class AgentTest extends AndroidTestCase {
 
-    private final static String TAG = "SimpleTest";
+    private final static String TAG = "AgentTest";
 
     public void testPass(){
         assertTrue(true);
