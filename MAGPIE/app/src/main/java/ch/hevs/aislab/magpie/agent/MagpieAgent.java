@@ -13,9 +13,9 @@ public class MagpieAgent implements IAgentBody, Serializable {
 
 	private final String TAG = getClass().getName();
 
-    public static final String BODY_KEY = "_body";
-    public static final String THEORY_KEY = "_theory";
-    public static final String ECKDTREE_KEY = "_indexer";
+    public static final String BODY_KEY = "_body.ser";
+    public static final String THEORY_KEY = "_theory.ser";
+    public static final String ECKDTREE_KEY = "_indexer.ser";
 
 	/** Fields set by the developer */
     private String name;
