@@ -5,13 +5,13 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
-import ch.hevs.aislab.magpie.android.MagpieService;
 import ch.hevs.aislab.magpie.context.ContextEntity;
 import ch.hevs.aislab.magpie.context.RestClientContextEntity;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
@@ -41,6 +41,8 @@ public class Environment implements IEnvironment {
 	private ConcurrentLinkedQueue<MagpieEvent> mQueueOfAlerts = new ConcurrentLinkedQueue<>();
 	
 	private AtomicInteger agentId = new AtomicInteger(0);
+
+    private CountDownLatch alertLatch = null;
 
 	/**
 	 * Class running the Environment life-cycle in a thread
@@ -136,10 +138,24 @@ public class Environment implements IEnvironment {
 	/**
 	 * Register a new event in the corresponding Environment queue
 	 */
-	public void registerEvent(MagpieEvent event) {
+	public MagpieEvent registerEvent(MagpieEvent event) {
 		mQueueOfEvents.add(event);
 		mEnvThread.newEventReceived();
-	}
+
+        //Wait until the Thread finishes to compute the alert
+        alertLatch = new CountDownLatch(1);
+        try {
+            alertLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if (!mQueueOfAlerts.isEmpty()) {
+            return mQueueOfAlerts.poll();
+        } else {
+            return null;
+        }
+    }
 	
 	/**
 	 * Register a new alert in the corresponding Environment queue
@@ -186,13 +202,15 @@ public class Environment implements IEnvironment {
 						agent.activate();
 					}
 				}
-				
+
 				/* Send the alerts produced by the agents */
 				if (!mQueueOfAlerts.isEmpty()) {
                     // Just print the alert in the Logcat
-                    LogicTupleEvent alert = (LogicTupleEvent) mQueueOfAlerts.poll();
+                    LogicTupleEvent alert = (LogicTupleEvent) mQueueOfAlerts.peek();
                     Log.i(TAG, alert.toTuple());
 				}
+
+                alertLatch.countDown();
 			}
 		}
 		
