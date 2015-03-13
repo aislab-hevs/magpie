@@ -5,7 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 
 import java.io.FileInputStream;
@@ -24,7 +29,7 @@ import ch.hevs.aislab.magpie.agent.MagpieAgent;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
 import ch.hevs.aislab.magpie.context.ContextEntity;
 import ch.hevs.aislab.magpie.environment.Environment;
-import ch.hevs.aislab.magpie.event.MagpieEvent;
+import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 
 public class MagpieService extends Service {
 
@@ -32,12 +37,14 @@ public class MagpieService extends Service {
 	private final String TAG = getClass().getName();
 
     /** Shared Preferences store the agents' names and the 'first time' boolean */
-    private static final String MAGPIE_PREFS = "magpie_prefs";
+    static final String MAGPIE_PREFS = "magpie_prefs";
 
     private static final String FIRST_TIME_KEY = "first_time";
     private static final String AGENTS_KEY = "agent_names";
 
-	private final IBinder mBinder = new MagpieBinder();
+    private final IBinder mBinder = new MagpieBinder();
+
+    private Messenger requestMessenger = null;
 
 	private Environment mEnvironment;
 
@@ -47,6 +54,8 @@ public class MagpieService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		Log.i(TAG, "onCreate()");
+
+        requestMessenger = new Messenger(new RequestHandler());
 
 		// Get the instance of the environment
         mEnvironment = Environment.getInstance();
@@ -84,7 +93,14 @@ public class MagpieService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		Log.i(TAG, "onBind()");
-		return mBinder;
+
+        String action = intent.getAction();
+        if (action.equals(MagpieActivity.ACTION_ONE_WAY_COMM)) {
+            return mBinder;
+        } else if (action.equals(MagpieActivity.ACTION_TWO_WAY_COMM)) {
+            return requestMessenger.getBinder();
+        }
+        return null;
 	}
 	
 	@Override
@@ -186,6 +202,30 @@ public class MagpieService extends Service {
 		//mContext = context;
 		return new Intent(context, MagpieService.class);
 	}
+
+    private class RequestHandler extends Handler {
+
+        @Override
+        public void handleMessage(Message request) {
+            final Messenger replyMessenger = request.replyTo;
+
+            Bundle bundleEvent = request.getData();
+            LogicTupleEvent event = bundleEvent.getParcelable(MagpieActivity.MAGPIE_EVENT);
+            LogicTupleEvent alert = (LogicTupleEvent) mEnvironment.registerEvent(event);
+            if (alert != null) {
+                Message reply = Message.obtain();
+                Bundle bundleAlert = new Bundle();
+                bundleAlert.putParcelable(MagpieActivity.MAGPIE_EVENT, alert);
+                reply.setData(bundleAlert);
+                try {
+                    replyMessenger.send(reply);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
 	
 	public static Context getContext() {
 		return mContext;
@@ -196,10 +236,6 @@ public class MagpieService extends Service {
 	 */
 	public void registerAgent(MagpieAgent agent) {
 		mEnvironment.registerAgent(agent);
-	}
-	
-	public void registerEvent(MagpieEvent event) {
-		mEnvironment.registerEvent(event);
 	}
 	
 	public ContextEntity getContextEntity(String service) {
