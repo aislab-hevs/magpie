@@ -55,6 +55,7 @@ initiates_at(alert(first)=situation('DM treatment is not efective'),T):-
 
 initiates_at(alert(second)=situation('Brittle diabetes'),T):-
         six_hours_ago(Tago,T),
+        happens_at(glucose(Va),T), Va >= 8,
         query_kd(happens_at(glucose(Value1),Tev1), [Tago, T]),
         query_kd(happens_at(glucose(Value2),Tev2), [Tago, T]),
         Value1 =< 3.8,
