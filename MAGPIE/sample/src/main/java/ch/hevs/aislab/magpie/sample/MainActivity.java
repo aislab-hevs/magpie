@@ -59,7 +59,12 @@ public class MainActivity extends MagpieActivity {
         MagpieAgent agent = new MagpieAgent("monitoring_agent", Services.LOGIC_TUPLE);
         PrologAgentMind mind = new PrologAgentMind(getApplicationContext(), new StringECKDTreeIndexer());
         agent.setMind(mind);
-        mService.registerAgent(agent);
+        getService().registerAgent(agent);
+    }
+
+    @Override
+    public void onAlertProduced(LogicTupleEvent alert) {
+        Toast.makeText(this, alert.toTuple(), Toast.LENGTH_LONG).show();
     }
 
     public void sendGlucoseEvent(View view) {
@@ -79,7 +84,7 @@ public class MainActivity extends MagpieActivity {
         }
         LogicTupleEvent lte = new LogicTupleEvent(type, value);
         lte.setTimeStamp(timestamp.timestamp.toDate().getTime());
-        mService.registerEvent(lte);
+        sendEvent(lte);
 
         editText.setText("");
         editText.clearFocus();
