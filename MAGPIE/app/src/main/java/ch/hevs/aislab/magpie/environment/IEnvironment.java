@@ -1,6 +1,5 @@
 package ch.hevs.aislab.magpie.environment;
 
-import java.util.List;
 import java.util.Map;
 
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
@@ -23,7 +22,7 @@ public interface IEnvironment {
 	
 	public ContextEntity getContextEntity(String service);
 
-	public void registerEvent(MagpieEvent ev);
+	public MagpieEvent registerEvent(MagpieEvent ev);
 	
 	public void registerAlert(MagpieEvent al);
 }
