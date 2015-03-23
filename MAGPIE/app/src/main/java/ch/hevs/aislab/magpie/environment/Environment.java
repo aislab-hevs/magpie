@@ -140,10 +140,10 @@ public class Environment implements IEnvironment {
 	 */
 	public MagpieEvent registerEvent(MagpieEvent event) {
 		mQueueOfEvents.add(event);
-		mEnvThread.newEventReceived();
 
         //Wait until the Thread finishes to compute the alert
         alertLatch = new CountDownLatch(1);
+        mEnvThread.newEventReceived();
         try {
             alertLatch.await();
         } catch (InterruptedException e) {
