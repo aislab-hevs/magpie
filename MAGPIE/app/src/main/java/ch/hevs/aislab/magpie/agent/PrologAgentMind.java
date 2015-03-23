@@ -30,24 +30,24 @@ import ch.hevs.aislab.magpie.event.UpdateMindModelEvent;
 import ch.hevs.aislab.magpie.support.Rule;
 import hevs.aislab.magpie.R;
 
-public class PrologAgentMind implements IAgentMind {
+public class PrologAgentMind implements IPrologAgentMind {
 
 	private final String  TAG = getClass().getName();
 
 	private Prolog prolog;
     private StringECKDTreeIndexer index;
 
-	private HashMap<Long,Rule> rulesMap = new HashMap<Long, Rule>();
+	private HashMap<Long,Rule> rulesMap = new HashMap<>();
 
     /**
      * Create a mind that works with EC and the indexer
      *
      * @param context
      */
-    public PrologAgentMind(Context context, StringECKDTreeIndexer indexer) {
+    public PrologAgentMind(Context context, int resourceId) {
 
         // Assign the indexer and a new prolog engine
-        index = indexer;
+        index = new StringECKDTreeIndexer();
         prolog = new Prolog();
 
         // Register the indexer in tuProlog
@@ -63,6 +63,7 @@ public class PrologAgentMind implements IAgentMind {
             prolog.addTheory(parseTheory(context, R.raw.ec_predicates));
             prolog.addTheory(parseTheory(context, R.raw.ec_for_indexing4));
             prolog.addTheory(parseTheory(context, R.raw.agent_cycle));
+            prolog.addTheory(parseTheory(context, resourceId));
         } catch (InvalidTheoryException ex) {
             Log.e(TAG, "Prolog theory is not valid: " + ex.getMessage());
         }
