@@ -118,15 +118,20 @@ public class MagpieService extends Service {
         while (iteratorIds.hasNext()) {
             int id = iteratorIds.next();
             MagpieAgent agent = mEnvironment.getRegisteredAgents().get(id);
-            String agentName = agent.getName();
-            agentNames.add(agentName);
 
-            // Serialize the body
-            serialize(agentName + MagpieAgent.BODY_KEY, agent);
-            // Serialize the mind's theory
-            serialize(agentName + MagpieAgent.THEORY_KEY, agent.getMind().getTheory());
-            // Serialize the KDTree
-            serialize(agentName + MagpieAgent.ECKDTREE_KEY, agent.getMind().getECKDTree());
+            if (agent.getMind() instanceof PrologAgentMind) {
+                String agentName = agent.getName();
+
+                PrologAgentMind mind = (PrologAgentMind) agent.getMind();
+                // Serialize the body
+                serialize(agentName + MagpieAgent.BODY_KEY, agent);
+                // Serialize the mind's theory
+                serialize(agentName + MagpieAgent.THEORY_KEY, mind.getTheory());
+                // Serialize the KDTree
+                serialize(agentName + MagpieAgent.ECKDTREE_KEY, mind.getECKDTree());
+
+                agentNames.add(agentName);
+            }
         }
 
         editor.putBoolean(FIRST_TIME_KEY, false);
