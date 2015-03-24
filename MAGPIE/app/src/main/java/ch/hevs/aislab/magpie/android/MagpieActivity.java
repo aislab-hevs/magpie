@@ -60,6 +60,7 @@ public abstract class MagpieActivity extends FragmentActivity implements MagpieC
         super.onStop();
         Log.i(TAG, "onStop()");
         unbindService(oneWayConnection);
+        unbindService(twoWayConnection);
 	}
 
     private ServiceConnection oneWayConnection = new ServiceConnection() {
