@@ -83,7 +83,8 @@ public class Environment implements IEnvironment {
 
 	@Override
 	public void registerAgent(MagpieAgent agent) {
-		
+
+        agent.setType();
 		agent.setId(agentId.incrementAndGet());
 		agent.setEnvironment(this);
 		mListOfAgents.put(agent.getId(), agent);
