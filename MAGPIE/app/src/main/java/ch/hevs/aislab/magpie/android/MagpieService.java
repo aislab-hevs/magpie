@@ -27,6 +27,8 @@ import java.util.Set;
 import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
+import ch.hevs.aislab.magpie.behavior.Behavior;
+import ch.hevs.aislab.magpie.behavior.BehaviorAgentMind;
 import ch.hevs.aislab.magpie.context.ContextEntity;
 import ch.hevs.aislab.magpie.environment.Environment;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
@@ -48,7 +50,8 @@ public class MagpieService extends Service {
 
 	private Environment mEnvironment;
 
-	private static Context mContext; // Can be in conflict with Context in MagpieApp
+    /** Last binding activity */
+	private static Context mContext;
 
 	@Override
 	public void onCreate() {
@@ -59,7 +62,6 @@ public class MagpieService extends Service {
 
 		// Get the instance of the environment
         mEnvironment = Environment.getInstance();
-        mContext = getContext();
 
         Log.i(TAG, "Agents onCreate(): " + mEnvironment.getRegisteredAgents().keySet().size());
 
@@ -74,16 +76,25 @@ public class MagpieService extends Service {
             Iterator<String> iterator = agentNames.iterator();
             while (iterator.hasNext()) {
                 String agentName = iterator.next();
-
                 // Deserialize the body
                 MagpieAgent agent = (MagpieAgent) deserialize(agentName + MagpieAgent.BODY_KEY);
-                // Deserialize the mind's theory
-                String theory = (String) deserialize(agentName + MagpieAgent.THEORY_KEY);
-                // Deserialize the KDTree
-                StringECKDTreeIndexer indexer = (StringECKDTreeIndexer) deserialize(agentName + MagpieAgent.ECKDTREE_KEY);
-                // Register the mind into the body
-                PrologAgentMind mind = new PrologAgentMind(theory, indexer);
-                agent.setMind(mind);
+
+                if (agent.getType().equals(MagpieAgent.PROLOG_TYPE)) {
+                    // Deserialize the mind's theory
+                    String theory = (String) deserialize(agentName + MagpieAgent.THEORY_KEY);
+                    // Deserialize the KDTree
+                    StringECKDTreeIndexer indexer = (StringECKDTreeIndexer) deserialize(agentName + MagpieAgent.ECKDTREE_KEY);
+                    // Register the mind into the body
+                    PrologAgentMind mind = new PrologAgentMind(theory, indexer);
+                    agent.setMind(mind);
+                } else if (agent.getType().equals(MagpieAgent.BEHAVIOR_TYPE)) {
+                    BehaviorAgentMind mind = (BehaviorAgentMind) deserialize(agentName + MagpieAgent.MIND_KEY);
+                    for (Behavior b : mind.getBehaviors()) {
+                        b.setAgent(agent);
+                        b.setContext(mContext);
+                    }
+                    agent.setMind(mind);
+                }
                 // Add the agent into the Environment
                 registerAgent(agent);
             }
@@ -118,9 +129,9 @@ public class MagpieService extends Service {
         while (iteratorIds.hasNext()) {
             int id = iteratorIds.next();
             MagpieAgent agent = mEnvironment.getRegisteredAgents().get(id);
+            String agentName = agent.getName();
 
             if (agent.getMind() instanceof PrologAgentMind) {
-                String agentName = agent.getName();
 
                 PrologAgentMind mind = (PrologAgentMind) agent.getMind();
                 // Serialize the body
@@ -129,8 +140,16 @@ public class MagpieService extends Service {
                 serialize(agentName + MagpieAgent.THEORY_KEY, mind.getTheory());
                 // Serialize the KDTree
                 serialize(agentName + MagpieAgent.ECKDTREE_KEY, mind.getECKDTree());
-
                 agentNames.add(agentName);
+
+            } else if (agent.getMind() instanceof BehaviorAgentMind) {
+
+                Log.i(TAG, "Agent '" + agentName + "' has a BehaviorAgentMind");
+                BehaviorAgentMind mind = (BehaviorAgentMind) agent.getMind();
+                serialize(agentName + MagpieAgent.BODY_KEY, agent);
+                serialize(agentName + MagpieAgent.MIND_KEY, mind);
+                agentNames.add(agentName);
+
             }
         }
 
@@ -152,6 +171,7 @@ public class MagpieService extends Service {
             Log.e(TAG, "File '" + fileName + "' not found in serialization");
         } catch (IOException ex) {
             Log.e(TAG, "IOException with the ObjectOutputStream");
+            ex.printStackTrace();
         } finally {
             if (oos != null) {
                 try {
@@ -204,7 +224,7 @@ public class MagpieService extends Service {
 	 * Factory method to make an intent to connect with this service
 	 */
 	public static Intent makeIntent(Context context) {
-		//mContext = context;
+		mContext = context;
 		return new Intent(context, MagpieService.class);
 	}
 
@@ -240,7 +260,7 @@ public class MagpieService extends Service {
 	 * Actions that can be performed in the Environment from an Activity
 	 */
 	public void registerAgent(MagpieAgent agent) {
-		mEnvironment.registerAgent(agent);
+        mEnvironment.registerAgent(agent);
 	}
 	
 	public ContextEntity getContextEntity(String service) {
