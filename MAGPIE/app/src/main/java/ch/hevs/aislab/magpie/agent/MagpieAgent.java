@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import ch.hevs.aislab.magpie.behavior.BehaviorAgentMind;
 import ch.hevs.aislab.magpie.environment.IEnvironment;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
 
@@ -14,13 +15,17 @@ public class MagpieAgent implements IAgentBody, Serializable {
 	private final String TAG = getClass().getName();
 
     public static final String BODY_KEY = "_body.ser";
+    public static final String MIND_KEY = "_mind.ser";
     public static final String THEORY_KEY = "_theory.ser";
     public static final String ECKDTREE_KEY = "_indexer.ser";
+
+    public static final String PROLOG_TYPE = "prolog";
+    public static final String BEHAVIOR_TYPE = "behavior";
 
 	/** Fields set by the developer */
     private String name;
 	private ArrayList<String> interests;
-	private transient IAgentMind mind;
+	private transient IAgentMind myMind;
 
     /** Fields initialized in the constructor */
     private ConcurrentLinkedQueue<MagpieEvent> events;
@@ -28,6 +33,7 @@ public class MagpieAgent implements IAgentBody, Serializable {
     /** Fields set by the Environment */
     private transient int id;
     private transient IEnvironment mEnv;
+    private String type;
 
 	public MagpieAgent(String name, String ... interests) {
 		this.name = name;
@@ -43,12 +49,12 @@ public class MagpieAgent implements IAgentBody, Serializable {
 		this.interests = interests;
 	}
 
-	public void setMind(IAgentMind mind){
-		this.mind = mind;
+	public void setMind(IAgentMind mind) {
+        this.myMind = mind;
 	}
 
     public IAgentMind getMind() {
-        return mind;
+        return myMind;
     }
 
 	public void setId(int id) {
@@ -58,6 +64,21 @@ public class MagpieAgent implements IAgentBody, Serializable {
 	public int getId() {
 		return id;
 	}
+
+    /**
+     * Method called automatically by the Environment to set the type of agent
+     */
+    public void setType() {
+        if (myMind instanceof PrologAgentMind) {
+            type = PROLOG_TYPE;
+        } else if (myMind instanceof BehaviorAgentMind) {
+            type = BEHAVIOR_TYPE;
+        }
+    }
+
+    public String getType() {
+        return type;
+    }
 
 	public String getName() {
 		return name;
@@ -91,7 +112,7 @@ public class MagpieAgent implements IAgentBody, Serializable {
 	@Override
 	public void doPerception() {
 		for(int i=0; i<this.events.size(); i++) {
-			this.mind.updatePerception(this.events.peek());
+			this.myMind.updatePerception(this.events.peek());
 		}
 		
 		Log.i(TAG, "Events in the body's queue after perception: " + events.size());
@@ -101,7 +122,7 @@ public class MagpieAgent implements IAgentBody, Serializable {
 	public void doBehaviour() {
 		//do something with the environment
         for (int i=0; i<this.events.size(); i++) {
-            MagpieEvent alert = this.mind.produceAction(
+            MagpieEvent alert = this.myMind.produceAction(
                     this.events.poll().getTimeStamp()
             );
             if (alert != null) {
