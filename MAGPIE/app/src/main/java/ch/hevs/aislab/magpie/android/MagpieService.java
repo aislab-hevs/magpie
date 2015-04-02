@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
+import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -58,7 +59,7 @@ public class MagpieService extends Service {
 		super.onCreate();
 		Log.i(TAG, "onCreate()");
 
-        requestMessenger = new Messenger(new RequestHandler());
+        requestMessenger = new Messenger(new RequestHandler(this));
 
 		// Get the instance of the environment
         mEnvironment = Environment.getInstance();
@@ -228,15 +229,26 @@ public class MagpieService extends Service {
 		return new Intent(context, MagpieService.class);
 	}
 
-    private class RequestHandler extends Handler {
+    private static class RequestHandler extends Handler {
+
+        private WeakReference<MagpieService> mService;
+
+        public RequestHandler(MagpieService service) {
+            mService = new WeakReference<>(service);
+        }
 
         @Override
         public void handleMessage(Message request) {
+            MagpieService service = mService.get();
+            if (service == null) {
+                return;
+            }
+
             final Messenger replyMessenger = request.replyTo;
 
             Bundle bundleEvent = request.getData();
             LogicTupleEvent event = bundleEvent.getParcelable(MagpieActivity.MAGPIE_EVENT);
-            LogicTupleEvent alert = (LogicTupleEvent) mEnvironment.registerEvent(event);
+            LogicTupleEvent alert = (LogicTupleEvent) service.mEnvironment.registerEvent(event);
             if (alert != null) {
                 Message reply = Message.obtain();
                 Bundle bundleAlert = new Bundle();
