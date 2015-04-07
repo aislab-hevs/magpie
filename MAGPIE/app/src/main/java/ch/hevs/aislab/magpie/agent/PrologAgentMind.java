@@ -216,7 +216,7 @@ public class PrologAgentMind implements IPrologAgentMind {
 			} else { // Subsequent times
 				Iterator<Entry<Long,Rule>> it0 = rulesMap.entrySet().iterator();
 				while (it0.hasNext()) {
-					Map.Entry<Long, Rule> pair = (Map.Entry<Long, Rule>) it0.next();
+					Map.Entry<Long, Rule> pair = it0.next();
 					String prologRule = pair.getValue().getPrologRule();
 					prologRule = prologRule.substring(0, prologRule.length()-1);
 					try {
