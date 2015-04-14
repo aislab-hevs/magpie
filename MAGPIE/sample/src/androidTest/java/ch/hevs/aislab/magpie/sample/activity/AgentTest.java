@@ -1,4 +1,4 @@
-package ch.hevs.aislab.magpie.agentlogic;
+package ch.hevs.aislab.magpie.sample.activity;
 
 import android.content.Context;
 import android.test.AndroidTestCase;
@@ -6,9 +6,9 @@ import android.test.AndroidTestCase;
 import java.lang.reflect.Method;
 
 import alice.tuprolog.Term;
-import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
+import ch.hevs.aislab.magpie.sample.R;
 
 public class AgentTest extends AndroidTestCase {
 
@@ -47,7 +47,8 @@ public class AgentTest extends AndroidTestCase {
 
     public void testAgentMind() {
 
-        PrologAgentMind mind = new PrologAgentMind(getTestContext(), new StringECKDTreeIndexer());
+        //getContext().getResources().;
+        PrologAgentMind mind = new PrologAgentMind(getTestContext(), R.raw.monitoring_rules);
 
         // *************** Test 1 ***************
         // Events triggering a 'Brittle diabetes' alert
