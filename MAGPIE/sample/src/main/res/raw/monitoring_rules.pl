@@ -1,6 +1,5 @@
 initiates_at(alert(first)=situation('DM treatment is not efective'),T):-
 	    last_two_weeks_ago(Tago,T),
-        (happens_at(glucose(Va),T), Va >= 10; happens_at(weight(We),T), We >= 87),
         not query_kd(happens_at(alert(first,'DM treatment is not efective'),Tev0), [Tago, T]),
 	    more_or_equals_to(2,(
 		        query_kd(happens_at(glucose(Value1),Tev1), [Tago, T]),
@@ -13,7 +12,7 @@ initiates_at(alert(first)=situation('DM treatment is not efective'),T):-
 
 initiates_at(alert(second)=situation('Brittle diabetes'),T):-
         six_hours_ago(Tago,T),
-        happens_at(glucose(Va),T), Va >= 8,
+        not query_kd(happens_at(alert(second,'Brittle diabetes'),Tev0), [Tago, T]),
         query_kd(happens_at(glucose(Value1),Tev1), [Tago, T]),
         query_kd(happens_at(glucose(Value2),Tev2), [Tago, T]),
         Value1 =< 3.8,
