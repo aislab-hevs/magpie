@@ -15,7 +15,6 @@ import org.joda.time.MutableDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
 import ch.hevs.aislab.magpie.android.MagpieActivity;
@@ -57,7 +56,7 @@ public class MainActivity extends MagpieActivity {
 
         // Create a new Agent and register it into the environment
         MagpieAgent agent = new MagpieAgent("monitoring_agent", Services.LOGIC_TUPLE);
-        PrologAgentMind mind = new PrologAgentMind(getApplicationContext(), new StringECKDTreeIndexer());
+        PrologAgentMind mind = new PrologAgentMind(getApplicationContext(), R.raw.monitoring_rules);
         agent.setMind(mind);
         getService().registerAgent(agent);
     }

@@ -48,7 +48,7 @@ public class AgentTest extends AndroidTestCase {
     public void testAgentMind() {
 
         //getContext().getResources().;
-        PrologAgentMind mind = new PrologAgentMind(getTestContext(), R.raw.monitoring_rules);
+        PrologAgentMind mind = new PrologAgentMind(getContext(), R.raw.monitoring_rules);
 
         // *************** Test 1 ***************
         // Events triggering a 'Brittle diabetes' alert
