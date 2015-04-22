@@ -13,7 +13,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
 import ch.hevs.aislab.magpie.context.ContextEntity;
-import ch.hevs.aislab.magpie.context.RestClientContextEntity;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
 
@@ -126,7 +125,7 @@ public class Environment implements IEnvironment {
 	@Override
 	public ContextEntity getContextEntity(String service) {
 		if (service.equals(Services.REST_CLIENT)) {
-			return (RestClientContextEntity) mListOfContextEntities.get(service);
+			return mListOfContextEntities.get(service);
 		} else {
 			return null;
 		}
