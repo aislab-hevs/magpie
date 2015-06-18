@@ -11,7 +11,9 @@ perceive(P,T):-
         (P=weight(Value),
         add(happensAt(weight(Value),T)));
         (P=blood_pressure(Sys,Dias),
-	    add(happensAt(blood_pressure(Sys,Dias),T))).
+	    add(happensAt(blood_pressure(Sys,Dias),T)));
+	    (P=heart_rate(Value),
+	    add(happensAt(heart_rate(Value),T))).
 
 % The ID of the patient is in the environment
 
