@@ -15,7 +15,7 @@ public abstract class BehaviorAgentMind implements IAgentMind, Serializable {
     protected transient MagpieEvent event;
 
 
-    BehaviorAgentMind() {
+    public BehaviorAgentMind() {
         behaviors = new ArrayList<>();
         triggeredBehaviors = new ArrayList<>();
     }
