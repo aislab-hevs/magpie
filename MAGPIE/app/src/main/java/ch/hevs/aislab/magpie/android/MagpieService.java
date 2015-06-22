@@ -111,8 +111,10 @@ public class MagpieService extends Service {
             return mBinder;
         } else if (action.equals(MagpieActivity.ACTION_TWO_WAY_COMM)) {
             return requestMessenger.getBinder();
+        } else {
+            Log.e(TAG, "MagpieService received an intent without an action");
+            return null;
         }
-        return null;
 	}
 	
 	@Override
