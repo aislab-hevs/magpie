@@ -32,7 +32,7 @@ public abstract class SensorHandler extends Handler implements SensorConnection 
         return message;
     }
 
-    public Message makeStopConnectionMessage(Looper sensorServiceLooper) {
+    public static Message makeStopConnectionMessage(Looper sensorServiceLooper) {
         Message message = Message.obtain();
         message.obj = sensorServiceLooper;
         message.arg1 = STOP_CONNECTION;
