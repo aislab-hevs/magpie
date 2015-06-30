@@ -14,9 +14,13 @@ import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
+import java.lang.ref.WeakReference;
+
 import ch.hevs.aislab.magpie.android.MagpieService.MagpieBinder;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
+import ch.hevs.aislab.magpie.sensor.SensorHandler;
+import ch.hevs.aislab.magpie.sensor.SensorService;
 
 public abstract class MagpieActivity extends FragmentActivity implements MagpieConnection {
 
@@ -26,16 +30,21 @@ public abstract class MagpieActivity extends FragmentActivity implements MagpieC
 	private final String TAG = getClass().getName();
 
     static final String ACTION_ONE_WAY_COMM = "ch.hevs.aislab.magpie.android.ONE_WAY";
-    static final String ACTION_TWO_WAY_COMM = "ch.hevs.aislab.magpie.android.TWO_WAYS";
+    public static final String ACTION_TWO_WAY_COMM = "ch.hevs.aislab.magpie.android.TWO_WAYS";
 
-    static final String MAGPIE_EVENT = "event";
+    public static final String MAGPIE_EVENT = "event";
 
     // Used for one way communications with the service
     private MagpieService mService;
 
     // Used for two way communications with the service
     private Messenger requestMessenger;
-    private Messenger replyMessenger = new Messenger(new ReplyHandler());
+    private Messenger replyMessenger = new Messenger(new ReplyHandler(this));
+
+    private Intent sensorServiceIntent;
+
+    // Sensor related fields
+    private SensorReplyHandler sensorReplyHandler;
 
 	@Override
 	protected void onStart() {
@@ -62,6 +71,15 @@ public abstract class MagpieActivity extends FragmentActivity implements MagpieC
         unbindService(oneWayConnection);
         unbindService(twoWayConnection);
 	}
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy()");
+        if (sensorServiceIntent != null) {
+            stopService(sensorServiceIntent);
+        }
+    }
 
     private ServiceConnection oneWayConnection = new ServiceConnection() {
 
@@ -98,16 +116,31 @@ public abstract class MagpieActivity extends FragmentActivity implements MagpieC
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            requestMessenger = null;
+
         }
     };
 
-    private class ReplyHandler extends Handler {
+    /**
+     * Handler to process the alerts coming from the Environment
+     */
+    private static class ReplyHandler extends Handler {
+
+        private WeakReference<MagpieActivity> mActivity;
+
+        public ReplyHandler(MagpieActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
         @Override
         public void handleMessage(Message reply) {
+            MagpieActivity activity = mActivity.get();
+            if (activity == null) {
+                return;
+            }
+
             Bundle bundleAlert = reply.getData();
             LogicTupleEvent alert = bundleAlert.getParcelable(MAGPIE_EVENT);
-            onAlertProduced(alert);
+            activity.onAlertProduced(alert);
         }
     }
 
@@ -129,6 +162,45 @@ public abstract class MagpieActivity extends FragmentActivity implements MagpieC
             requestMessenger.send(request);
         } catch (RemoteException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Sensor related methods and classes
+     */
+    protected void connectToSensor(Class<? extends SensorHandler> sensorHandlerImpl) {
+        // Initialize the SensorHandler
+        sensorReplyHandler = new SensorReplyHandler(this);
+        sensorServiceIntent = SensorService.makeIntent(this, sensorHandlerImpl, sensorReplyHandler);
+        startService(sensorServiceIntent);
+    }
+
+    protected void disconnectSensor() {
+        sensorReplyHandler = null;
+        stopService(sensorServiceIntent);
+    }
+
+    protected abstract void sensorConnectionResult(int code);
+
+    /**
+     * A nested class that uses the handleMessage() hook method to process Messages
+     * sent to it from the SensorService
+     */
+    private static class SensorReplyHandler extends Handler {
+
+        private WeakReference<MagpieActivity> mActivity;
+
+        public SensorReplyHandler(MagpieActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        public void handleMessage(Message message) {
+            int result = message.arg1;
+            MagpieActivity activity = mActivity.get();
+            if (activity == null) {
+                return;
+            }
+            activity.sensorConnectionResult(result);
         }
     }
 }
