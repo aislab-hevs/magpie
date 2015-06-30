@@ -4,16 +4,12 @@
     android:versionName="1.0" >
 
     <!-- Mobile computing with AGents and Publish/subscribe for Intelligent u-hEalthcare (MAGPIE) -->
-    
-    <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="15" />
 
     <application
-        android:allowBackup="true"
-        android:theme="@style/AppTheme">
+        android:allowBackup="true" >
 
         <service android:name="ch.hevs.aislab.magpie.android.MagpieService" />
+        <service android:name="ch.hevs.aislab.magpie.sensor.SensorService" />
 
     </application>
 
