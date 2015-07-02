@@ -30,5 +30,5 @@ dependencies {
     compile 'com.android.support:support-v4:21.+'
     compile 'joda-time:joda-time:2.1'
     compile 'com.doomonafireball.betterpickers:library:1.5.4'
-    compile project (':app')
+    compile project (':library')
 }
