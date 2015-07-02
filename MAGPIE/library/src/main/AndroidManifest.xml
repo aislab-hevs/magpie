@@ -1,0 +1,16 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="hevs.aislab.magpie"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <!-- Mobile computing with AGents and Publish/subscribe for Intelligent u-hEalthcare (MAGPIE) -->
+
+    <application
+        android:allowBackup="true" >
+
+        <service android:name="ch.hevs.aislab.magpie.android.MagpieService" />
+        <service android:name="ch.hevs.aislab.magpie.sensor.SensorService" />
+
+    </application>
+
+</manifest>
