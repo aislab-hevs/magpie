@@ -45,6 +45,9 @@ more_or_equals_to(Number,Expr):-
 	    length(List,Val),
 	    Val >= Number.
 
+last_minute_ago(Tago,Tfinal):-
+        Tago is Tfinal - 60 * 1000.
+
 last_six_hours(Tev,Tfinal):-
         Tinit is Tfinal - 6 * 3600 * 1000,
         Tev =< Tfinal,
