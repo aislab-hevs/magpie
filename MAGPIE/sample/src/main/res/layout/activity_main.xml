@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/activity_horizontal_margin"
     android:id="@+id/exampleLinearLayout">
 
 
@@ -9,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="Glucose"
-        android:textSize="24dp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:id="@+id/glucoseTxtView"
         android:layout_marginTop="8dp"
@@ -19,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Value"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:id="@+id/valueLabelGTxtView"
         android:layout_below="@id/glucoseTxtView"
         android:layout_marginTop="8dp"
@@ -40,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="mmol/l"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:id="@+id/glucoseUnitsTxtView"
         android:layout_below="@id/glucoseTxtView"
         android:layout_toRightOf="@id/glucoseEditTxt"
@@ -62,7 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Timestamp: "
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:id="@+id/glucoseTimestampLabelTxtView"
         android:layout_below="@id/glucoseEditTxt"
         android:layout_marginTop="8dp"
@@ -72,7 +74,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:id="@+id/glucoseTimestampTxtView"
         android:layout_below="@id/glucoseEditTxt"
         android:layout_toRightOf="@id/glucoseTimestampLabelTxtView"
@@ -95,7 +97,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="Weight"
-        android:textSize="24dp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:id="@+id/weightTxtView"
         android:layout_below="@id/glucoseSendBtn"
@@ -106,7 +108,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Value"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:id="@+id/valueLabelWTxtView"
         android:layout_below="@id/weightTxtView"
         android:layout_marginTop="8dp"
@@ -127,7 +129,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="kg"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:id="@+id/weightUnitsTxtView"
         android:layout_below="@id/weightTxtView"
         android:layout_toRightOf="@id/weightEditTxt"
@@ -148,7 +150,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Timestamp: "
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:id="@+id/weightTimestampLabelTxtView"
         android:layout_below="@id/weightEditTxt"
         android:layout_marginTop="8dp"
@@ -158,7 +160,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:id="@+id/weightTimestampTxtView"
         android:layout_below="@id/weightEditTxt"
         android:layout_toRightOf="@id/weightTimestampLabelTxtView"
@@ -175,5 +177,27 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:onClick="sendWeightEvent"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Connect BioHarness 3"
+        android:id="@+id/connectSensorBtn"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:onClick="connectToBioHarness"
+        android:layout_above="@+id/disconnectSensorBtn" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Disconnect BioHarness 3"
+        android:id="@+id/disconnectSensorBtn"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:onClick="disconnectBioHarness"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>
