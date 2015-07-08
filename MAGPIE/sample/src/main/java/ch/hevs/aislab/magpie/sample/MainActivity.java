@@ -2,6 +2,9 @@ package ch.hevs.aislab.magpie.sample;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -183,4 +186,28 @@ public class MainActivity extends MagpieActivity {
             textView.setText(timestamp.toString(dtf));
         }
     }
+
+
+    /**
+     * Methods to handle the About dialog
+     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_about, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.about_item:
+                Toast.makeText(this, "This is a MAGPIE demo!", Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }
