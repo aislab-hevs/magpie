@@ -36,8 +36,8 @@ import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 
 public class MagpieService extends Service {
 
-	/** Used for debugging */
-	private final String TAG = getClass().getName();
+    /** Used for debugging */
+    private final String TAG = getClass().getName();
 
     /** Shared Preferences store the agents' names and the 'first time' boolean */
     static final String MAGPIE_PREFS = "magpie_prefs";
@@ -49,19 +49,19 @@ public class MagpieService extends Service {
 
     private Messenger requestMessenger;
 
-	private Environment mEnvironment;
+    private Environment mEnvironment;
 
     /** Last binding activity */
-	private static Context mContext;
+    private static Context mContext;
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Log.i(TAG, "onCreate()");
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.i(TAG, "onCreate()");
 
         requestMessenger = new Messenger(new RequestHandler(this));
 
-		// Get the instance of the environment
+        // Get the instance of the environment
         mEnvironment = Environment.getInstance();
 
         Log.i(TAG, "Agents onCreate(): " + mEnvironment.getRegisteredAgents().keySet().size());
@@ -100,11 +100,11 @@ public class MagpieService extends Service {
                 registerAgent(agent);
             }
         }
-	}
-	
-	@Override
-	public IBinder onBind(Intent intent) {
-		Log.i(TAG, "onBind()");
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.i(TAG, "onBind()");
 
         String action = intent.getAction();
         if (action.equals(MagpieActivity.ACTION_ONE_WAY_COMM)) {
@@ -115,11 +115,11 @@ public class MagpieService extends Service {
             Log.e(TAG, "MagpieService received an intent without an action");
             return null;
         }
-	}
-	
-	@Override
-	public void onDestroy() {
-		Log.i(TAG, "MagpieService - onDestroy()");
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "MagpieService - onDestroy()");
 
         SharedPreferences settings = getSharedPreferences(MAGPIE_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
@@ -163,7 +163,7 @@ public class MagpieService extends Service {
         editor.putStringSet(AGENTS_KEY, agentNames);
         editor.commit();
 
-        System.exit(0);
+        mEnvironment = null;
     }
 
     private void serialize(String fileName, Object object) {
@@ -216,23 +216,23 @@ public class MagpieService extends Service {
         }
         return newInstance;
     }
-	
-	/**
-	 * Binder object returned to the caller
-	 */
-	public class MagpieBinder extends Binder {
-		public MagpieService getService() {
-			return MagpieService.this;
-		}
-	}
-	
-	/**
-	 * Factory method to make an intent to connect with this service
-	 */
-	public static Intent makeIntent(Context context) {
-		mContext = context;
-		return new Intent(context, MagpieService.class);
-	}
+
+    /**
+     * Binder object returned to the caller
+     */
+    public class MagpieBinder extends Binder {
+        public MagpieService getService() {
+            return MagpieService.this;
+        }
+    }
+
+    /**
+     * Factory method to make an intent to connect with this service
+     */
+    public static Intent makeIntent(Context context) {
+        mContext = context;
+        return new Intent(context, MagpieService.class);
+    }
 
     private static class RequestHandler extends Handler {
 
@@ -268,19 +268,19 @@ public class MagpieService extends Service {
 
         }
     }
-	
-	public static Context getContext() {
-		return mContext;
-	}
-	
-	/**
-	 * Actions that can be performed in the Environment from an Activity
-	 */
-	public void registerAgent(MagpieAgent agent) {
+
+    public static Context getContext() {
+        return mContext;
+    }
+
+    /**
+     * Actions that can be performed in the Environment from an Activity
+     */
+    public void registerAgent(MagpieAgent agent) {
         mEnvironment.registerAgent(agent);
-	}
-	
-	public ContextEntity getContextEntity(String service) {
-		return mEnvironment.getContextEntity(service);
-	}
+    }
+
+    public ContextEntity getContextEntity(String service) {
+        return mEnvironment.getContextEntity(service);
+    }
 }
