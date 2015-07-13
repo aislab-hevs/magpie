@@ -1,7 +1,12 @@
 package ch.hevs.aislab.magpie.sample;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.text.util.Linkify;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +23,8 @@ import org.joda.time.DateTime;
 import org.joda.time.MutableDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.util.regex.Pattern;
 
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
@@ -47,8 +54,6 @@ public class MainActivity extends MagpieActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        setTitle("MAGPIE example Application");
 
         glucoseEditTxt = (EditText) findViewById(R.id.glucoseEditTxt);
         glucoseTstampTxtView = (TextView) findViewById(R.id.glucoseTimestampTxtView);
@@ -203,11 +208,28 @@ public class MainActivity extends MagpieActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.about_item:
-                Toast.makeText(this, "This is a MAGPIE demo!", Toast.LENGTH_LONG).show();
+                showAboutDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showAboutDialog() {
+        // Transform text into URL link
+        View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, null, false);
+        TextView txtView = (TextView) aboutView.findViewById(R.id.aboutTxtView);
+        Pattern pattern = Pattern.compile("here");
+        Linkify.addLinks(txtView, pattern, getString(R.string.magpie_url));
+        // Create and show the dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                new ContextThemeWrapper(
+                        this,
+                        android.R.style.Theme_Material_Light_NoActionBar_Fullscreen));
+        builder.setTitle(getString(R.string.about_app))
+                .setView(aboutView)
+                .create()
+                .show();
     }
 
 }

@@ -5,7 +5,7 @@
 
     <item android:id="@+id/about_item"
         android:icon="@android:drawable/ic_dialog_info"
-        android:title="About"
+        android:title="@string/about_app"
         android:showAsAction="ifRoom" />
 
 </menu>
