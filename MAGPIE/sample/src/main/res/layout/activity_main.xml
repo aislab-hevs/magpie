@@ -2,202 +2,198 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/activity_horizontal_margin"
     android:layout_marginBottom="@dimen/activity_horizontal_margin"
+    android:layout_marginLeft="@dimen/activity_vertical_margin"
+    android:layout_marginRight="@dimen/activity_vertical_margin"
     android:id="@+id/exampleLinearLayout">
 
 
     <TextView
+        android:id="@+id/glucoseTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Glucose"
-        android:textSize="24sp"
         android:textStyle="bold"
-        android:id="@+id/glucoseTxtView"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"/>
+        android:textSize="24sp"
+        android:text="@string/glucose" />
 
     <TextView
+        android:id="@+id/valueLabelGTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Value"
-        android:textSize="20sp"
-        android:id="@+id/valueLabelGTxtView"
         android:layout_below="@id/glucoseTxtView"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp" />
+        android:layout_marginTop="@dimen/view_margin"
+        android:textSize="20sp"
+        android:text="@string/value" />
 
     <EditText
+        android:id="@+id/glucoseEditTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:ems="3"
-        android:id="@+id/glucoseEditTxt"
         android:layout_below="@id/glucoseTxtView"
-        android:layout_toRightOf="@id/valueLabelGTxtView"
         android:layout_alignBaseline="@id/valueLabelGTxtView"
-        android:layout_marginLeft="8dp" />
+        android:layout_toRightOf="@id/valueLabelGTxtView"
+        android:layout_toEndOf="@id/valueLabelGTxtView"
+        android:layout_marginLeft="@dimen/view_margin"
+        android:layout_marginStart="@dimen/view_margin"
+        android:inputType="numberDecimal"
+        android:ems="3" />
 
     <TextView
+        android:id="@+id/glucoseUnitsTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="mmol/l"
-        android:textSize="20sp"
-        android:id="@+id/glucoseUnitsTxtView"
         android:layout_below="@id/glucoseTxtView"
-        android:layout_toRightOf="@id/glucoseEditTxt"
         android:layout_alignBaseline="@id/valueLabelGTxtView"
-        android:layout_marginLeft="8dp"/>
+        android:layout_toRightOf="@id/glucoseEditTxt"
+        android:layout_toEndOf="@id/glucoseEditTxt"
+        android:layout_marginLeft="@dimen/view_margin"
+        android:layout_marginStart="@dimen/view_margin"
+        android:textSize="20sp"
+        android:text="@string/glucose_unit" />
 
     <Button
+        android:id="@+id/glucoseTimestampBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Timestamp"
-        android:id="@+id/glucoseTimestampBtn"
-        android:layout_below="@id/glucoseTxtView"
-        android:layout_alignParentRight="true"
         android:layout_alignBaseline="@id/valueLabelGTxtView"
-        android:layout_marginRight="8dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:text="@string/timestamp_btn"
         android:onClick="setGlucoseTimestamp"/>
 
     <TextView
+        android:id="@+id/glucoseTimestampLabelTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Timestamp: "
-        android:textSize="15sp"
-        android:id="@+id/glucoseTimestampLabelTxtView"
         android:layout_below="@id/glucoseEditTxt"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"/>
+        android:layout_marginTop="@dimen/view_margin"
+        android:textSize="15sp"
+        android:text="@string/timestamp_txtview" />
 
     <TextView
+        android:id="@+id/glucoseTimestampTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="-"
-        android:textSize="15sp"
-        android:id="@+id/glucoseTimestampTxtView"
         android:layout_below="@id/glucoseEditTxt"
-        android:layout_toRightOf="@id/glucoseTimestampLabelTxtView"
         android:layout_alignBaseline="@id/glucoseTimestampLabelTxtView"
-        android:layout_marginLeft="8dp"/>
+        android:layout_toRightOf="@id/glucoseTimestampLabelTxtView"
+        android:layout_toEndOf="@id/glucoseTimestampLabelTxtView"
+        android:layout_marginLeft="@dimen/view_margin"
+        android:layout_marginStart="@dimen/view_margin"
+        android:textSize="15sp"
+        android:text="@string/value_empty" />
 
     <Button
+        android:id="@+id/glucoseSendBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send Glucose Event"
-        android:id="@+id/glucoseSendBtn"
         android:layout_below="@id/glucoseTimestampLabelTxtView"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginTop="@dimen/view_margin"
+        android:text="@string/glucose_send_event"
         android:onClick="sendGlucoseEvent"/>
 
     <TextView
+        android:id="@+id/weightTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Weight"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:id="@+id/weightTxtView"
         android:layout_below="@id/glucoseSendBtn"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="8dp"/>
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:text="@string/weight" />
 
     <TextView
+        android:id="@+id/valueLabelWTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Value"
-        android:textSize="20sp"
-        android:id="@+id/valueLabelWTxtView"
         android:layout_below="@id/weightTxtView"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp" />
+        android:layout_marginTop="@dimen/view_margin"
+        android:textSize="20sp"
+        android:text="@string/value" />
 
     <EditText
+        android:id="@+id/weightEditTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="3"
-        android:id="@+id/weightEditTxt"
         android:layout_below="@id/weightTxtView"
-        android:layout_toRightOf="@id/valueLabelWTxtView"
         android:layout_alignBaseline="@id/valueLabelWTxtView"
-        android:layout_marginLeft="8dp"/>
+        android:layout_toRightOf="@id/valueLabelWTxtView"
+        android:layout_toEndOf="@id/valueLabelWTxtView"
+        android:inputType="number"
+        android:ems="3" />
 
     <TextView
+        android:id="@+id/weightUnitsTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="kg"
-        android:textSize="20sp"
-        android:id="@+id/weightUnitsTxtView"
         android:layout_below="@id/weightTxtView"
-        android:layout_toRightOf="@id/weightEditTxt"
         android:layout_alignBaseline="@id/valueLabelWTxtView"
-        android:layout_marginLeft="8dp"/>
+        android:layout_toRightOf="@id/weightEditTxt"
+        android:layout_toEndOf="@id/weightEditTxt"
+        android:layout_marginLeft="@dimen/view_margin"
+        android:layout_marginStart="@dimen/view_margin"
+        android:textSize="20sp"
+        android:text="@string/weight_unit" />
 
     <Button
+        android:id="@+id/weightTimestampBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Timestamp"
-        android:id="@+id/weightTimestampBtn"
-        android:layout_alignParentRight="true"
         android:layout_alignBaseline="@id/valueLabelWTxtView"
-        android:layout_marginRight="8dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:text="@string/timestamp_btn"
         android:onClick="setWeightTimestamp"/>
 
     <TextView
+        android:id="@+id/weightTimestampLabelTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Timestamp: "
-        android:textSize="15sp"
-        android:id="@+id/weightTimestampLabelTxtView"
         android:layout_below="@id/weightEditTxt"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"/>
+        android:layout_marginTop="@dimen/view_margin"
+        android:textSize="15sp"
+        android:text="@string/timestamp_txtview" />
 
     <TextView
+        android:id="@+id/weightTimestampTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="-"
-        android:textSize="15sp"
-        android:id="@+id/weightTimestampTxtView"
         android:layout_below="@id/weightEditTxt"
+        android:layout_alignBaseline="@id/weightTimestampLabelTxtView"
         android:layout_toRightOf="@id/weightTimestampLabelTxtView"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"/>
+        android:layout_toEndOf="@id/weightTimestampLabelTxtView"
+        android:layout_marginLeft="@dimen/view_margin"
+        android:layout_marginStart="@dimen/view_margin"
+        android:textSize="15sp"
+        android:text="@string/value_empty" />
 
     <Button
+        android:id="@+id/weightSendBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send Weight Event"
-        android:id="@+id/weightSendBtn"
         android:layout_below="@id/weightTimestampLabelTxtView"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginTop="@dimen/view_margin"
+        android:text="@string/weight_send_event"
         android:onClick="sendWeightEvent"/>
 
     <Button
+        android:id="@+id/connectSensorBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Connect BioHarness 3"
-        android:id="@+id/connectSensorBtn"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:onClick="connectToBioHarness"
-        android:layout_above="@+id/disconnectSensorBtn" />
+        android:layout_above="@+id/disconnectSensorBtn"
+        android:text="@string/bioharness_btn_connect"
+        android:onClick="connectToBioHarness" />
 
     <Button
+        android:id="@+id/disconnectSensorBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Disconnect BioHarness 3"
-        android:id="@+id/disconnectSensorBtn"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:onClick="disconnectBioHarness"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/view_margin"
+        android:text="@string/bioharness_btn_disconnect"
+        android:onClick="disconnectBioHarness" />
 
 </RelativeLayout>

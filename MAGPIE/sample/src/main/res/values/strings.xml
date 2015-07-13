@@ -1,5 +1,21 @@
 <resources>
     <string name="app_name">MAGPIE Sample</string>
+
+    <!-- MainActivity -->
+    <string name="bioharness_btn_connect">Connect BioHarness 3</string>
+    <string name="bioharness_btn_disconnect">Disconnect BioHarness 3</string>
+    <string name="glucose">Glucose</string>
+    <string name="glucose_send_event">Send Glucose Event</string>
+    <string name="glucose_unit">mmol/l</string>
+    <string name="timestamp_btn">Timestamp</string>
+    <string name="timestamp_txtview">Timestamp:</string>
+    <string name="value">Value</string>
+    <string name="value_empty">-</string>
+    <string name="weight">Weight</string>
+    <string name="weight_send_event">Send Weight Event</string>
+    <string name="weight_unit">kg</string>
+
+    <!-- About Strings -->
     <string name="about_app">About MAGPIE Sample</string>
     <string name="magpie_info">More information about MAGPIE can be found here.</string>
     <string name="magpie_url">http://www.hevs.ch/en/mini-sites/projets-produits/aislab/projets/magpie-4826</string>
