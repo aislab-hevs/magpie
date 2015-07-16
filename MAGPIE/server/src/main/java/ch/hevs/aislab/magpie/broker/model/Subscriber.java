@@ -12,4 +12,14 @@ public class Subscriber extends User {
 	public Subscriber(String firstName, String lastName) {
 		super(firstName, lastName);
 	}
+
+	@Override
+	public String toString() {
+		return "Subscriber[id: " + id +
+				", firstName: " + firstName +
+				", lastName: " + lastName +
+				"]";
+	}
+	
+	
 }

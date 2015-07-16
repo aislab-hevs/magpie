@@ -10,10 +10,10 @@ public abstract class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	protected long id;
 	
-	private String firstName;
-	private String lastName;
+	protected String firstName;
+	protected String lastName;
 	
 	public User() {
 		
