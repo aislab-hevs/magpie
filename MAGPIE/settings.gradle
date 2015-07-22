@@ -1,1 +1,1 @@
-include ':library', ':sample-sensor', ':sample-publisher'
+include ':library', ':sample-sensor', ':sample-debs'
