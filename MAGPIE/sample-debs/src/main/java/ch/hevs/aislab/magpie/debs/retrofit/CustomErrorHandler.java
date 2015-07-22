@@ -1,4 +1,4 @@
-package ch.hevs.aislab.magpie.publisher.retrofit;
+package ch.hevs.aislab.magpie.debs.retrofit;
 
 
 import android.content.Context;
@@ -26,21 +26,6 @@ public class CustomErrorHandler implements ErrorHandler {
             if (error.getCause() instanceof ConnectException) {
                 return error.getCause();
             }
-                /*
-                ((MainActivity)context).runOnUiThread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(
-                                        context,
-                                        "ERROR: server is down",
-                                        Toast.LENGTH_LONG)
-                                        .show();
-                            }
-                        }
-                );
-                */
-
         } else {
             Response r = error.getResponse();
             if (r != null) {

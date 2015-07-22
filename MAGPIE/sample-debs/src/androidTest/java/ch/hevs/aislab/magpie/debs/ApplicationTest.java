@@ -1,4 +1,4 @@
-package ch.hevs.aislab.magpie.publisher;
+package ch.hevs.aislab.magpie.debs;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

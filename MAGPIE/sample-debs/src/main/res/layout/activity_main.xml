@@ -11,31 +11,37 @@
     android:focusableInTouchMode="true"
     tools:context=".MainActivity">
 
+    <ProgressBar
+        android:id="@+id/registrationProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
-            android:id="@+id/firstNameEditTxt"
+            android:id="@+id/usernameEditTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/first_name" />
+            android:hint="@string/username" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
-            android:id="@+id/lastNameEditTxt"
+            android:id="@+id/passwordEditTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/last_name"/>
+            android:inputType="textPassword"
+            android:hint="@string/password"/>
     </android.support.design.widget.TextInputLayout>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/register"
-        android:onClick="registerUser"/>
+        android:text="@string/login"
+        android:onClick="doLogin"/>
 
 </LinearLayout>
 

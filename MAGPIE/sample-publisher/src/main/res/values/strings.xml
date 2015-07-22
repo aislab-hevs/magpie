@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">MAGPIE Publisher</string>
-
-    <string name="action_settings">Settings</string>
-    <string name="first_name">First name</string>
-    <string name="last_name">Last name</string>
-    <string name="register">Register</string>
-</resources>
