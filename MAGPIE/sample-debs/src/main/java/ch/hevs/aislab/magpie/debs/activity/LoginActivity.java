@@ -10,8 +10,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -19,8 +17,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-
-import java.util.Collection;
 
 import ch.hevs.aislab.magpie.debs.R;
 import ch.hevs.aislab.magpie.debs.gcm.RegistrationIntentService;
@@ -34,7 +30,7 @@ import retrofit.RetrofitError;
 import retrofit.client.ApacheClient;
 
 
-public class MainActivity extends ActionBarActivity {
+public class LoginActivity extends ActionBarActivity {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private final String TAG = getClass().getName();
@@ -91,7 +87,7 @@ public class MainActivity extends ActionBarActivity {
         final String password = passwordEditTxt.getText().toString();
         // Check that the values are not empty
         if (username.isEmpty() || password.isEmpty()) {
-            MainActivity.this.showToast("Type username and password");
+            LoginActivity.this.showToast("Type username and password");
             return;
         }
 
@@ -112,7 +108,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void run() {
 
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                 String gcmToken = preferences.getString(Preferences.TOKEN, "null");
 
                 MobileClient client;
@@ -122,9 +118,9 @@ public class MainActivity extends ActionBarActivity {
                     if (e instanceof RetrofitError) {
                         RetrofitError error = (RetrofitError) e;
                         if (error.getMessage().contains("HttpHostConnectException")) {
-                            MainActivity.this.showToast("Server is down!");
+                            LoginActivity.this.showToast("Server is down!");
                         } else if (error.getMessage().contains("SecuredRestException")){
-                            MainActivity.this.showToast("Incorrect username or password");
+                            LoginActivity.this.showToast("Incorrect username or password");
                         }
                     }
                     return;
@@ -132,8 +128,8 @@ public class MainActivity extends ActionBarActivity {
 
                 if (client != null) {
                     if (client.getRoles().contains("SUBSCRIBER")) {
-                        MainActivity.this.showToast("Hello " + client.getFirstName() + " " + client.getLastName());
-                        Intent i = new Intent(MainActivity.this, SubscriberActivity.class);
+                        LoginActivity.this.showToast("Hello " + client.getFirstName() + " " + client.getLastName());
+                        Intent i = new Intent(LoginActivity.this, SubscriberActivity.class);
                         i.putExtra(MobileClient.SUBSCRIBER_EXTRA, client);
                         startActivity(i);
                     }
@@ -149,7 +145,7 @@ public class MainActivity extends ActionBarActivity {
                 new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 }
         );
