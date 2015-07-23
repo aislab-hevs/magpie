@@ -15,6 +15,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class MobileClient {
 
+	public static final String ROLE_PUBLISHER = "PUBLISHER";
+	public static final String ROLE_SUBSCRIBER = "SUBSCRIBER";
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

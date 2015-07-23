@@ -33,6 +33,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import ch.hevs.aislab.magpie.broker.model.MobileClient;
+
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class OAuth2SecurityConfiguration {
@@ -97,8 +99,8 @@ public class OAuth2SecurityConfiguration {
 			
 			UserDetailsService svc = new InMemoryUserDetailsManager(
 					Arrays.asList(
-									User.create("publisher", "publisher", "PUBLISHER"),
-									User.create("subscriber", "subscriber", "SUBSCRIBER")));
+									User.create("publisher", "publisher", MobileClient.ROLE_PUBLISHER),
+									User.create("subscriber", "subscriber", MobileClient.ROLE_SUBSCRIBER)));
 			
 			combinedService_ = new ClientAndUserDetailsService(csvc,svc);
 		}
