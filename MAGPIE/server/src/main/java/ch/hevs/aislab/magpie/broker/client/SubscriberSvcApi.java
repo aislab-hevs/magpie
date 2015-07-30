@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import retrofit.http.Body;
 import retrofit.http.POST;
 import retrofit.http.Path;
+import ch.hevs.aislab.magpie.broker.model.RequestSubscriptionResult;
 
 public interface SubscriberSvcApi {
 
@@ -15,7 +16,7 @@ public interface SubscriberSvcApi {
 	
 	
 	@POST(SUB_SUBSCRIBE_SVC)
-	boolean doSubscriptionByUsername(
+	RequestSubscriptionResult doSubscriptionByUsername(
 			@Path(SUBSCRIBER_ID) long subId,
 			@Body String pubUsername,
 			HttpServletResponse response);
