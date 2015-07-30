@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/grpSub1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/menuSubItem1"
+            android:icon="@drawable/ic_person_black_24dp"
+            android:title="@string/contacts"/>
+        <item
+            android:id="@+id/menuSubItem2"
+            android:icon="@drawable/ic_person_add_black_24dp"
+            android:title="@string/subscribe"/>
+    </group>
+
+    <group
+        android:id="@+id/grpSub2"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/menuSubItem3"
+            android:icon="@drawable/ic_power_settings_new_black_24dp"
+            android:title="@string/logout"/>
+    </group>
+
+</menu>

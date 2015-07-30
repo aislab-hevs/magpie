@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/grpPub1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/menuPubItem1"
+            android:icon="@drawable/ic_person_black_24dp"
+            android:title="@string/contacts"/>
+    </group>
+
+    <group
+        android:id="@+id/grpPub2"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/menuPubItem2"
+            android:icon="@drawable/ic_power_settings_new_black_24dp"
+            android:title="@string/logout"/>
+    </group>
+
+</menu>
