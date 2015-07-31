@@ -1,14 +1,15 @@
 package ch.hevs.aislab.magpie.broker.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -33,8 +34,8 @@ public class MobileClient {
     @ElementCollection
     private List<String> roles;
 
-    @ManyToMany
-    private List<MobileClient> clients;
+    @ElementCollection
+    private Map<Long, SubscriptionStatus> clients;
 
     public MobileClient() {
 
@@ -45,7 +46,7 @@ public class MobileClient {
     	this.firstName = firstName;
     	this.lastName = lastName;
     	this.roles = new ArrayList<String>();
-    	this.clients = new ArrayList<MobileClient>();
+    	this.clients = new HashMap<Long, SubscriptionStatus>();
     }
 
     public long getId() {
@@ -96,11 +97,11 @@ public class MobileClient {
         this.roles = roles;
     }
 
-    public List<MobileClient> getClients() {
+    public Map<Long, SubscriptionStatus> getClients() {
         return clients;
     }
 
-    public void setClients(List<MobileClient> clients) {
+    public void setClients(Map<Long, SubscriptionStatus> clients) {
         this.clients = clients;
     }
 }
