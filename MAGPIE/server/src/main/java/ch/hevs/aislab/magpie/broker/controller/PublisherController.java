@@ -47,16 +47,39 @@ public class PublisherController implements PublisherSvcApi {
 		boolean decision = subscriptionResult.isDecision();
 		
 		if (decision) {
-			publisher.getClients().put(subscriber, SubscriptionStatus.ACCEPTED);
+			publisher.getClients().put(subscriber.getId(), SubscriptionStatus.ACCEPTED);
 			mobileclients.save(publisher);
-			subscriber.getClients().put(publisher, SubscriptionStatus.ACCEPTED);
+			subscriber.getClients().put(publisher.getId(), SubscriptionStatus.ACCEPTED);
 			mobileclients.save(subscriber);
 		} else {
-			publisher.getClients().put(subscriber, SubscriptionStatus.REJECTED);
+			publisher.getClients().put(subscriber.getId(), SubscriptionStatus.REJECTED);
 			mobileclients.save(publisher);
-			subscriber.getClients().put(publisher, SubscriptionStatus.REJECTED);
+			subscriber.getClients().put(publisher.getId(), SubscriptionStatus.REJECTED);
 			mobileclients.save(subscriber);
 		}
+		return true;
+	}
+
+	@Override
+	@RequestMapping(value = PUB_REVOKE_SVC, method = RequestMethod.POST)
+	public @ResponseBody boolean revokeSubscription(
+			@PathVariable("pubId") long pubId,
+			@RequestBody long subId,
+			HttpServletResponse response) {
+		// Check that exists a publisher with the provided id
+		if ((!mobileclients.exists(pubId)) || (!mobileclients.exists(subId))) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return false;
+		}
+		
+		MobileClient publisher = mobileclients.findOne(pubId);
+		MobileClient subscriber = mobileclients.findOne(subId);
+		
+		publisher.getClients().put(subscriber.getId(), SubscriptionStatus.REJECTED);
+		mobileclients.save(publisher);
+		subscriber.getClients().put(publisher.getId(), SubscriptionStatus.REJECTED);
+		mobileclients.save(subscriber);
+		
 		return true;
 	}
 
