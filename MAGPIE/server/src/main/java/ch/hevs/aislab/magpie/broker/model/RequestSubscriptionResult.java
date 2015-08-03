@@ -10,5 +10,6 @@ public enum RequestSubscriptionResult {
 	INVALID_PUBLISHER,
 	GCM_ERROR,
 	STATUS_PENDING,
+	STATUS_ALREADY_SUBSCRIBED,
 	STATUS_OK
 }
