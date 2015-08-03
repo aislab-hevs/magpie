@@ -1,5 +1,6 @@
 package ch.hevs.aislab.magpie.debs.activity;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,11 +20,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import ch.hevs.aislab.magpie.debs.R;
-import ch.hevs.aislab.magpie.debs.gcm.RegistrationIntentService;
-import ch.hevs.aislab.magpie.debs.model.MobileClient;
-import ch.hevs.aislab.magpie.debs.retrofit.ClientSvcApi;
-import ch.hevs.aislab.magpie.debs.retrofit.SecuredRestBuilder;
 import ch.hevs.aislab.magpie.debs.gcm.Preferences;
+import ch.hevs.aislab.magpie.debs.gcm.RegistrationIntentService;
+import ch.hevs.aislab.magpie.debs.credentials.SessionManager;
+import ch.hevs.aislab.magpie.debs.model.MobileClient;
+import ch.hevs.aislab.magpie.debs.retrofit.UserSvcApi;
+import ch.hevs.aislab.magpie.debs.retrofit.SecuredRestBuilder;
 import ch.hevs.aislab.magpie.debs.retrofit.UnsafeHttpsClient;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -35,17 +37,18 @@ public class LoginActivity extends ActionBarActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private final String TAG = getClass().getName();
 
-
     private EditText usernameEditTxt;
     private EditText passwordEditTxt;
 
     private BroadcastReceiver registrationBroadcastReceiver;
     private ProgressBar registrationProgressBar;
 
+    private SessionManager sessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
         usernameEditTxt = (EditText) findViewById(R.id.usernameEditTxt);
         passwordEditTxt = (EditText) findViewById(R.id.passwordEditTxt);
@@ -55,6 +58,10 @@ public class LoginActivity extends ActionBarActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 registrationProgressBar.setVisibility(ProgressBar.GONE);
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                String gcmToken = preferences.getString(Preferences.TOKEN, "null");
+                Log.i(TAG, "GCM Token in LoginActivity: " + gcmToken);
             }
         };
 
@@ -63,6 +70,14 @@ public class LoginActivity extends ActionBarActivity {
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
+
+        sessionManager = new SessionManager(this);
+        if (sessionManager.isLoggedIn()) {
+            String username = sessionManager.getUserDetails().get(SessionManager.KEY_USERNAME);
+            String password = sessionManager.getUserDetails().get(SessionManager.KEY_PASSWORD);
+            redirectToMainActivity(username, password);
+        }
+
     }
 
     @Override
@@ -90,30 +105,35 @@ public class LoginActivity extends ActionBarActivity {
             LoginActivity.this.showToast("Type username and password");
             return;
         }
+        redirectToMainActivity(username, password);
+    }
+
+    private void redirectToMainActivity(final String username, final String password) {
 
         // Adapter for the HTTPS connections
-        final ClientSvcApi clientSvc = new SecuredRestBuilder()
-                .setLoginEndpoint(ClientSvcApi.SERVICE_URL + ClientSvcApi.TOKEN_PATH)
+        final UserSvcApi clientSvc = new SecuredRestBuilder()
+                .setLoginEndpoint(UserSvcApi.SERVICE_URL + UserSvcApi.TOKEN_PATH)
                 .setUsername(username)
                 .setPassword(password)
-                .setClientId("mobile")
+                .setClientId(UserSvcApi.CLIENT_ID)
                 .setClient(new ApacheClient(UnsafeHttpsClient.createUnsafeClient()))
-                .setEndpoint(ClientSvcApi.SERVICE_URL)
+                .setEndpoint(UserSvcApi.SERVICE_URL)
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build()
-                .create(ClientSvcApi.class);
+                .create(UserSvcApi.class);
 
         // Thread to do the connection with the server
+        final ProgressDialog dialog = ProgressDialog.show(LoginActivity.this, "" , "Please wait ..." ,true);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                 String gcmToken = preferences.getString(Preferences.TOKEN, "null");
 
                 MobileClient client;
                 try {
-                    client = clientSvc.getRoles(gcmToken);
+                    client = clientSvc.getUser(gcmToken);
+                    LoginActivity.this.sessionManager.createLoginSession(username, password);
                 } catch (Exception e) {
                     if (e instanceof RetrofitError) {
                         RetrofitError error = (RetrofitError) e;
@@ -123,18 +143,22 @@ public class LoginActivity extends ActionBarActivity {
                             LoginActivity.this.showToast("Incorrect username or password");
                         }
                     }
+                    dialog.dismiss();
                     return;
                 }
 
+                dialog.dismiss();
                 if (client != null) {
-                    if (client.getRoles().contains("SUBSCRIBER")) {
-                        LoginActivity.this.showToast("Hello " + client.getFirstName() + " " + client.getLastName());
+                    if (client.getRoles().contains(MobileClient.ROLE_SUBSCRIBER)) {
                         Intent i = new Intent(LoginActivity.this, SubscriberActivity.class);
-                        i.putExtra(MobileClient.SUBSCRIBER_EXTRA, client);
+                        i.putExtra(MobileClient.EXTRA_USER, client);
+                        startActivity(i);
+                    } else if (client.getRoles().contains(MobileClient.ROLE_PUBLISHER)) {
+                        Intent i = new Intent(LoginActivity.this, PublisherActivity.class);
+                        i.putExtra(MobileClient.EXTRA_USER, client);
                         startActivity(i);
                     }
                 }
-
             }
         });
         t.start();
