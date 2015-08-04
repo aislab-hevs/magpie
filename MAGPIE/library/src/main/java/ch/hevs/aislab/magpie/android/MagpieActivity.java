@@ -11,7 +11,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
@@ -22,7 +22,7 @@ import ch.hevs.aislab.magpie.event.MagpieEvent;
 import ch.hevs.aislab.magpie.sensor.SensorHandler;
 import ch.hevs.aislab.magpie.sensor.SensorService;
 
-public abstract class MagpieActivity extends FragmentActivity implements MagpieConnection {
+public abstract class MagpieActivity extends AppCompatActivity implements MagpieConnection {
 
 	/**
 	 * Used for debugging
