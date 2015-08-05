@@ -148,7 +148,7 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
         return mService;
     }
 
-    protected void sendEvent(MagpieEvent event) {
+    public void sendEvent(MagpieEvent event) {
 
         Message request = Message.obtain();
         request.replyTo = replyMessenger;
