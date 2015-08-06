@@ -8,54 +8,54 @@
     android:paddingBottom="8dp">
 
     <TextView
+        android:id="@+id/usernameLabelTxtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        style="@style/LabelFont"
+        android:text="username:"/>
+
+    <TextView
         android:id="@+id/fullNameLabelTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/ContactLabelFont"
+        android:layout_below="@id/usernameLabelTxtView"
+        style="@style/LabelFont"
         android:text="@string/name"/>
-
-    <TextView
-        android:id="@+id/usernameLabelEditTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/fullNameLabelTxtView"
-        android:layout_marginRight="8dp"
-        android:layout_marginEnd="8dp"
-        style="@style/ContactLabelFont"
-        android:text="username:"/>
 
     <TextView
         android:id="@+id/statusLabelTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/usernameLabelEditTxt"
-        style="@style/ContactLabelFont"
+        android:layout_below="@id/fullNameLabelTxtView"
+        style="@style/LabelFont"
         android:text="Status:"/>
+
+    <TextView
+        android:id="@+id/contactUsernameTxtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/usernameLabelTxtView"
+        android:layout_toEndOf="@id/usernameLabelTxtView"
+        style="@style/ValueFont" />
 
     <TextView
         android:id="@+id/fullNameTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/usernameLabelEditTxt"
-        android:layout_toEndOf="@id/usernameLabelEditTxt"
-        style="@style/ContactFont" />
-
-    <TextView
-        android:id="@+id/usernameEditTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/fullNameLabelTxtView"
-        android:layout_toRightOf="@id/usernameLabelEditTxt"
-        android:layout_toEndOf="@id/usernameLabelEditTxt"
-        style="@style/ContactFont" />
+        android:layout_below="@id/contactUsernameTxtView"
+        android:layout_toRightOf="@id/usernameLabelTxtView"
+        android:layout_toEndOf="@id/usernameLabelTxtView"
+        style="@style/ValueFont" />
 
     <TextView
         android:id="@+id/statusTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/usernameLabelEditTxt"
-        android:layout_toRightOf="@id/usernameLabelEditTxt"
-        android:layout_toEndOf="@id/usernameLabelEditTxt"
-        style="@style/ContactFont" />
+        android:layout_below="@id/fullNameTxtView"
+        android:layout_toRightOf="@id/usernameLabelTxtView"
+        android:layout_toEndOf="@id/usernameLabelTxtView"
+        style="@style/ValueFont" />
 
 </RelativeLayout>
