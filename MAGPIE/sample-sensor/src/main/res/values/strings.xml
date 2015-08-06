@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MAGPIE Sample</string>
+    <string name="app_name">MAGPIE Sensor</string>
 
     <!-- MainActivity -->
     <string name="bioharness_btn_connect">Connect BioHarness 3</string>
