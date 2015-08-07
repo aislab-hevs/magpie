@@ -147,7 +147,6 @@ public class LoginActivity extends ActionBarActivity {
                     return;
                 }
 
-                dialog.dismiss();
                 if (client != null) {
                     if (client.getRoles().contains(MobileClient.ROLE_SUBSCRIBER)) {
                         Intent i = new Intent(LoginActivity.this, SubscriberActivity.class);
@@ -159,6 +158,7 @@ public class LoginActivity extends ActionBarActivity {
                         startActivity(i);
                     }
                 }
+                dialog.dismiss();
             }
         });
         t.start();
