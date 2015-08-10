@@ -1,5 +1,10 @@
 package ch.hevs.aislab.magpie.broker.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ch.hevs.aislab.magpie.broker.client.PublisherSvcApi;
+import ch.hevs.aislab.magpie.broker.gcm.GcmSender;
+import ch.hevs.aislab.magpie.broker.model.GlucoseAlert;
 import ch.hevs.aislab.magpie.broker.model.MobileClient;
 import ch.hevs.aislab.magpie.broker.model.SubscriptionResult;
 import ch.hevs.aislab.magpie.broker.model.SubscriptionStatus;
+import ch.hevs.aislab.magpie.broker.repository.GlucoseAlertRepo;
 import ch.hevs.aislab.magpie.broker.repository.MobileClientRepo;
 
 @Controller
@@ -21,6 +29,9 @@ public class PublisherController implements PublisherSvcApi {
 
 	@Autowired
 	private MobileClientRepo mobileclients;
+	
+	@Autowired
+	private GlucoseAlertRepo glucosealerts;
 	
 	@Override
 	@RequestMapping(value = PUB_CONFIRM_SVC, method = RequestMethod.POST)
@@ -83,4 +94,42 @@ public class PublisherController implements PublisherSvcApi {
 		return true;
 	}
 
+	@Override
+	@RequestMapping(value = PUB_ALERT_SVC, method = RequestMethod.POST)
+	public @ResponseBody boolean notifyAlert(
+			@PathVariable("pubId") long pubId, 
+			@RequestBody GlucoseAlert glucoseAlert,
+			HttpServletResponse response) {
+		
+		// Check that exists a publisher with the provided id
+		if (!mobileclients.exists(pubId)) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return false;
+		}
+		
+		// Store the alert
+		glucosealerts.save(glucoseAlert);
+		
+		System.out.println(glucoseAlert.toString());
+		
+		MobileClient publisher = mobileclients.findOne(pubId);
+		if (publisher.getClients().containsValue(SubscriptionStatus.ACCEPTED)) {
+			List<String> subGcmTokens = new ArrayList<String>();
+			for (Map.Entry<Long, SubscriptionStatus> entry : publisher.getClients().entrySet()) {
+				if (entry.getValue().equals(SubscriptionStatus.ACCEPTED)) {
+					MobileClient subscriber = mobileclients.findOne(entry.getKey());
+					subGcmTokens.add(subscriber.getGcmToken());
+				}
+			}
+			try {
+				GcmSender.notifyAlert(publisher, glucoseAlert, subGcmTokens);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
