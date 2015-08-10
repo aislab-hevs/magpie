@@ -8,11 +8,13 @@
     <style name="LabelFont" parent="@android:style/TextAppearance">
         <item name="android:textSize">22sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black_primary</item>
     </style>
 
     <style name="ValueFont" parent="@android:style/TextAppearance">
         <item name="android:textSize">22sp</item>
         <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/black_primary</item>
     </style>
 
 </resources>
