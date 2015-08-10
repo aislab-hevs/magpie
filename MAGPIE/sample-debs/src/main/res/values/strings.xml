@@ -2,19 +2,36 @@
     <string name="app_name">MAGPIE Client</string>
     <string name="app_publisher">MAGPIE Publisher</string>
     <string name="app_subscriber">MAGPIE Subscriber</string>
+    <string name="title_activity_alerts">AlertsActivity</string>
 
     <string name="contacts">Contacts</string>
     <string name="close_menu">Close menu</string>
+    <string name="date">Date:</string>
+    <string name="glucose">Glucose</string>
+    <string name="glucose_value">Value (mmol/l)</string>
     <string name="hello">Hello</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
+    <string name="magpie">MAGPIE</string>
     <string name="name">Name: </string>
+    <string name="no_alerts">%1$s doesn\'t have any alerts yet</string>
     <string name="no_contacts">You don\'t have any contacts yet</string>
     <string name="open_menu">Open menu</string>
     <string name="password">Password</string>
     <string name="pub_username">Publisher\'s username</string>
     <string name="request">Request subscription</string>
+    <string name="send_measurement">Send measurement</string>
     <string name="subscribe">Subscribe</string>
+    <string name="timestamp">Timestamp:</string>
+    <string name="timestamp_btn">Set timestamp</string>
+    <string name="type">Type:</string>
     <string name="username">Username</string>
+    <string name="value">Value:</string>
+    <string name="value_btn">Set value</string>
+    <string name="value_empty">-</string>
+
+    <string-array name="contact_dialog">
+        <item>Revoke subscription</item>
+    </string-array>
 
 </resources>
