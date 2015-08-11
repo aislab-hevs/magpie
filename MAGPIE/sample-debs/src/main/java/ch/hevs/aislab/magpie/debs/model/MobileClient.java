@@ -4,13 +4,18 @@ package ch.hevs.aislab.magpie.debs.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MobileClient implements Parcelable {
 
-    public static final String EXTRA_PUBLISHER = "publisher";
-    public static final String EXTRA_SUBSCRIBER = "subscriber";
+    public static final String EXTRA_USER = "user";
+
+    public static final String ROLE_PUBLISHER = "PUBLISHER";
+    public static final String ROLE_SUBSCRIBER = "SUBSCRIBER";
+
+    public static final String PUBLISHER_ID = "publisherId";
+    public static final String SUBSCRIBER_ID = "subscriberId";
 
     private long id;
 
@@ -22,7 +27,7 @@ public class MobileClient implements Parcelable {
 
     private List<String> roles;
 
-    private List<MobileClient> clients;
+    private SubscriptionStatus status;
 
     public MobileClient() {
 
@@ -76,12 +81,16 @@ public class MobileClient implements Parcelable {
         this.roles = roles;
     }
 
-    public List<MobileClient> getClients() {
-        return clients;
+    public SubscriptionStatus getStatus() {
+        return status;
     }
 
-    public void setClients(List<MobileClient> clients) {
-        this.clients = clients;
+    public void setStatus(SubscriptionStatus status) {
+        this.status = status;
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 
     @Override
@@ -97,7 +106,6 @@ public class MobileClient implements Parcelable {
         out.writeString(firstName);
         out.writeString(lastName);
         out.writeStringList(roles);
-        out.writeList(clients);
     }
 
     public static final Parcelable.Creator<MobileClient> CREATOR
@@ -121,8 +129,22 @@ public class MobileClient implements Parcelable {
         firstName = in.readString();
         lastName = in.readString();
         roles = in.createStringArrayList();
-        clients = new ArrayList<>();
-        in.readList(clients, null);
+    }
+
+    /**
+     * Two MobileClients are considered equals if they have the same username
+     *
+     * @param obj
+     * @return
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof MobileClient) {
+            MobileClient other = (MobileClient) obj;
+            return Objects.equals(username, other.username);
+        } else {
+            return false;
+        }
     }
 }
 
