@@ -139,26 +139,56 @@ public class OAuth2SecurityConfiguration {
 			
 			@Override
 			public void customize(ConfigurableEmbeddedServletContainer container) {
-				TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) container;
-				tomcat.addConnectorCustomizers(
-						new TomcatConnectorCustomizer() {
-							@Override
-							public void customize(Connector connector) {
-								connector.setPort(8443);
-								connector.setSecure(true);
-								connector.setScheme("https");
-								
-								Http11NioProtocol proto = (Http11NioProtocol) connector.getProtocolHandler();
-								proto.setSSLEnabled(true);
-								proto.setKeystoreFile(absoluteKeyStore);
-								proto.setKeystorePass(keystorePass);
-								proto.setKeystoreType("JKS");
-								proto.setKeyAlias("tomcat");
-							}
-						});
+				TomcatEmbeddedServletContainerFactory tomcat = null;
+				boolean casted = true;
+				try {
+					tomcat = (TomcatEmbeddedServletContainerFactory) container;
+				} catch(ClassCastException ex) {
+					casted = false;
+				}
+				
+				if (casted) {
+					tomcat.addConnectorCustomizers(
+							new TomcatConnectorCustomizer() {
+								@Override
+								public void customize(Connector connector) {
+									connector.setPort(8443);
+									connector.setSecure(true);
+									connector.setScheme("https");
+									
+									Http11NioProtocol proto = (Http11NioProtocol) connector.getProtocolHandler();
+									proto.setSSLEnabled(true);
+									proto.setKeystoreFile(absoluteKeyStore);
+									proto.setKeystorePass(keystorePass);
+									proto.setKeystoreType("JKS");
+									proto.setKeyAlias("tomcat");
+								}
+							});
+				} else {
+					tomcat = new TomcatEmbeddedServletContainerFactory();
+					tomcat.addAdditionalTomcatConnectors(createSSLConnector(absoluteKeyStore, keystorePass));
+				}
 			}
 		};
-		
+	}
+	
+	private Connector createSSLConnector(String absoluteKeyStore, String keystorePass) {
+		Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
+		Http11NioProtocol protocol = (Http11NioProtocol) connector.getProtocolHandler();
+		try {
+			connector.setPort(8443);
+			connector.setSecure(true);
+			connector.setScheme("https");
+			
+			protocol.setSSLEnabled(true);
+			protocol.setKeystoreFile(absoluteKeyStore);
+			protocol.setKeystorePass(keystorePass);
+			protocol.setKeystoreType("JKS");
+			protocol.setKeyAlias("tomcat");
+			return connector;
+		} catch(Exception ex) {
+			throw new IllegalStateException("Can't access to keystore: [" + absoluteKeyStore + "]", ex);
+		}
 	}
 
 }
