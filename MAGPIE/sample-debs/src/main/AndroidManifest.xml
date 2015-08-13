@@ -3,6 +3,7 @@
     package="ch.hevs.aislab.magpie.debs" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
@@ -10,21 +11,59 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <!-- Activities -->
         <activity
-            android:name=".activity.MainActivity"
-            android:label="@string/app_name" >
+            android:name=".activity.LoginActivity"
+            android:label="@string/app_name"
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".activity.PublisherActivity"
+            android:label="@string/app_publisher" >
+        </activity>
         <activity
             android:name=".activity.SubscriberActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_subscriber" >
         </activity>
+        <activity
+            android:name=".activity.AlertsActivity"
+            android:label="@string/title_activity_alerts" >
+        </activity>
+        <!-- Activities -->
 
+
+        <!-- BroadcastReceivers -->
+        <receiver
+            android:name=".background.NotificationProcessorReceiver"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="ch.hevs.aislab.magpie.debs" />
+            </intent-filter>
+        </receiver>
+        <!-- BroadcastReceivers -->
+
+
+        <!-- Services -->
+        <service
+            android:name=".gcm.GcmMessageHandler"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
         <service
             android:name=".gcm.MyInstanceIDListenerService"
             android:exported="false" >
@@ -36,7 +75,7 @@
             android:name=".gcm.RegistrationIntentService"
             android:exported="false" >
         </service>
-
+        <!-- Services -->
     </application>
 
 </manifest>
