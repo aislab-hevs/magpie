@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/view_margin"
+    android:paddingRight="@dimen/view_margin"
+    android:paddingTop="@dimen/view_margin"
+    android:paddingBottom="@dimen/view_margin">
+
+    <TextView
+        android:id="@+id/typeLabelTxtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/LabelFont"
+        android:text="@string/type"/>
+
+    <TextView
+        android:id="@+id/typeTxtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/typeLabelTxtView"
+        android:layout_toEndOf="@id/typeLabelTxtView"
+        android:layout_marginLeft="@dimen/view_margin"
+        android:layout_marginStart="@dimen/view_margin"
+        style="@style/ValueFont" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/typeLabelTxtView"
+        style="@style/LabelFont"
+        android:text="@string/date"/>
+
+    <TextView
+        android:id="@+id/dateTxtView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/typeLabelTxtView"
+        android:layout_toRightOf="@id/typeLabelTxtView"
+        android:layout_toEndOf="@id/typeLabelTxtView"
+        android:layout_marginLeft="@dimen/view_margin"
+        android:layout_marginStart="@dimen/view_margin"
+        style="@style/ValueFont" />
+
+</RelativeLayout>
