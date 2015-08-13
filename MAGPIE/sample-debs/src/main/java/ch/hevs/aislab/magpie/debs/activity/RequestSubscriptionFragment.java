@@ -30,14 +30,12 @@ public class RequestSubscriptionFragment extends Fragment implements View.OnClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View v = inflater.inflate(R.layout.fragment_request_subscription, container, false);
 
         pubUsernameEditTxt = (EditText) v.findViewById(R.id.pubUsernameEditTxt);
 
         Button btn = (Button) v.findViewById(R.id.requestSubsBtn);
         btn.setOnClickListener(this);
-
         return v;
     }
 
@@ -45,7 +43,7 @@ public class RequestSubscriptionFragment extends Fragment implements View.OnClic
     public void onStart() {
         super.onStart();
 
-        MobileClient mc = getActivity().getIntent().getParcelableExtra(MobileClient.EXTRA_SUBSCRIBER);
+        MobileClient mc = getActivity().getIntent().getParcelableExtra(MobileClient.EXTRA_USER);
         subscriberId = mc.getId();
     }
 
