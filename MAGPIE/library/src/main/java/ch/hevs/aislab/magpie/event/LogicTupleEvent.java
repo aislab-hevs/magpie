@@ -1,7 +1,5 @@
 package ch.hevs.aislab.magpie.event;
 
-import android.util.Log;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
