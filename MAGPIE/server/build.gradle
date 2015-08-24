@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '1.2.5.RELEASE'
+		springBootVersion = '1.0.2.RELEASE'
 	}
     repositories {
         maven { url "http://repo.spring.io/libs-snapshot" }
@@ -17,12 +17,11 @@ apply plugin: 'idea'
 apply plugin: 'spring-boot'
 apply plugin: 'war'
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 war {
-    baseName = 'magpie-broker'
-    version =  '0.1.0'
+    baseName = 'magpie'
 }
 
 repositories {
@@ -36,8 +35,29 @@ repositories {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-tomcat:${springBootVersion}")
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    compile("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-aop:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+
     compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
     compile("org.springframework.data:spring-data-rest-webmvc")
+    
+    compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
+    compile("org.springframework.security.oauth:spring-security-oauth2:2.0.0.RC2")
+    compile("org.springframework.security.oauth:spring-security-oauth2-javaconfig:1.0.0.M1")
+    
+    compile("org.hsqldb:hsqldb")
+    
+    compile("com.google.guava:guava:17.0")
+    compile("com.ganyo:gcm-server:1.0.2")
+    compile("org.apache.commons:commons-lang3:3.3.2")
+    compile("org.apache.httpcomponents:httpclient:4.3.4")
+    compile("com.squareup.retrofit:retrofit:1.6.0")
+    compile("commons-io:commons-io:2.4")
+    compile("org.json:json:20140107")
+    
+    testCompile("junit:junit")
 }
