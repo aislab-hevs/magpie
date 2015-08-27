@@ -5,6 +5,12 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="TitleFont" parent="@android:style/TextAppearance">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black_primary</item>
+    </style>
+
     <style name="LabelFont" parent="@android:style/TextAppearance">
         <item name="android:textSize">22sp</item>
         <item name="android:textStyle">bold</item>

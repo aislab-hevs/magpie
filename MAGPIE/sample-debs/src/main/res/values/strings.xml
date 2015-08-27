@@ -20,7 +20,7 @@
     <string name="password">Password</string>
     <string name="pub_username">Publisher\'s username</string>
     <string name="request">Request subscription</string>
-    <string name="send_measurement">Send measurement</string>
+    <string name="send_alert">Send alert</string>
     <string name="subscribe">Subscribe</string>
     <string name="timestamp">Timestamp:</string>
     <string name="timestamp_btn">Set timestamp</string>

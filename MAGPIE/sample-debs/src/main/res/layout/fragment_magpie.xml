@@ -13,24 +13,72 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        style="@style/LabelFont"
+        style="@style/TitleFont"
         android:text="@string/glucose" />
 
-    <TextView
-        android:id="@+id/glucoseValueTxtView"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/view_margin"
-        style="@style/ValueFont"
-        android:text="@string/value"/>
+        android:layout_marginTop="@dimen/view_margin">
 
-    <TextView
-        android:id="@+id/glucoseTimestampTxtView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/view_margin"
-        style="@style/ValueFont"
-        android:text="@string/timestamp" />
+        <TextView
+            android:id="@+id/glucoseLabelTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/LabelFont"
+            android:text="@string/value"/>
+
+        <TextView
+            android:id="@+id/glucoseValueTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/glucoseLabelTxtView"
+            android:layout_toEndOf="@id/glucoseLabelTxtView"
+            android:layout_marginLeft="@dimen/view_margin"
+            android:layout_marginStart="@dimen/view_margin"
+            style="@style/ValueFont" />
+
+        <TextView
+            android:id="@+id/glucoseDateLabelTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/glucoseLabelTxtView"
+            android:layout_marginTop="@dimen/view_margin"
+            style="@style/LabelFont"
+            android:text="Date:" />
+
+        <TextView
+            android:id="@+id/glucoseDateValueTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/glucoseDateLabelTxtView"
+            android:layout_toEndOf="@id/glucoseDateLabelTxtView"
+            android:layout_alignBaseline="@id/glucoseDateLabelTxtView"
+            android:layout_marginLeft="@dimen/view_margin"
+            android:layout_marginStart="@dimen/view_margin"
+            style="@style/ValueFont" />
+
+        <TextView
+            android:id="@+id/glucoseTimeLabelTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/glucoseDateLabelTxtView"
+            android:layout_marginTop="@dimen/view_margin"
+            style="@style/LabelFont"
+            android:text="Time:" />
+
+        <TextView
+            android:id="@+id/glucoseTimeValueTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/glucoseTimeLabelTxtView"
+            android:layout_toEndOf="@id/glucoseTimeLabelTxtView"
+            android:layout_alignBaseline="@id/glucoseTimeLabelTxtView"
+            android:layout_marginLeft="@dimen/view_margin"
+            android:layout_marginStart="@dimen/view_margin"
+            style="@style/ValueFont" />
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/glucoseValueBtn"
@@ -51,6 +99,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/view_margin"
-        android:text="@string/send_measurement"/>
+        android:text="@string/send_alert"/>
 
 </LinearLayout>

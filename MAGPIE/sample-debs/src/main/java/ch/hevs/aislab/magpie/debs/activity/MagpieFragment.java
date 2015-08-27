@@ -31,7 +31,8 @@ public class MagpieFragment extends Fragment implements View.OnClickListener {
     private static final String FRAG_TAG_TIME_PICKER = "timePickerDialogFragment";
 
     private TextView glucoseValueTxtView;
-    private TextView glucoseTstampTxtView;
+    private TextView glucoseDateTxtView;
+    private TextView glucoseTimeTxtView;
 
     private PhysioMeasurement glucoseMeasurement;
 
@@ -42,8 +43,9 @@ public class MagpieFragment extends Fragment implements View.OnClickListener {
         View v = inflater.inflate(R.layout.fragment_magpie, container, false);
 
         glucoseValueTxtView = (TextView) v.findViewById(R.id.glucoseValueTxtView);
-        glucoseTstampTxtView = (TextView) v.findViewById(R.id.glucoseTimestampTxtView);
-        glucoseMeasurement = new PhysioMeasurement(glucoseValueTxtView, glucoseTstampTxtView, "mmol/l");
+        glucoseDateTxtView = (TextView) v.findViewById(R.id.glucoseDateValueTxtView);
+        glucoseTimeTxtView = (TextView) v.findViewById(R.id.glucoseTimeValueTxtView);
+        glucoseMeasurement = new PhysioMeasurement(glucoseValueTxtView, glucoseDateTxtView, glucoseTimeTxtView, "mmol/l");
 
         Button btnValue = (Button) v.findViewById(R.id.glucoseValueBtn);
         btnValue.setOnClickListener(this);
@@ -115,15 +117,17 @@ public class MagpieFragment extends Fragment implements View.OnClickListener {
         private double value;
         private TextView valueTxtView;
         private MutableDateTime timestamp;
-        private TextView timestampTxtView;
+        private TextView dateTxtView;
+        private TextView timeTxtView;
         private String units;
 
         private boolean isTimestampSet = false;
 
-        public PhysioMeasurement(TextView valueTxtView, TextView timestampTxtView, String units) {
+        public PhysioMeasurement(TextView valueTxtView, TextView dateTxtView, TextView timeTxtView, String units) {
             this.valueTxtView = valueTxtView;
             this.timestamp = MutableDateTime.now();
-            this.timestampTxtView = timestampTxtView;
+            this.dateTxtView = dateTxtView;
+            this.timeTxtView = timeTxtView;
             this.units = units;
         }
 
@@ -131,7 +135,7 @@ public class MagpieFragment extends Fragment implements View.OnClickListener {
         public void onDialogNumberSet(int reference, int number, double decimal,
                                       boolean isNegative, double fullNumber) {
             value = fullNumber;
-            valueTxtView.setText("Value: " + fullNumber + " " + units);
+            valueTxtView.setText(fullNumber + " " + units);
         }
 
         @Override
@@ -151,8 +155,20 @@ public class MagpieFragment extends Fragment implements View.OnClickListener {
             timestamp.setHourOfDay(hourOfDay);
             timestamp.setMinuteOfHour(minute);
             isTimestampSet = true;
-            DateTimeFormatter dtf = DateTimeFormat.forPattern("kk:mm dd/MM/yyyy");
-            timestampTxtView.setText("Timestamp: " + timestamp.toString(dtf));
+            DateTimeFormatter dtfDate = DateTimeFormat.forPattern("dd/MM/yyyy");
+            DateTimeFormatter dtfTime = DateTimeFormat.forPattern("kk:mm");
+            if (isToday(timestamp.toString(dtfDate))) {
+                dateTxtView.setText("Today");
+            } else {
+                dateTxtView.setText(timestamp.toString(dtfDate));
+            }
+            timeTxtView.setText(timestamp.toString(dtfTime));
+        }
+
+        private boolean isToday(String otherDay) {
+            MutableDateTime today = MutableDateTime.now();
+            DateTimeFormatter dtfDate = DateTimeFormat.forPattern("dd/MM/yyyy");
+            return today.toString(dtfDate).equals(otherDay);
         }
     }
 }
