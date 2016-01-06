@@ -1,9 +1,12 @@
 package ch.hevs.aislab.magpie.debs.activity;
 
 import android.app.Fragment;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,7 +17,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import ch.hevs.aislab.magpie.debs.R;
-import ch.hevs.aislab.magpie.debs.manager.SessionManager;
+import ch.hevs.aislab.magpie.debs.credentials.SessionManager;
 import ch.hevs.aislab.magpie.debs.model.MobileClient;
 
 public class SubscriberActivity extends ActionBarActivity implements
@@ -37,14 +40,19 @@ public class SubscriberActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscriber);
 
+        MobileClient subscriber = getIntent().getParcelableExtra(MobileClient.EXTRA_USER);
+        long subscriberId = subscriber.getId();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.edit().putLong(MobileClient.SUBSCRIBER_ID, subscriberId).apply();
+
         setupToolbar();
         setupDrawerLayout();
         loadNavigationState(savedInstanceState);
         setupNavigationView();
         navigate(mNavItemId);
 
-        MobileClient mc = getIntent().getParcelableExtra(MobileClient.EXTRA_SUBSCRIBER);
-        Toast.makeText(this, "Hello " + mc.getFirstName() + " " + mc.getLastName(), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Hello " + subscriber.getFirstName() + " " + subscriber.getLastName(), Toast.LENGTH_LONG).show();
     }
 
     private void setupToolbar() {
@@ -76,7 +84,17 @@ public class SubscriberActivity extends ActionBarActivity implements
     private void navigate(final int itemId) {
         switch (itemId) {
             case R.id.menuSubItem1:
-
+                Fragment contactsFrag = new ContactsFragment();
+                Bundle bundle = new Bundle();
+                String key = MobileClient.EXTRA_USER;
+                MobileClient value = getIntent().getParcelableExtra(MobileClient.EXTRA_USER);
+                bundle.putParcelable(key, value);
+                contactsFrag.setArguments(bundle);
+                getFragmentManager()
+                        .beginTransaction()
+                        .remove(contactsFrag)
+                        .replace(R.id.subContentFrame, contactsFrag)
+                        .commit();
                 break;
             case R.id.menuSubItem2:
                 getFragmentManager()
