@@ -25,13 +25,13 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
     public void testAddAgents() {
         // First time: the agent is registered from the activity
         int numAgents = Environment.getInstance().getRegisteredAgents().size();
-        assertEquals(1,numAgents);
+        assertEquals(2,numAgents);
         magpieActivityTest.finish();
 
         // Second time: the agent is registered from the service
         magpieActivityTest = getActivity();
         numAgents = Environment.getInstance().getRegisteredAgents().size();
-        assertEquals(1,numAgents);
+        assertEquals(2,numAgents);
         magpieActivityTest.finish();
 
     }
