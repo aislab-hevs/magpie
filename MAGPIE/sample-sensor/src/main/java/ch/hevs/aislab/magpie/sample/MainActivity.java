@@ -71,11 +71,13 @@ public class MainActivity extends MagpieActivity {
     public void onEnvironmentConnected() {
 
         // Create a new Agent and register it into the environment
+        //Prolog example
         MagpieAgent prologAgent = new MagpieAgent("monitoring_agent", Services.LOGIC_TUPLE);
         PrologAgentMind prologMind = new PrologAgentMind(getApplicationContext(), R.raw.monitoring_rules);
         prologAgent.setMind(prologMind);
         getService().registerAgent(prologAgent);
 
+        //Java example
         MagpieAgent behaviorAgent = new MagpieAgent("priority_agent", Services.LOGIC_TUPLE);
         PriorityBehaviorAgentMind behaviorMind = new PriorityBehaviorAgentMind();
         behaviorMind.addBehavior(new CounterBehavior(this, behaviorAgent, 0));
@@ -85,6 +87,7 @@ public class MainActivity extends MagpieActivity {
         getService().registerAgent(behaviorAgent);
     }
 
+    //Only for prolog
     @Override
     public void onAlertProduced(LogicTupleEvent alert) {
         Toast.makeText(this, alert.toTuple(), Toast.LENGTH_LONG).show();

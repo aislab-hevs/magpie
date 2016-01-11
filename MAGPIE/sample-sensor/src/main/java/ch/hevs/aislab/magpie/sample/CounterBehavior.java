@@ -23,6 +23,7 @@ public class CounterBehavior extends Behavior {
     public void action(MagpieEvent event) {
         count++;
         MainActivity activity = (MainActivity) getContext();
+        //run the result directly on the UI thread - no need to pass the alert back to the activity
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

@@ -16,6 +16,9 @@ import ch.hevs.aislab.magpie.event.MagpieEvent;
 import ch.hevs.aislab.magpie.sensor.SensorHandler;
 import zephyr.android.BioHarnessBT.BTClient;
 
+/**
+ * Handles the connection between the phone and the BioHarness sensor.
+ */
 public class BioHarnessHandler extends SensorHandler {
 
     private final String TAG = getClass().getName();
