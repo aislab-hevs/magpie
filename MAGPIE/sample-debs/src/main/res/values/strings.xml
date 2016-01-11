@@ -29,6 +29,7 @@
     <string name="value">Value:</string>
     <string name="value_btn">Set value</string>
     <string name="value_empty">-</string>
+    <string name="gcm_defaultSenderId">defaultSenderId</string>
 
     <string-array name="contact_dialog">
         <item>Revoke subscription</item>
