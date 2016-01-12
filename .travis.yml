@@ -1,13 +1,18 @@
 language: android
 android:
   components:
-    - build-tools-21.1.1
+    # Update Android SDK Tools
+    - tools
+    - build-tools-23.0.2
+    - android-23
 
-    # The SDK version used to compile your project
-    - android-19
-
-before_install:
-    - chmod +x gradlew
+    # Support library
+    - extra-android-support
+    - extra-android-m2repository
+    - extra-google-m2repository
+  
+#before_install:
+#    - chmod +x gradlew
 
 # Emulator Management: Create, Start and Wait
 before_script:
@@ -18,4 +23,5 @@ before_script:
 
 script: 
  - cd MAGPIE/  
- - ./gradlew build connectedCheck
+ # execute just the sample-sensor module - only one with tests
+ - ./gradlew build connectedCheck -p sample-sensor
