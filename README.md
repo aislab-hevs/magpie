@@ -16,7 +16,7 @@ MAGPIE agent platform for Android
 - [Andorid Studio & Android SDK](https://developer.android.com/sdk/installing/index.html?pkg=studio)
 - [Gradle](http://www.gradle.org/installation)
 
-The Android Build Tools version used is 21.1.2. It is necessary to install this version or change the version to the installed version in /app/build.gradle/ buildToolsVersion "21.1.2"
+The Android Build Tools version used is 23.0.2. It is necessary to install this version or change the version to the installed version in /library/build.gradle/ buildToolsVersion "23.0.2"
 
 ## Quick start
 Two quick start options are available:
