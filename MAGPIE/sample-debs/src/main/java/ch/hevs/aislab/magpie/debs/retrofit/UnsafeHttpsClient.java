@@ -16,9 +16,8 @@ public class UnsafeHttpsClient {
             builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
             SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
                     builder.build());
-            CloseableHttpClient httpclient = HttpClients.custom()
+            return HttpClients.custom()
                     .setSSLSocketFactory(sslsf).build();
-            return httpclient;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
