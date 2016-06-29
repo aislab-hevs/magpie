@@ -62,8 +62,8 @@ public class GcmMessageHandler extends GcmListenerService {
                 break;
             case ALERT_NOTIFICATION:
                 // Method used for the evaluation of the whole architecture
-                storeTime(data);
-                //processAlertNotification(data);
+                // storeTime(data);
+                processAlertNotification(data);
                 break;
             default:
                 break;
@@ -134,8 +134,7 @@ public class GcmMessageHandler extends GcmListenerService {
         intent.putExtra(SUBSCRIBER_ID, subId);
         intent.putExtra(SUBSCRIBER_USERNAME, subUsername);
         intent.putExtra(NotificationProcessorReceiver.NOTIFICATION_ID, notificationId);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-        return pendingIntent;
+        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
     }
 
     private void storeTime(Bundle data) {
