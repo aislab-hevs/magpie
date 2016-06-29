@@ -127,11 +127,7 @@ public class SubscriberActivity extends ActionBarActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
-        if(drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        return drawerToggle.onOptionsItemSelected(item);
     }
 
     @Override

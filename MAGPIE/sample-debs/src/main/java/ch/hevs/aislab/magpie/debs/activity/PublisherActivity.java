@@ -125,6 +125,13 @@ public class PublisherActivity extends MagpieActivity implements
                         .commit();
                 break;
             case R.id.menuPubItem3:
+                Fragment testFrag = new PublisherTestFragment();
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.pubContentFrame, testFrag)
+                        .commit();
+                break;
+            case R.id.menuPubItem4:
                 SessionManager manager = new SessionManager(this);
                 manager.logoutUser();
                 break;
@@ -157,11 +164,7 @@ public class PublisherActivity extends MagpieActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
-        if(drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        return drawerToggle.onOptionsItemSelected(item);
     }
 
     @Override
