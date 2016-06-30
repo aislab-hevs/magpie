@@ -73,7 +73,7 @@ private static final String TAG = "Magpie-EditTextContextEntity";
 		}	
 	}
 	
-	private boolean isValid() {
+	private boolean isNotValid() {
 		return validator.check(this);
 	}
 	
@@ -94,7 +94,7 @@ private static final String TAG = "Magpie-EditTextContextEntity";
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			Log.i(TAG, "EditTextContextEntity - onTextChanged(...)");
 			// Check if the text is a number
-			if (!isValid()) {
+			if (isNotValid()) {
 				setError(validator.getErrorMessage());
 				return;
 			}
