@@ -5,6 +5,6 @@ import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
 
 public interface IPrologAgentMind extends IAgentMind {
 
-    public String getTheory();
-    public StringECKDTreeIndexer getECKDTree();
+    String getTheory();
+    StringECKDTreeIndexer getECKDTree();
 }

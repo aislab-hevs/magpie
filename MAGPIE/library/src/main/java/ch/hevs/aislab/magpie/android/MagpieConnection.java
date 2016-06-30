@@ -4,8 +4,8 @@ import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 
 public interface MagpieConnection {
 
-	public void onEnvironmentConnected();
+	void onEnvironmentConnected();
 
-    public void onAlertProduced(LogicTupleEvent alert);
+    void onAlertProduced(LogicTupleEvent alert);
 	
 }

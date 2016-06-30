@@ -5,14 +5,14 @@ import ch.hevs.aislab.magpie.event.MagpieEvent;
 
 public interface IAgentBody {
 
-    public void senseEvent(MagpieEvent event);
+    void senseEvent(MagpieEvent event);
 
 	/** Activate is a method that will produce the behaviour of the agent */
-	public void activate();
+	void activate();
 	
-	public void doPerception();
+	void doPerception();
 	
-	public void doBehaviour();
+	void doBehaviour();
 
-	public void setEnvironment(IEnvironment environment);
+	void setEnvironment(IEnvironment environment);
 }

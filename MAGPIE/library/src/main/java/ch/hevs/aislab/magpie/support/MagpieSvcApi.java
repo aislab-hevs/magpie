@@ -9,14 +9,14 @@ import retrofit.http.POST;
 
 public interface MagpieSvcApi {
 
-	public static final String RULE_SVC_PATH = "/rule";
+	String RULE_SVC_PATH = "/rule";
 	
-	public static final String ALERT_SVC_PATH = "/alert";
+	String ALERT_SVC_PATH = "/alert";
 	
 	@GET(RULE_SVC_PATH)
-	public Collection<Rule> getRuleList();
+	Collection<Rule> getRuleList();
 	
 	@POST(ALERT_SVC_PATH)
-	public LogicTupleEvent postAlert(@Body LogicTupleEvent alert);
+	LogicTupleEvent postAlert(@Body LogicTupleEvent alert);
 	
 }
