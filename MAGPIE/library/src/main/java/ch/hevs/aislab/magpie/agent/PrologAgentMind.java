@@ -202,29 +202,25 @@ public class PrologAgentMind implements IPrologAgentMind {
 			Collection<Rule> rules = ((RuleSetEvent) event).getRules();
 			
 			if (rulesMap.isEmpty()) { // When there are no rules from the server 
-				Iterator<Rule> it = rules.iterator();
-				while (it.hasNext()) {
-					Rule r = it.next();
-					Log.i(TAG, "Prolog rule received by the agent: " + r.getPrologRule());
-					try {
-						prolog.addTheory(new Theory(r.getPrologRule()));
-					} catch (InvalidTheoryException e) {
-						Log.e(TAG, "'" + r.getPrologRule() + "' is not a valid Prolog rule");
-					}
-					rulesMap.put(r.getId(), r);			
-				}
+                for (Rule r : rules) {
+                    Log.i(TAG, "Prolog rule received by the agent: " + r.getPrologRule());
+                    try {
+                        prolog.addTheory(new Theory(r.getPrologRule()));
+                    } catch (InvalidTheoryException e) {
+                        Log.e(TAG, "'" + r.getPrologRule() + "' is not a valid Prolog rule");
+                    }
+                    rulesMap.put(r.getId(), r);
+                }
 			} else { // Subsequent times
-				Iterator<Entry<Long,Rule>> it0 = rulesMap.entrySet().iterator();
-				while (it0.hasNext()) {
-					Map.Entry<Long, Rule> pair = it0.next();
-					String prologRule = pair.getValue().getPrologRule();
-					prologRule = prologRule.substring(0, prologRule.length()-1);
-					try {
-						prolog.solve("retract(" + prologRule + ").");
-					} catch (MalformedGoalException e) {
-						e.printStackTrace();
-					}
-				}
+                for (Entry<Long, Rule> pair : rulesMap.entrySet()) {
+                    String prologRule = pair.getValue().getPrologRule();
+                    prologRule = prologRule.substring(0, prologRule.length() - 1);
+                    try {
+                        prolog.solve("retract(" + prologRule + ").");
+                    } catch (MalformedGoalException e) {
+                        e.printStackTrace();
+                    }
+                }
 				rulesMap.clear();
 				Iterator<Rule> it1 = rules.iterator();
 				while (it1.hasNext()) {

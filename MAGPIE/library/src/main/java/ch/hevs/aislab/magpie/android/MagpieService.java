@@ -74,9 +74,7 @@ public class MagpieService extends Service {
 
         if (!firstTime) {
             Set<String> agentNames = settings.getStringSet(AGENTS_KEY, new HashSet<String>());
-            Iterator<String> iterator = agentNames.iterator();
-            while (iterator.hasNext()) {
-                String agentName = iterator.next();
+            for (String agentName : agentNames) {
                 // Deserialize the body
                 MagpieAgent agent = (MagpieAgent) deserialize(agentName + MagpieAgent.BODY_KEY);
 

@@ -33,10 +33,10 @@ public class LogicTupleEvent extends MagpieEvent {
 	public LogicTupleEvent(String name, String ... args) {
 		this.type = Services.LOGIC_TUPLE;
 		String tuple = name + "(";
-		
-		for(int i=0; i<args.length; i++) {
-			tuple = tuple + args[i] + ",";
-		}
+
+        for (String arg : args) {
+            tuple = tuple + arg + ",";
+        }
 		
 		// Remove the last comma and close the parenthesis
 		tuple = tuple.substring(0, tuple.length() - 1);
@@ -72,8 +72,8 @@ public class LogicTupleEvent extends MagpieEvent {
             arguments.add(getSubstring("(", ","));
             String restString = getSubstring(",", ")");
             String[] restArray = StringUtils.split(restString, ",");
-            for (int i = 0; i < restArray.length; i++) {
-                arguments.add(restArray[i]);
+            for (String aRestArray : restArray) {
+                arguments.add(aRestArray);
             }
         }
         return arguments;
