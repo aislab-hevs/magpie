@@ -63,7 +63,9 @@ public abstract class SensorHandler extends Handler implements SensorConnection 
         Message message = Message.obtain();
         message.arg1 = replyCode;
         try {
-            messenger.send(message);
+            if (messenger != null) {
+                messenger.send(message);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
