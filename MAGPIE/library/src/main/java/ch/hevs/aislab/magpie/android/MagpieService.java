@@ -161,7 +161,7 @@ public class MagpieService extends Service {
 
         editor.putBoolean(FIRST_TIME_KEY, false);
         editor.putStringSet(AGENTS_KEY, agentNames);
-        editor.commit();
+        editor.apply();
 
         mEnvironment = null;
     }

@@ -99,7 +99,7 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
              */
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(TAG, false);
-            editor.commit();
+            editor.apply();
         }
 
         @Override
