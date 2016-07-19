@@ -17,6 +17,7 @@ import android.util.Log;
 import java.lang.ref.WeakReference;
 
 import ch.hevs.aislab.magpie.android.MagpieService.MagpieBinder;
+import ch.hevs.aislab.magpie.environment.Environment;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
 import ch.hevs.aislab.magpie.sensor.SensorHandler;
@@ -148,9 +149,15 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
         return mService;
     }
 
+    /**
+     * This method sends an Event to the Environment, which is generated from the UI. The 'what' field
+     * in the message specifies that it contains an Event, so that the Environment knows how to process
+     * the message
+     */
     public void sendEvent(MagpieEvent event) {
 
         Message request = Message.obtain();
+        request.what = Environment.EVENT;
         request.replyTo = replyMessenger;
 
         Bundle bundle = new Bundle();

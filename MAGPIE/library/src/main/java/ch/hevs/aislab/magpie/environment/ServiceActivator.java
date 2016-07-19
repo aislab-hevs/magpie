@@ -11,9 +11,8 @@ public class ServiceActivator {
 	
 	private static MultiMap<String, Integer> agentsInterests = new MultiMap<String, Integer>();
 		
-	protected static void registerInterests(MagpieAgent agent) {
+	protected static void registerInterests(Environment env, MagpieAgent agent) {
 				
-		Environment env = Environment.getInstance();
 		List<String> interests = agent.getInterests();
 		
 		for (String interest : interests) {

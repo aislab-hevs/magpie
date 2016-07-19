@@ -7,7 +7,9 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
@@ -49,7 +51,12 @@ public class MagpieService extends Service {
 
     private Messenger requestMessenger;
 
-    private Environment mEnvironment;
+    /**
+     * Looper associated with the HandlerThread
+     */
+    private volatile Looper mServiceLooper;
+
+    private volatile Environment mEnvironment;
 
     /** Last binding activity */
     private static Context mContext;
@@ -59,10 +66,16 @@ public class MagpieService extends Service {
         super.onCreate();
         Log.i(TAG, "onCreate()");
 
-        requestMessenger = new Messenger(new RequestHandler(this));
+        // Create and start a background HandlerThread since by default a Service
+        // runs in the UI Thread, which we don't want to block
+        HandlerThread thread = new HandlerThread("EnvironmentService");
+        thread.start();
 
-        // Get the instance of the environment
-        mEnvironment = Environment.getInstance();
+        // Get the HandlerThread's Looper and use it for our Handler
+        mServiceLooper = thread.getLooper();
+        mEnvironment = new Environment(mServiceLooper);
+
+        requestMessenger = new Messenger(mEnvironment);
 
         Log.i(TAG, "Agents onCreate(): " + mEnvironment.getRegisteredAgents().keySet().size());
 
@@ -230,41 +243,6 @@ public class MagpieService extends Service {
     public static Intent makeIntent(Context context) {
         mContext = context;
         return new Intent(context, MagpieService.class);
-    }
-
-    private static class RequestHandler extends Handler {
-
-        private WeakReference<MagpieService> mService;
-
-        public RequestHandler(MagpieService service) {
-            mService = new WeakReference<>(service);
-        }
-
-        @Override
-        public void handleMessage(Message request) {
-            MagpieService service = mService.get();
-            if (service == null) {
-                return;
-            }
-
-            final Messenger replyMessenger = request.replyTo;
-
-            Bundle bundleEvent = request.getData();
-            LogicTupleEvent event = bundleEvent.getParcelable(MagpieActivity.MAGPIE_EVENT);
-            LogicTupleEvent alert = (LogicTupleEvent) service.mEnvironment.registerEvent(event);
-            if (alert != null) {
-                Message reply = Message.obtain();
-                Bundle bundleAlert = new Bundle();
-                bundleAlert.putParcelable(MagpieActivity.MAGPIE_EVENT, alert);
-                reply.setData(bundleAlert);
-                try {
-                    replyMessenger.send(reply);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
     }
 
     public static Context getContext() {

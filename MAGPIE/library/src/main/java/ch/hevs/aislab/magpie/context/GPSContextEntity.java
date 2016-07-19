@@ -79,16 +79,18 @@ private final static String TAG = "Magpie-GPSContextEntity";
 	
 	public void init() {
 		Log.i(TAG, "GPSContextEntity  - init()");
+		/*
 		locationManager.requestLocationUpdates(
 				LocationManager.GPS_PROVIDER,
 				pollingFreq, 
 				minDistance, 
 				this);
+		*/
 	}
 	
 	public void stop() {
 		Log.i(TAG, "GPSContextEntity  - stop()");
-		locationManager.removeUpdates(this);
+		//locationManager.removeUpdates(this);
 	}
 	
 	// Methods to get and set the configuration settings
@@ -98,7 +100,8 @@ private final static String TAG = "Magpie-GPSContextEntity";
 	public void onLocationChanged(Location location) {
 		Log.i(TAG, "onLocationChanged()");
 		LocationEvent event = new LocationEvent(location);
-		Environment.getInstance().registerEvent(event);
+		//Send the event to the Environment
+		//Environment.getInstance().registerEvent(event);
 	}
 
 	@Override

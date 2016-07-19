@@ -22,7 +22,5 @@ public interface IEnvironment {
 	
 	ContextEntity getContextEntity(String service);
 
-	MagpieEvent registerEvent(MagpieEvent ev);
-	
 	void registerAlert(MagpieEvent al);
 }

@@ -1,8 +1,15 @@
 package ch.hevs.aislab.magpie.environment;
 
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -12,28 +19,27 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
+import ch.hevs.aislab.magpie.android.MagpieActivity;
 import ch.hevs.aislab.magpie.context.ContextEntity;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
 
-public class Environment implements IEnvironment {
+public class Environment extends Handler implements IEnvironment {
 
 	/**
 	 * Used for debugging
 	 */
 	private final String TAG = getClass().getName();
 
-	private static volatile Environment instance;
+	/**
+	 * Codes for the Messages that the Environment can process
+	 */
+	public static final int EVENT = 100;
 
 	private Map<Integer, MagpieAgent> mListOfAgents = new HashMap<Integer, MagpieAgent>();
 	
 	private Map<String, ContextEntity> mListOfContextEntities = new HashMap<String, ContextEntity>();
 
-	/**
-	 * Queue for storing the events produced by the ContextEntities 
-	 */
-	private ConcurrentLinkedQueue<MagpieEvent> mQueueOfEvents = new ConcurrentLinkedQueue<>();
-	
 	/**
 	 * Queue for storing the alerts produced by the MagpieAgents
 	 */
@@ -41,44 +47,24 @@ public class Environment implements IEnvironment {
 	
 	private AtomicInteger agentId = new AtomicInteger(0);
 
-    private CountDownLatch alertLatch = null;
 
-	/**
-	 * Class running the Environment life-cycle in a thread
-	 */
-	private EnvironmentThread mEnvThread;
-
-	private Environment() {
-		//mListOfProvidedServices.put(Services.GPS_LOCATION, false);
-		
-		Log.i(TAG, "Starting the Environment's thread");
-		mEnvThread = new EnvironmentThread();
-		new Thread(mEnvThread).start();
+	public Environment(Looper looper) {
+		super(looper);
 	}
 
-	public static Environment getInstance() {
-		if (instance == null) {
-			synchronized (Environment.class) {
-				instance = new Environment();
-			}
+	@Override
+	public void handleMessage(Message request) {
+		int code = request.what;
+		// For the moment the received messages are events
+		switch (code) {
+			case Environment.EVENT:
+				processEvent(request);
+				break;
+			default:
+				Log.i(TAG, "Message with code " + code + " not understood");
+				break;
 		}
-        //Start the Environment life-cycle if it is not started
-		/*
-		if (instance.mEnvThread.isCancelled()) {
-			instance.mEnvThread.setCancelled(false);
-			new Thread(instance.mEnvThread).start();
-		}
-		*/
-		return instance;
 	}
-	/**
-	 * Used to stop the Environment life-cycle 
-	 */
-	/*
-	public void shutDown() {
-		mEnvThread.cancel();
-	}
-	*/
 
 	@Override
 	public void registerAgent(MagpieAgent agent) {
@@ -89,7 +75,7 @@ public class Environment implements IEnvironment {
 		mListOfAgents.put(agent.getId(), agent);
 		
 		// Register the interests of the new agent joining the environment
-		ServiceActivator.registerInterests(agent);
+		ServiceActivator.registerInterests(this, agent);
 		
 		Log.i(TAG, "Agent '" + agent.getName() + "' with ID " + agent.getId() + " registered\n"
 				+ "Total num. of agents: " + mListOfAgents.size());
@@ -114,6 +100,13 @@ public class Environment implements IEnvironment {
 
 	@Override
 	public Map<Integer, MagpieAgent> getRegisteredAgents() {
+
+		if (Looper.myLooper() == Looper.getMainLooper()) {
+			Log.i("RequestHandler", "In the Environment getRegisteredAgents() we are in UI Thread");
+		} else {
+			Log.i("RequestHandler", "This is not the UI Thread in the Environment getRegisteredAgents()");
+		}
+
 		return mListOfAgents;
 	}
 
@@ -131,32 +124,6 @@ public class Environment implements IEnvironment {
 		}
 	}
 
-	public void registeredAgents() {
-		Log.i(TAG, "Number of registered agents: " + mListOfAgents.size());
-	}
-
-	/**
-	 * Register a new event in the corresponding Environment queue
-	 */
-	public MagpieEvent registerEvent(MagpieEvent event) {
-		mQueueOfEvents.add(event);
-
-        //Wait until the Thread finishes to compute the alert
-        alertLatch = new CountDownLatch(1);
-        mEnvThread.newEventReceived();
-        try {
-            alertLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        if (!mQueueOfAlerts.isEmpty()) {
-            return mQueueOfAlerts.poll();
-        } else {
-            return null;
-        }
-    }
-	
 	/**
 	 * Register a new alert in the corresponding Environment queue
 	 */
@@ -165,60 +132,44 @@ public class Environment implements IEnvironment {
 		Log.i(TAG, "Number of alerts produced by the Agents: " + mQueueOfAlerts.size());
 	}
 
-    // Methods to change the state of the services
-
-	private class EnvironmentThread implements Runnable {
-
-		private Lock mLock = new ReentrantLock();
-		
-		private Condition mCondition = mLock.newCondition();
-		
-		private EnvironmentThread() {
-			//mCondition = mLock.newCondition();
-		}
-		
+	private void processEvent(Message request) {
 		/**
-		 * This method runs the Environment life-cycle forever which may
-		 * may consume a lot of battery. However this doesn't happen as 
-		 * it applies the guarded suspension pattern, where the condition
-		 * to wake up the thread is to receive a new event in the
-		 * environment.
+		 * Get the Event that is inside the message, and the Messenger to reply in the case that an
+		 * alert is produced
 		 */
-		@Override
-		public void run() {
-			while (true) {
-				mLock.lock();
-				while (Environment.this.mQueueOfEvents.isEmpty()) {
-					Log.i(TAG, "Waiting for new Events");
-					mCondition.awaitUninterruptibly();
-				}
-				mLock.unlock();
-				MagpieEvent event = Environment.this.mQueueOfEvents.poll();
-				for (MagpieAgent agent : mListOfAgents.values()) {
-					/* Send the event only to the interested agents */
-					if (agent.getInterests().contains(event.getType())) {
-						Log.i(TAG, "Agent with Id " + agent.getId() + " and name " + agent.getName() + " activated");
-						agent.senseEvent(event);
-						agent.activate();
-					}
-				}
+		Bundle bundleEvent = request.getData();
+		LogicTupleEvent event = bundleEvent.getParcelable(MagpieActivity.MAGPIE_EVENT);
 
-				/* Send the alerts produced by the agents */
-				if (!mQueueOfAlerts.isEmpty()) {
-                    // Just print the alert in the Logcat
-                    LogicTupleEvent alert = (LogicTupleEvent) mQueueOfAlerts.peek();
-                    Log.i(TAG, alert.toTuple());
-				}
+		final Messenger replyMessenger = request.replyTo;
 
-                alertLatch.countDown();
+		for (MagpieAgent agent : mListOfAgents.values()) {
+			// Send the event only to the interested agents
+			if (agent.getInterests().contains(event.getType())) {
+				Log.i(TAG, "Agent with Id " + agent.getId() + " and name " + agent.getName() + " activated");
+				agent.senseEvent(event);
+				agent.activate();
 			}
 		}
-		
-		private void newEventReceived() {
-			mLock.lock();
-			Log.i(TAG, "New Event received");
-			mCondition.signal();
-			mLock.unlock();
-		}	
+
+		if (!mQueueOfAlerts.isEmpty()) {
+			Iterator<MagpieEvent> alertsIt = mQueueOfAlerts.iterator();
+			while (alertsIt.hasNext()) {
+				// Take the alert
+				LogicTupleEvent alert = (LogicTupleEvent) alertsIt.next();
+
+				// Prepare the message containg the alert to be sent to the MagpieActivity
+				Message reply = Message.obtain();
+				Bundle alertBundle = new Bundle();
+				alertBundle.putParcelable(MagpieActivity.MAGPIE_EVENT, alert);
+				reply.setData(alertBundle);
+
+				// Send back the alert
+				try {
+					replyMessenger.send(reply);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
