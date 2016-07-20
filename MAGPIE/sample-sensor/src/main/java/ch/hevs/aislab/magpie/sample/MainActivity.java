@@ -75,7 +75,7 @@ public class MainActivity extends MagpieActivity {
         MagpieAgent prologAgent = new MagpieAgent("monitoring_agent", Services.LOGIC_TUPLE);
         PrologAgentMind prologMind = new PrologAgentMind(getApplicationContext(), R.raw.monitoring_rules);
         prologAgent.setMind(prologMind);
-        getService().registerAgent(prologAgent);
+        registerAgent(prologAgent);
 
         //Java example
         MagpieAgent behaviorAgent = new MagpieAgent("priority_agent", Services.LOGIC_TUPLE);
@@ -84,7 +84,7 @@ public class MainActivity extends MagpieActivity {
         behaviorMind.addBehavior(new HighWeightBehaviour(this, behaviorAgent, 1));
         behaviorMind.addBehavior(new HypoglycemiaBehaviour(this, behaviorAgent, 3));
         behaviorAgent.setMind(behaviorMind);
-        getService().registerAgent(behaviorAgent);
+        registerAgent(behaviorAgent);
     }
 
     //Only for prolog

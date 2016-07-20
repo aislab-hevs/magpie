@@ -43,9 +43,9 @@ public class MagpieService extends Service {
 
     /** Shared Preferences store the agents' names and the 'first time' boolean */
     static final String MAGPIE_PREFS = "magpie_prefs";
+    static final String AGENTS_KEY = "agent_names";
 
     private static final String FIRST_TIME_KEY = "first_time";
-    private static final String AGENTS_KEY = "agent_names";
 
     private final IBinder mBinder = new MagpieBinder();
 
@@ -77,10 +77,7 @@ public class MagpieService extends Service {
 
         requestMessenger = new Messenger(mEnvironment);
 
-        Log.i(TAG, "Agents onCreate(): " + mEnvironment.getRegisteredAgents().keySet().size());
-
         SharedPreferences settings = getSharedPreferences(MAGPIE_PREFS, MODE_PRIVATE);
-
         boolean firstTime = settings.getBoolean(FIRST_TIME_KEY, true);
 
         Log.i(TAG, "Service first time? " + firstTime);
@@ -111,6 +108,8 @@ public class MagpieService extends Service {
                 registerAgent(agent);
             }
         }
+
+        Log.i(TAG, "Agents at the end of onCreate(): " + mEnvironment.getRegisteredAgents().keySet().size());
     }
 
     @Override
@@ -252,6 +251,20 @@ public class MagpieService extends Service {
     /**
      * Actions that can be performed in the Environment from an Activity
      */
+    public void registerAgent(MagpieAgent agent, String activityName) {
+        mEnvironment.registerAgent(agent);
+
+
+        SharedPreferences settings = getSharedPreferences(MAGPIE_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        Set<String> agentNames = settings.getStringSet(activityName, new HashSet<String>());
+        agentNames.add(agent.getName());
+        editor.putStringSet(activityName, agentNames);
+        editor.apply();
+
+    }
+
     public void registerAgent(MagpieAgent agent) {
         mEnvironment.registerAgent(agent);
     }

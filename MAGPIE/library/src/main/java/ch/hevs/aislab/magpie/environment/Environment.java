@@ -12,11 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
 import ch.hevs.aislab.magpie.android.MagpieActivity;
@@ -34,7 +30,8 @@ public class Environment extends Handler implements IEnvironment {
 	/**
 	 * Codes for the Messages that the Environment can process
 	 */
-	public static final int EVENT = 100;
+	public static final int NEW_EVENT = 100;
+	public static final int RECREATE_AGENTS = 200;
 
 	private Map<Integer, MagpieAgent> mListOfAgents = new HashMap<Integer, MagpieAgent>();
 	
@@ -57,8 +54,11 @@ public class Environment extends Handler implements IEnvironment {
 		int code = request.what;
 		// For the moment the received messages are events
 		switch (code) {
-			case Environment.EVENT:
+			case Environment.NEW_EVENT:
 				processEvent(request);
+				break;
+			case Environment.RECREATE_AGENTS:
+				Log.i(TAG, "The agents should be recreated and registred in the Environment");
 				break;
 			default:
 				Log.i(TAG, "Message with code " + code + " not understood");

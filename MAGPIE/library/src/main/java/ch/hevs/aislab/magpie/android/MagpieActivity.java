@@ -15,7 +15,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Set;
 
+import ch.hevs.aislab.magpie.agent.MagpieAgent;
 import ch.hevs.aislab.magpie.android.MagpieService.MagpieBinder;
 import ch.hevs.aislab.magpie.environment.Environment;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
@@ -25,10 +28,8 @@ import ch.hevs.aislab.magpie.sensor.SensorService;
 
 public abstract class MagpieActivity extends AppCompatActivity implements MagpieConnection {
 
-	/**
-	 * Used for debugging
-	 */
-	private final String TAG = getClass().getName();
+
+	private final String ACTIVITY_NAME = getClass().getName();
 
     static final String ACTION_ONE_WAY_COMM = "ch.hevs.aislab.magpie.android.ONE_WAY";
     public static final String ACTION_TWO_WAY_COMM = "ch.hevs.aislab.magpie.android.TWO_WAYS";
@@ -50,7 +51,7 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
 	@Override
 	protected void onStart() {
 		super.onStart();
-		Log.i(TAG, "onStart()");
+		Log.i(ACTIVITY_NAME, "onStart()");
 		// Bind to the Service running the Environment
 
         // Bind for interactions not requiring an answer from the service
@@ -68,7 +69,7 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
 	@Override
 	protected void onStop() {
         super.onStop();
-        Log.i(TAG, "onStop()");
+        Log.i(ACTIVITY_NAME, "onStop()");
         unbindService(oneWayConnection);
         unbindService(twoWayConnection);
 	}
@@ -76,7 +77,7 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "onDestroy()");
+        Log.i(ACTIVITY_NAME, "onDestroy()");
         if (sensorServiceIntent != null) {
             stopService(sensorServiceIntent);
         }
@@ -89,18 +90,11 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
             mService = ((MagpieBinder) service).getService();
 
             SharedPreferences settings = getSharedPreferences(MagpieService.MAGPIE_PREFS, MODE_PRIVATE);
-            boolean firstTime = settings.getBoolean(TAG, true);
-            if (firstTime) {
+            Set<String> agentNames = settings.getStringSet(ACTIVITY_NAME, new HashSet<String>());
+
+            if (agentNames.isEmpty()) {
                 onEnvironmentConnected();
             }
-
-            /**
-             * Register this Activity as bounded in SharedPreferences, so that in the next
-             * binding the method onEnvironmentConnected() is not called again
-             */
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(TAG, false);
-            editor.apply();
         }
 
         @Override
@@ -157,7 +151,7 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
     public void sendEvent(MagpieEvent event) {
 
         Message request = Message.obtain();
-        request.what = Environment.EVENT;
+        request.what = Environment.NEW_EVENT;
         request.replyTo = replyMessenger;
 
         Bundle bundle = new Bundle();
@@ -170,6 +164,10 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
         } catch (RemoteException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void registerAgent(MagpieAgent agent) {
+        getService().registerAgent(agent, getClass().getName());
     }
 
     /**
