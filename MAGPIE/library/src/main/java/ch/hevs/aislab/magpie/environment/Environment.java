@@ -1,5 +1,7 @@
 package ch.hevs.aislab.magpie.environment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -8,14 +10,26 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.StreamCorruptedException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
+import ch.hevs.aislab.magpie.agent.PrologAgentMind;
 import ch.hevs.aislab.magpie.android.MagpieActivity;
+import ch.hevs.aislab.magpie.android.MagpieService;
+import ch.hevs.aislab.magpie.behavior.Behavior;
+import ch.hevs.aislab.magpie.behavior.BehaviorAgentMind;
 import ch.hevs.aislab.magpie.context.ContextEntity;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
@@ -33,6 +47,8 @@ public class Environment extends Handler implements IEnvironment {
 	public static final int NEW_EVENT = 100;
 	public static final int RECREATE_AGENTS = 200;
 
+	private MagpieService mMagpieService;
+
 	private Map<Integer, MagpieAgent> mListOfAgents = new HashMap<Integer, MagpieAgent>();
 	
 	private Map<String, ContextEntity> mListOfContextEntities = new HashMap<String, ContextEntity>();
@@ -45,8 +61,9 @@ public class Environment extends Handler implements IEnvironment {
 	private AtomicInteger agentId = new AtomicInteger(0);
 
 
-	public Environment(Looper looper) {
+	public Environment(Looper looper, MagpieService magpieService) {
 		super(looper);
+		this.mMagpieService = magpieService;
 	}
 
 	@Override
@@ -58,7 +75,7 @@ public class Environment extends Handler implements IEnvironment {
 				processEvent(request);
 				break;
 			case Environment.RECREATE_AGENTS:
-				Log.i(TAG, "The agents should be recreated and registred in the Environment");
+				recreateAgents(request);
 				break;
 			default:
 				Log.i(TAG, "Message with code " + code + " not understood");
@@ -171,5 +188,60 @@ public class Environment extends Handler implements IEnvironment {
 				}
 			}
 		}
+	}
+
+	private void recreateAgents(Message request) {
+		Bundle bundle = request.getData();
+		Set<String> agentNames = (HashSet<String>) bundle.get(MagpieService.AGENT_NAMES);
+		for (String agentName : agentNames) {
+			// Deserialize the body
+			MagpieAgent agent = (MagpieAgent) deserialize(agentName + MagpieAgent.BODY_KEY);
+
+			if (agent.getType().equals(MagpieAgent.PROLOG_TYPE)) {
+				// Deserialize the mind's theory
+				String theory = (String) deserialize(agentName + MagpieAgent.THEORY_KEY);
+				// Deserialize the KDTree
+				StringECKDTreeIndexer indexer = (StringECKDTreeIndexer) deserialize(agentName + MagpieAgent.ECKDTREE_KEY);
+				// Register the mind into the body
+				PrologAgentMind mind = new PrologAgentMind(theory, indexer);
+				agent.setMind(mind);
+			} else if (agent.getType().equals(MagpieAgent.BEHAVIOR_TYPE)) {
+				BehaviorAgentMind mind = (BehaviorAgentMind) deserialize(agentName + MagpieAgent.MIND_KEY);
+				for (Behavior b : mind.getBehaviors()) {
+					b.setAgent(agent);
+					b.setContext(mMagpieService);
+				}
+				agent.setMind(mind);
+			}
+			registerAgent(agent);
+		}
+	}
+
+	private Object deserialize(String fileName) {
+		Object newInstance = null;
+		ObjectInputStream ois = null;
+		try {
+			FileInputStream fis = mMagpieService.getApplicationContext()
+					.openFileInput(fileName);
+			ois = new ObjectInputStream(fis);
+			newInstance = ois.readObject();
+		} catch (FileNotFoundException ex) {
+			Log.e(TAG, "File '" + fileName + "' not found in deserialization");
+		} catch (StreamCorruptedException ex) {
+			Log.e(TAG, "StreamCorruptedException when deserializing the object");
+		} catch (IOException ex) {
+			Log.e(TAG, "IOException with the ObjectInputStream");
+		} catch (ClassNotFoundException ex) {
+			Log.wtf(TAG, "Class Object not found");
+		} finally {
+			if (ois != null) {
+				try {
+					ois.close();
+				} catch (IOException ex) {
+					Log.e(TAG, "IOException when closing the ObjectInputStream");
+				}
+			}
+		}
+		return newInstance;
 	}
 }

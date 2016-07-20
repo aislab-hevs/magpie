@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
@@ -15,26 +14,19 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.StreamCorruptedException;
-import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
-import ch.hevs.aislab.magpie.behavior.Behavior;
 import ch.hevs.aislab.magpie.behavior.BehaviorAgentMind;
 import ch.hevs.aislab.magpie.context.ContextEntity;
 import ch.hevs.aislab.magpie.environment.Environment;
-import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 
 public class MagpieService extends Service {
 
@@ -43,7 +35,9 @@ public class MagpieService extends Service {
 
     /** Shared Preferences store the agents' names and the 'first time' boolean */
     static final String MAGPIE_PREFS = "magpie_prefs";
-    static final String AGENTS_KEY = "agent_names";
+    static final String MASTER_KEY = "MagpieActivitiesInApplication";
+
+    public static final String AGENT_NAMES = "agent_names";
 
     private static final String FIRST_TIME_KEY = "first_time";
 
@@ -73,49 +67,38 @@ public class MagpieService extends Service {
 
         // Get the HandlerThread's Looper and use it for our Handler
         mServiceLooper = thread.getLooper();
-        mEnvironment = new Environment(mServiceLooper);
+        mEnvironment = new Environment(mServiceLooper, this);
 
         requestMessenger = new Messenger(mEnvironment);
 
+        // Check whether or not MagpieActivities have alredy registered agents previously
         SharedPreferences settings = getSharedPreferences(MAGPIE_PREFS, MODE_PRIVATE);
-        boolean firstTime = settings.getBoolean(FIRST_TIME_KEY, true);
+        Set<String> magpieActivities = settings.getStringSet(MASTER_KEY, new HashSet<String>());
 
-        Log.i(TAG, "Service first time? " + firstTime);
+        if (!magpieActivities.isEmpty()) {
+            // Ask to the Environemnt the recreation of the agents by telling it its names
+            Message request = Message.obtain();
+            request.what = Environment.RECREATE_AGENTS;
 
-        if (!firstTime) {
-            Set<String> agentNames = settings.getStringSet(AGENTS_KEY, new HashSet<String>());
-            for (String agentName : agentNames) {
-                // Deserialize the body
-                MagpieAgent agent = (MagpieAgent) deserialize(agentName + MagpieAgent.BODY_KEY);
-
-                if (agent.getType().equals(MagpieAgent.PROLOG_TYPE)) {
-                    // Deserialize the mind's theory
-                    String theory = (String) deserialize(agentName + MagpieAgent.THEORY_KEY);
-                    // Deserialize the KDTree
-                    StringECKDTreeIndexer indexer = (StringECKDTreeIndexer) deserialize(agentName + MagpieAgent.ECKDTREE_KEY);
-                    // Register the mind into the body
-                    PrologAgentMind mind = new PrologAgentMind(theory, indexer);
-                    agent.setMind(mind);
-                } else if (agent.getType().equals(MagpieAgent.BEHAVIOR_TYPE)) {
-                    BehaviorAgentMind mind = (BehaviorAgentMind) deserialize(agentName + MagpieAgent.MIND_KEY);
-                    for (Behavior b : mind.getBehaviors()) {
-                        b.setAgent(agent);
-                        b.setContext(mContext);
-                    }
-                    agent.setMind(mind);
-                }
-                // Add the agent into the Environment
-                registerAgent(agent);
+            Bundle bundle = new Bundle();
+            HashSet<String> agentNames = new HashSet<>();
+            for (String activityName : magpieActivities) {
+                Set<String> agentNamesFromActivity = settings.getStringSet(activityName, new HashSet<String>());
+                agentNames.addAll(agentNamesFromActivity);
+            }
+            bundle.putSerializable(AGENT_NAMES, agentNames);
+            request.setData(bundle);
+            try {
+                requestMessenger.send(request);
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
-
-        Log.i(TAG, "Agents at the end of onCreate(): " + mEnvironment.getRegisteredAgents().keySet().size());
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         Log.i(TAG, "onBind()");
-
         String action = intent.getAction();
         if (action.equals(MagpieActivity.ACTION_ONE_WAY_COMM)) {
             return mBinder;
@@ -170,7 +153,7 @@ public class MagpieService extends Service {
         }
 
         editor.putBoolean(FIRST_TIME_KEY, false);
-        editor.putStringSet(AGENTS_KEY, agentNames);
+        editor.putStringSet(AGENT_NAMES, agentNames);
         editor.apply();
 
         mEnvironment = null;
@@ -197,34 +180,6 @@ public class MagpieService extends Service {
                 }
             }
         }
-    }
-
-    private Object deserialize(String fileName) {
-        Object newInstance = null;
-        ObjectInputStream ois = null;
-        try {
-            FileInputStream fis = getApplicationContext()
-                    .openFileInput(fileName);
-            ois = new ObjectInputStream(fis);
-            newInstance = ois.readObject();
-        } catch (FileNotFoundException ex) {
-            Log.e(TAG, "File '" + fileName + "' not found in deserialization");
-        } catch (StreamCorruptedException ex) {
-            Log.e(TAG, "StreamCorruptedException when deserializing the object");
-        } catch (IOException ex) {
-            Log.e(TAG, "IOException with the ObjectInputStream");
-        } catch (ClassNotFoundException ex) {
-            Log.wtf(TAG, "Class Object not found");
-        } finally {
-            if (ois != null) {
-                try {
-                    ois.close();
-                } catch (IOException ex) {
-                    Log.e(TAG, "IOException when closing the ObjectInputStream");
-                }
-            }
-        }
-        return newInstance;
     }
 
     /**
@@ -254,13 +209,17 @@ public class MagpieService extends Service {
     public void registerAgent(MagpieAgent agent, String activityName) {
         mEnvironment.registerAgent(agent);
 
-
         SharedPreferences settings = getSharedPreferences(MAGPIE_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
 
-        Set<String> agentNames = settings.getStringSet(activityName, new HashSet<String>());
-        agentNames.add(agent.getName());
-        editor.putStringSet(activityName, agentNames);
+        Set<String> magpieActivities = settings.getStringSet(MASTER_KEY, new HashSet<String>());
+        magpieActivities.add(activityName);
+        editor.putStringSet(MASTER_KEY, magpieActivities);
+
+        Set<String> agentNamesFromActivity = settings.getStringSet(activityName, new HashSet<String>());
+        agentNamesFromActivity.add(agent.getName());
+        editor.putStringSet(activityName, agentNamesFromActivity);
+
         editor.apply();
 
     }
