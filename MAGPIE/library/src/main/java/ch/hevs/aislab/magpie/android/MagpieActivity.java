@@ -29,12 +29,13 @@ import ch.hevs.aislab.magpie.sensor.SensorService;
 public abstract class MagpieActivity extends AppCompatActivity implements MagpieConnection {
 
 
-	private final String ACTIVITY_NAME = getClass().getName();
+	public final String ACTIVITY_NAME = getClass().getName();
 
     static final String ACTION_ONE_WAY_COMM = "ch.hevs.aislab.magpie.android.ONE_WAY";
     public static final String ACTION_TWO_WAY_COMM = "ch.hevs.aislab.magpie.android.TWO_WAYS";
 
     public static final String MAGPIE_EVENT = "event";
+    public static final String AGENT_NAMES = "agentNames";
 
     // Used for one way communications with the service
     private MagpieService mService;
@@ -107,6 +108,7 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             requestMessenger = new Messenger(binder);
+            recreateAgents();
         }
 
         @Override
@@ -133,9 +135,30 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
                 return;
             }
 
+            int code = reply.what;
+            switch (code) {
+                case Environment.NEW_EVENT:
+                    processAlert(reply, activity);
+                    break;
+                case Environment.RECREATE_AGENTS:
+                    sendContext(activity);
+                    break;
+                default:
+                    String activityName = mActivity.getClass().getName();
+                    Log.e(activityName, "Message with code " + code + " not understood");
+            }
+        }
+
+        private void processAlert(Message reply, MagpieActivity activity) {
             Bundle bundleAlert = reply.getData();
             LogicTupleEvent alert = bundleAlert.getParcelable(MAGPIE_EVENT);
             activity.onAlertProduced(alert);
+        }
+
+        private void sendContext(MagpieActivity activity) {
+            SharedPreferences settings = activity.getSharedPreferences(MagpieService.MAGPIE_PREFS, MODE_PRIVATE);
+            Set<String> agentNamesFromActivity = settings.getStringSet(activity.ACTIVITY_NAME, new HashSet<String>());
+            activity.mService.setBehaviorsContext(activity, agentNamesFromActivity);
         }
     }
 
@@ -149,13 +172,33 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
      * the message
      */
     public void sendEvent(MagpieEvent event) {
-
         Message request = Message.obtain();
         request.what = Environment.NEW_EVENT;
         request.replyTo = replyMessenger;
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(MAGPIE_EVENT, event);
+
+        request.setData(bundle);
+
+        try {
+            requestMessenger.send(request);
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void recreateAgents() {
+        Message request = Message.obtain();
+        request.what = Environment.RECREATE_AGENTS;
+        request.replyTo = replyMessenger;
+
+        Bundle bundle = new Bundle();
+
+        SharedPreferences settings = getSharedPreferences(MagpieService.MAGPIE_PREFS, MODE_PRIVATE);
+        HashSet<String> agentNamesFromActivity = (HashSet<String>)
+                settings.getStringSet(ACTIVITY_NAME, new HashSet<String>());
+        bundle.putSerializable(AGENT_NAMES, agentNamesFromActivity);
 
         request.setData(bundle);
 

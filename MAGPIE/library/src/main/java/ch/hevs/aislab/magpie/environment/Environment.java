@@ -1,7 +1,6 @@
 package ch.hevs.aislab.magpie.environment;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,6 +17,7 @@ import java.io.StreamCorruptedException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -78,7 +78,7 @@ public class Environment extends Handler implements IEnvironment {
 				recreateAgents(request);
 				break;
 			default:
-				Log.i(TAG, "Message with code " + code + " not understood");
+				Log.e(TAG, "Message with code " + code + " not understood");
 				break;
 		}
 	}
@@ -149,6 +149,23 @@ public class Environment extends Handler implements IEnvironment {
 		Log.i(TAG, "Number of alerts produced by the Agents: " + mQueueOfAlerts.size());
 	}
 
+	public void setBehaviorsContext(Context context, Set<String> searchedAgentNames) {
+		for (MagpieAgent agent : mListOfAgents.values()) {
+			if (agent.getType().equals(MagpieAgent.BEHAVIOR_TYPE)) {
+				String agentName = agent.getName();
+				for (String searchedAgentName : searchedAgentNames) {
+					if (agentName.equals(searchedAgentName)) {
+						BehaviorAgentMind agentMind = (BehaviorAgentMind) agent.getMind();
+						List<Behavior> agentBehaviors = agentMind.getBehaviors();
+						for (Behavior b : agentBehaviors) {
+							b.setContext(context);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	private void processEvent(Message request) {
 		/**
 		 * Get the Event that is inside the message, and the Messenger to reply in the case that an
@@ -176,6 +193,7 @@ public class Environment extends Handler implements IEnvironment {
 
 				// Prepare the message containg the alert to be sent to the MagpieActivity
 				Message reply = Message.obtain();
+				reply.what = Environment.NEW_EVENT;
 				Bundle alertBundle = new Bundle();
 				alertBundle.putParcelable(MagpieActivity.MAGPIE_EVENT, alert);
 				reply.setData(alertBundle);
@@ -191,12 +209,14 @@ public class Environment extends Handler implements IEnvironment {
 	}
 
 	private void recreateAgents(Message request) {
+
+		final Messenger replyMessenger = request.replyTo;
+
 		Bundle bundle = request.getData();
-		Set<String> agentNames = (HashSet<String>) bundle.get(MagpieService.AGENT_NAMES);
+		Set<String> agentNames = (HashSet<String>) bundle.get(MagpieActivity.AGENT_NAMES);
 		for (String agentName : agentNames) {
 			// Deserialize the body
 			MagpieAgent agent = (MagpieAgent) deserialize(agentName + MagpieAgent.BODY_KEY);
-
 			if (agent.getType().equals(MagpieAgent.PROLOG_TYPE)) {
 				// Deserialize the mind's theory
 				String theory = (String) deserialize(agentName + MagpieAgent.THEORY_KEY);
@@ -209,11 +229,18 @@ public class Environment extends Handler implements IEnvironment {
 				BehaviorAgentMind mind = (BehaviorAgentMind) deserialize(agentName + MagpieAgent.MIND_KEY);
 				for (Behavior b : mind.getBehaviors()) {
 					b.setAgent(agent);
-					b.setContext(mMagpieService);
 				}
 				agent.setMind(mind);
 			}
 			registerAgent(agent);
+		}
+
+		Message reply = Message.obtain();
+		reply.what = Environment.RECREATE_AGENTS;
+		try {
+			replyMessenger.send(reply);
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
 	}
 

@@ -5,13 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -70,35 +67,12 @@ public class MagpieService extends Service {
         mEnvironment = new Environment(mServiceLooper, this);
 
         requestMessenger = new Messenger(mEnvironment);
-
-        // Check whether or not MagpieActivities have alredy registered agents previously
-        SharedPreferences settings = getSharedPreferences(MAGPIE_PREFS, MODE_PRIVATE);
-        Set<String> magpieActivities = settings.getStringSet(MASTER_KEY, new HashSet<String>());
-
-        if (!magpieActivities.isEmpty()) {
-            // Ask to the Environemnt the recreation of the agents by telling it its names
-            Message request = Message.obtain();
-            request.what = Environment.RECREATE_AGENTS;
-
-            Bundle bundle = new Bundle();
-            HashSet<String> agentNames = new HashSet<>();
-            for (String activityName : magpieActivities) {
-                Set<String> agentNamesFromActivity = settings.getStringSet(activityName, new HashSet<String>());
-                agentNames.addAll(agentNamesFromActivity);
-            }
-            bundle.putSerializable(AGENT_NAMES, agentNames);
-            request.setData(bundle);
-            try {
-                requestMessenger.send(request);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         Log.i(TAG, "onBind()");
+
         String action = intent.getAction();
         if (action.equals(MagpieActivity.ACTION_ONE_WAY_COMM)) {
             return mBinder;
@@ -222,6 +196,10 @@ public class MagpieService extends Service {
 
         editor.apply();
 
+    }
+
+    public void setBehaviorsContext(Context context, Set<String> agentNames) {
+        mEnvironment.setBehaviorsContext(context, agentNames);
     }
 
     public void registerAgent(MagpieAgent agent) {
