@@ -30,21 +30,15 @@ public class MagpieService extends Service {
     /** Used for debugging */
     private final String TAG = getClass().getName();
 
-    /** Shared Preferences store the agents' names and the 'first time' boolean */
+    /** Shared Preferences store the names of the MagpieActivities that bounded to this Service */
     static final String MAGPIE_PREFS = "magpie_prefs";
     static final String MASTER_KEY = "MagpieActivitiesInApplication";
 
-    public static final String AGENT_NAMES = "agent_names";
-
-    private static final String FIRST_TIME_KEY = "first_time";
-
+    /** Objects returned to the MagpieActivity for communicating with the Service and the Environment */
     private final IBinder mBinder = new MagpieBinder();
-
     private Messenger requestMessenger;
 
-    /**
-     * Looper associated with the HandlerThread
-     */
+    /** Looper associated with the HandlerThread */
     private volatile Looper mServiceLooper;
 
     private volatile Environment mEnvironment;
@@ -87,10 +81,7 @@ public class MagpieService extends Service {
     @Override
     public void onDestroy() {
         Log.i(TAG, "MagpieService - onDestroy()");
-
-        SharedPreferences settings = getSharedPreferences(MAGPIE_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-
+        
         Set<String> agentNames = new HashSet<>();
         Iterator<Integer> iteratorIds = mEnvironment.getRegisteredAgents().keySet().iterator();
 
@@ -125,10 +116,6 @@ public class MagpieService extends Service {
 
             }
         }
-
-        editor.putBoolean(FIRST_TIME_KEY, false);
-        editor.putStringSet(AGENT_NAMES, agentNames);
-        editor.apply();
 
         mEnvironment = null;
     }
