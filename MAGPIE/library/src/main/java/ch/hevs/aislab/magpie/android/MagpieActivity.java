@@ -89,13 +89,6 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mService = ((MagpieBinder) service).getService();
-
-            SharedPreferences settings = getSharedPreferences(MagpieService.MAGPIE_PREFS, MODE_PRIVATE);
-            Set<String> agentNames = settings.getStringSet(ACTIVITY_NAME, new HashSet<String>());
-
-            if (agentNames.isEmpty()) {
-                onEnvironmentConnected();
-            }
         }
 
         @Override
@@ -108,7 +101,15 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             requestMessenger = new Messenger(binder);
-            recreateAgents();
+
+            SharedPreferences settings = getSharedPreferences(MagpieService.MAGPIE_PREFS, MODE_PRIVATE);
+            Set<String> agentNames = settings.getStringSet(ACTIVITY_NAME, new HashSet<String>());
+
+            if (agentNames.isEmpty()) {
+                onEnvironmentConnected();
+            } else {
+                recreateAgents(settings);
+            }
         }
 
         @Override
@@ -188,14 +189,13 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
         }
     }
 
-    private void recreateAgents() {
+    private void recreateAgents(SharedPreferences settings) {
         Message request = Message.obtain();
         request.what = Environment.RECREATE_AGENTS;
         request.replyTo = replyMessenger;
 
         Bundle bundle = new Bundle();
 
-        SharedPreferences settings = getSharedPreferences(MagpieService.MAGPIE_PREFS, MODE_PRIVATE);
         HashSet<String> agentNamesFromActivity = (HashSet<String>)
                 settings.getStringSet(ACTIVITY_NAME, new HashSet<String>());
         bundle.putSerializable(AGENT_NAMES, agentNamesFromActivity);

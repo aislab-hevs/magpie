@@ -81,7 +81,7 @@ public class MagpieService extends Service {
     @Override
     public void onDestroy() {
         Log.i(TAG, "MagpieService - onDestroy()");
-        
+
         Set<String> agentNames = new HashSet<>();
         Iterator<Integer> iteratorIds = mEnvironment.getRegisteredAgents().keySet().iterator();
 
