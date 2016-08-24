@@ -71,6 +71,7 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
 	protected void onStop() {
         super.onStop();
         Log.i(ACTIVITY_NAME, "onStop()");
+        storeAgents();
         unbindService(oneWayConnection);
         unbindService(twoWayConnection);
 	}
@@ -201,6 +202,17 @@ public abstract class MagpieActivity extends AppCompatActivity implements Magpie
         bundle.putSerializable(AGENT_NAMES, agentNamesFromActivity);
 
         request.setData(bundle);
+
+        try {
+            requestMessenger.send(request);
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void storeAgents() {
+        Message request = Message.obtain();
+        request.what = Environment.STORE_AGENTS;
 
         try {
             requestMessenger.send(request);

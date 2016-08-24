@@ -11,17 +11,10 @@ import android.os.Looper;
 import android.os.Messenger;
 import android.util.Log;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
-import ch.hevs.aislab.magpie.agent.PrologAgentMind;
-import ch.hevs.aislab.magpie.behavior.BehaviorAgentMind;
 import ch.hevs.aislab.magpie.context.ContextEntity;
 import ch.hevs.aislab.magpie.environment.Environment;
 
@@ -75,71 +68,6 @@ public class MagpieService extends Service {
         } else {
             Log.e(TAG, "MagpieService received an intent without an action");
             return null;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.i(TAG, "MagpieService - onDestroy()");
-
-        Set<String> agentNames = new HashSet<>();
-        Iterator<Integer> iteratorIds = mEnvironment.getRegisteredAgents().keySet().iterator();
-
-        Log.i(TAG, "Agents onDestroy(): " + mEnvironment.getRegisteredAgents().keySet().size());
-
-        while (iteratorIds.hasNext()) {
-            int id = iteratorIds.next();
-            MagpieAgent agent = mEnvironment.getRegisteredAgents().get(id);
-            String agentName = agent.getName();
-
-            if (agent.getMind() instanceof PrologAgentMind) {
-
-                PrologAgentMind mind = (PrologAgentMind) agent.getMind();
-                // Serialize the body
-                serialize(agentName + MagpieAgent.BODY_KEY, agent);
-                Log.i(TAG, "Agent body serialized OK!");
-                // Serialize the mind's theory
-                serialize(agentName + MagpieAgent.THEORY_KEY, mind.getTheory());
-                Log.i(TAG, "Agent theory serialized OK!");
-                // Serialize the KDTree
-                serialize(agentName + MagpieAgent.ECKDTREE_KEY, mind.getECKDTree());
-                Log.i(TAG, "KD Tree serialized OK!");
-                agentNames.add(agentName);
-
-            } else if (agent.getMind() instanceof BehaviorAgentMind) {
-
-                Log.i(TAG, "Agent '" + agentName + "' has a BehaviorAgentMind");
-                BehaviorAgentMind mind = (BehaviorAgentMind) agent.getMind();
-                serialize(agentName + MagpieAgent.BODY_KEY, agent);
-                serialize(agentName + MagpieAgent.MIND_KEY, mind);
-                agentNames.add(agentName);
-
-            }
-        }
-
-        mEnvironment = null;
-    }
-
-    private void serialize(String fileName, Object object) {
-        ObjectOutputStream oos = null;
-        try {
-            FileOutputStream fos = getApplicationContext()
-                    .openFileOutput(fileName, MODE_PRIVATE);
-            oos = new ObjectOutputStream(fos);
-            oos.writeObject(object);
-        } catch (FileNotFoundException ex) {
-            Log.e(TAG, "File '" + fileName + "' not found in serialization");
-        } catch (IOException ex) {
-            Log.e(TAG, "IOException with the ObjectOutputStream");
-            ex.printStackTrace();
-        } finally {
-            if (oos != null) {
-                try {
-                    oos.close();
-                } catch (IOException ex) {
-                    Log.e(TAG, "IOException when closing the ObjectOutputStream");
-                }
-            }
         }
     }
 
