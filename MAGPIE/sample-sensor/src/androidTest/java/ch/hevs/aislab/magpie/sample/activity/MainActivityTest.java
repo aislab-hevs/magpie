@@ -2,7 +2,6 @@ package ch.hevs.aislab.magpie.sample.activity;
 
 import android.test.ActivityInstrumentationTestCase2;
 
-import ch.hevs.aislab.magpie.environment.Environment;
 import ch.hevs.aislab.magpie.sample.MainActivity;
 
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
@@ -23,16 +22,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
     }
 
     public void testAddAgents() {
-        // First time: the agent is registered from the activity
-        int numAgents = Environment.getInstance().getRegisteredAgents().size();
-        assertEquals(2,numAgents);
-        magpieActivityTest.finish();
-
-        // Second time: the agent is registered from the service
-        magpieActivityTest = getActivity();
-        numAgents = Environment.getInstance().getRegisteredAgents().size();
-        assertEquals(2,numAgents);
-        magpieActivityTest.finish();
 
     }
 }
