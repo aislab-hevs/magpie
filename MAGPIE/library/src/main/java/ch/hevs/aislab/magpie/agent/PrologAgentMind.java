@@ -21,7 +21,7 @@ import alice.tuprolog.event.OutputEvent;
 import alice.tuprolog.event.OutputListener;
 import alice.tuprolog.lib.InvalidObjectIdException;
 import alice.tuprolog.lib.JavaLibrary;
-import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
+import ch.hevs.aislab.indexer.ECKDTreeIndexer;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.magpie.event.MagpieEvent;
 import ch.hevs.aislab.magpie.event.RuleSetEvent;
@@ -34,19 +34,19 @@ public class PrologAgentMind implements IPrologAgentMind {
 	private final String  TAG = getClass().getName();
 
 	private Prolog prolog;
-    private StringECKDTreeIndexer index;
+    private ECKDTreeIndexer index;
 
 	private HashMap<Long,Rule> rulesMap = new HashMap<>();
 
     /**
-     * Create a mind that works with EC and the indexer
+     * Create a mind that works with EC and the indexer based on k-d trees
      *
      * @param context
      */
     public PrologAgentMind(Context context, int resourceId) {
 
         // Assign the indexer and a new prolog engine
-        index = new StringECKDTreeIndexer();
+        index = new ECKDTreeIndexer();
         prolog = new Prolog();
 
         // Register the indexer in tuProlog
@@ -59,9 +59,10 @@ public class PrologAgentMind implements IPrologAgentMind {
 
         // Add to the prolog engine the theories from the files
         try {
-            prolog.addTheory(parseTheory(context, R.raw.ec_predicates));
-            prolog.addTheory(parseTheory(context, R.raw.ec_for_indexing4));
             prolog.addTheory(parseTheory(context, R.raw.agent_cycle));
+            prolog.addTheory(parseTheory(context, R.raw.time_window));
+            prolog.addTheory(parseTheory(context, R.raw.ec_predicates));
+            prolog.addTheory(parseTheory(context, R.raw.ec_indexer));
             prolog.addTheory(parseTheory(context, resourceId));
         } catch (InvalidTheoryException ex) {
             Log.e(TAG, "Prolog theory is not valid: " + ex.getMessage());
@@ -74,7 +75,7 @@ public class PrologAgentMind implements IPrologAgentMind {
     /**
      * Constructor used in MagpieService to recreate the mind
      */
-    public PrologAgentMind(String theory, StringECKDTreeIndexer indexer) {
+    public PrologAgentMind(String theory, ECKDTreeIndexer indexer) {
 
         index = indexer;
         prolog = new Prolog();
@@ -170,7 +171,7 @@ public class PrologAgentMind implements IPrologAgentMind {
     }
 
     @Override
-    public StringECKDTreeIndexer getECKDTree() {
+    public ECKDTreeIndexer getECKDTree() {
         return index;
     }
 
@@ -251,6 +252,8 @@ public class PrologAgentMind implements IPrologAgentMind {
             //Print the act and its solution
             Log.i(TAG, "act(A," + timeStamp + ").");
             Log.i(TAG, "act solution: " + infoAct.toString());
+
+            // TODO: Fix open alternatives
 
 			if (infoAct.isSuccess()) {
 				action = new LogicTupleEvent(infoAct.getSolution());

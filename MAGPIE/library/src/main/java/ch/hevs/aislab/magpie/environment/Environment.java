@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import ch.hevs.aislab.indexer.StringECKDTreeIndexer;
+import ch.hevs.aislab.indexer.ECKDTreeIndexer;
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
 import ch.hevs.aislab.magpie.android.MagpieActivity;
@@ -227,7 +227,7 @@ public class Environment extends Handler implements IEnvironment {
 				// Deserialize the mind's theory
 				String theory = (String) deserialize(agentName + MagpieAgent.THEORY_KEY);
 				// Deserialize the KDTree
-				StringECKDTreeIndexer indexer = (StringECKDTreeIndexer) deserialize(agentName + MagpieAgent.ECKDTREE_KEY);
+				ECKDTreeIndexer indexer = (ECKDTreeIndexer) deserialize(agentName + MagpieAgent.ECKDTREE_KEY);
 				// Register the mind into the body
 				PrologAgentMind mind = new PrologAgentMind(theory, indexer);
 				agent.setMind(mind);
