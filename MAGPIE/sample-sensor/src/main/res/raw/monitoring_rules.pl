@@ -1,29 +1,43 @@
-initiates_at(alert(first)=situation('DM treatment is not efective'),T):-
-	    last_two_weeks_ago(Tago,T),
-        not query_kd(happens_at(alert(first,'DM treatment is not efective'),Tev0), [Tago, T]),
-	    more_or_equals_to(2,(
-		        query_kd(happens_at(glucose(Value1),Tev1), [Tago, T]),
-		        Value1 >= 10
-	    )),
-        more_or_equals_to(1,(
-                query_kd(happens_at(weight(Value2),Tev2), [Tago, T]),
-                Value2 >= 87
-        )).
-
-initiates_at(alert(second)=situation('Brittle diabetes'),T):-
-        six_hours_ago(Tago,T),
-        not query_kd(happens_at(alert(second,'Brittle diabetes'),Tev0), [Tago, T]),
+% Example of a sequential rule
+initiates_at(alert(first)=situation('Brittle diabetes'),T):-
+        hours_ago(6,Tago,T),
+        not query_kd(happens_at(alert(first,'Brittle diabetes'),Tev0), [Tago, T]),
         query_kd(happens_at(glucose(Value1),Tev1), [Tago, T]),
         query_kd(happens_at(glucose(Value2),Tev2), [Tago, T]),
         Value1 =< 3.8,
         Value2 >= 8,
         Tev2 > Tev1.
 
-initiates_at(alert(third)=situation('pre-hypertension, consider lifestyle modification'),T):-
+% Example of a complex rule
+initiates_at(alert(second)=situation('pre-hypertension, consider lifestyle modification'),T):-
+        weeks_ago(1,Tago,T),
+        not query_kd(happens_at(alert(second,'pre-hypertension, consider lifestyle modification'),Tev0), [Tago, T]),
         more_or_equals_to(2,(
-                last_week_ago(Tago,T),
-                not query_kd(happens_at(alert(third,'pre-hypertension, consider lifestyle modification'),Tev0), [Tago, T]),
                 query_kd(happens_at(blood_pressure(Sys,Dias),Tev), [Tago, T]),
                 Sys >= 130,
-                Dias >= 80
+                Dias >= 80,
+                within_weeks(1,Tev,T)
+        )).
+
+initiates_at(alert(third)=situation('Gaining weight'),T):-
+        weeks_ago(1,Tago,T),
+        not query_kd(happens_at(alert(third,'Gaining weight'),Tev0), [Tago, T]),
+        query_kd(happens_at(weight(Value1),Tev1), [Tago, T]),
+        query_kd(happens_at(weight(Value2),Tev2), [Tago, T]),
+        Value1 =< 93.7,
+        Value2 >= 94.6,
+        Tev2 > Tev1.
+
+initiates_at(alert(fourth)=situation('DM treatment is not efective'),T):-
+	    weeks_ago(4,Tago,T),
+        not query_kd(happens_at(alert(fourth,'DM treatment is not efective'),Tev0), [Tago, T]),
+	    more_or_equals_to(2,(
+		        query_kd(happens_at(glucose(Value1),Tev1), [Tago, T]),
+		        Value1 >= 10,
+		        within_weeks(4,Tev1,T)
+	    )),
+        more_or_equals_to(1,(
+                query_kd(happens_at(weight(Value2),Tev2), [Tago, T]),
+                Value2 >= 87,
+                within_weeks(4,Tev2,T)
         )).
