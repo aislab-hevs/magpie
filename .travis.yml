@@ -1,4 +1,5 @@
 language: android
+jdk: oraclejdk8
 android:
   components:
     # Update Android SDK Tools
@@ -10,7 +11,7 @@ android:
     - extra-android-support
     - extra-android-m2repository
     - extra-google-m2repository
-  
+
 #before_install:
 #    - chmod +x gradlew
 
