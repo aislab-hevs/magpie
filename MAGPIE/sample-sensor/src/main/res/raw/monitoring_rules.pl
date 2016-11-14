@@ -9,9 +9,9 @@ initiates_at(alert(first)=situation('Brittle diabetes'),T):-
         Tev2 > Tev1.
 
 % Example of a complex rule
-initiates_at(alert(second)=situation('pre-hypertension, consider lifestyle modification'),T):-
+initiates_at(alert(second)=situation('Pre-hypertension'),T):-
         weeks_ago(1,Tago,T),
-        not query_kd(happens_at(alert(second,'pre-hypertension, consider lifestyle modification'),Tev0), [Tago, T]),
+        not query_kd(happens_at(alert(second,'Pre-hypertension'),Tev0), [Tago, T]),
         more_or_equals_to(2,(
                 query_kd(happens_at(blood_pressure(Sys,Dias),Tev), [Tago, T]),
                 Sys >= 130,
@@ -28,9 +28,9 @@ initiates_at(alert(third)=situation('Gaining weight'),T):-
         Value2 >= 94.6,
         Tev2 > Tev1.
 
-initiates_at(alert(fourth)=situation('DM treatment is not efective'),T):-
+initiates_at(alert(fourth)=situation('DM treatment is not effective'),T):-
 	    weeks_ago(4,Tago,T),
-        not query_kd(happens_at(alert(fourth,'DM treatment is not efective'),Tev0), [Tago, T]),
+        not query_kd(happens_at(alert(fourth,'DM treatment is not effective'),Tev0), [Tago, T]),
 	    more_or_equals_to(2,(
 		        query_kd(happens_at(glucose(Value1),Tev1), [Tago, T]),
 		        Value1 >= 10,
