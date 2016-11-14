@@ -1,4 +1,4 @@
-package ch.hevs.aislab.magpie.sample.activity;
+package ch.hevs.aislab.magpie.test.android;
 
 import android.test.ActivityInstrumentationTestCase2;
 
