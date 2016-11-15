@@ -3,14 +3,11 @@ package ch.hevs.aislab.magpie.test.android;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.lang.reflect.Method;
 
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
@@ -46,13 +43,14 @@ public class PrologAgentMindTest {
 
         // The mind perceives the first event
         agentMind.updatePerception(ev1);
-        agentMind.produceAction(tsEv1++);
+        agentMind.produceAction(tsEv1);
 
         // The mind perceives the second event
         agentMind.updatePerception(ev2);
-        LogicTupleEvent alert = (LogicTupleEvent) agentMind.produceAction(tsEv2++);
+        LogicTupleEvent alert = (LogicTupleEvent) agentMind.produceAction(tsEv2);
 
-        assertEquals(alert.toTuple(), "act(act(produce_alert(first,'Brittle diabetes'))," + tsEv2 + ")");
+        // Internally the PrologAgentMind increments the timestamp 1L, which corresponds to 1ms
+        assertEquals(alert.toTuple(), "act(act(produce_alert(first,'Brittle diabetes'))," + ++tsEv2 + ")");
     }
 
     @Test
@@ -69,13 +67,13 @@ public class PrologAgentMindTest {
 
         // The mind perceives the first event
         agentMind.updatePerception(ev1);
-        agentMind.produceAction(tsEv1++);
+        agentMind.produceAction(tsEv1);
 
         // The mind perceives the second event
         agentMind.updatePerception(ev2);
-        LogicTupleEvent alert = (LogicTupleEvent) agentMind.produceAction(tsEv2++);
+        LogicTupleEvent alert = (LogicTupleEvent) agentMind.produceAction(tsEv2);
 
-        assertEquals(alert.toTuple(), "act(act(produce_alert(second,'Pre-hypertension'))," + tsEv2 + ")");
+        assertEquals(alert.toTuple(), "act(act(produce_alert(second,'Pre-hypertension'))," + ++tsEv2 + ")");
 
         // Blood pressure event that happens after the alert and is within the one week time window
         LogicTupleEvent ev3 = new LogicTupleEvent("blood_pressure(134,83)");
@@ -83,7 +81,7 @@ public class PrologAgentMindTest {
         ev3.setTimeStamp(tsEv3);
 
         agentMind.updatePerception(ev3);
-        LogicTupleEvent noAlert = (LogicTupleEvent) agentMind.produceAction(tsEv3++);
+        LogicTupleEvent noAlert = (LogicTupleEvent) agentMind.produceAction(tsEv3);
 
         assertEquals(noAlert, null);
 
@@ -104,12 +102,12 @@ public class PrologAgentMindTest {
         ev3.setTimeStamp(tsEv3);
 
         agentMind.updatePerception(ev1);
-        agentMind.produceAction(tsEv1++);
+        agentMind.produceAction(tsEv1);
         agentMind.updatePerception(ev2);
-        agentMind.produceAction(tsEv2++);
+        agentMind.produceAction(tsEv2);
         agentMind.updatePerception(ev3);
-        LogicTupleEvent alert = (LogicTupleEvent) agentMind.produceAction(tsEv3++);
+        LogicTupleEvent alert = (LogicTupleEvent) agentMind.produceAction(tsEv3);
 
-        assertEquals(alert.toTuple(), "act(act(produce_alert(fourth,'DM treatment is not effective'))," + tsEv3 + ")");
+        assertEquals(alert.toTuple(), "act(act(produce_alert(fourth,'DM treatment is not effective'))," + ++tsEv3 + ")");
     }
 }
