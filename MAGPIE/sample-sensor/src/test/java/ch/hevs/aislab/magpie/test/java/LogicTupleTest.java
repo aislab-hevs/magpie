@@ -32,4 +32,17 @@ public class LogicTupleTest {
         String tupleFromString = bp3.toTuple();
         assertEquals(logicTuple, tupleFromString);
     }
+
+    @Test
+    public void getNameAndArguments() {
+
+        String name = "blood_pressure";
+        String arg1 = "Sys";
+        String arg2 = "Dias";
+        LogicTupleEvent ev = new LogicTupleEvent(name, arg1, arg2);
+
+        assertEquals(name, ev.getName());
+        assertEquals(arg1, ev.getArguments().get(0));
+        assertEquals(arg2, ev.getArguments().get(1));
+    }
 }
