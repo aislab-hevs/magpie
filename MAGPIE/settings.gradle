@@ -1,1 +1,1 @@
-include ':library', ':ECTreeIndexerAndroidLib-1.2', ':sample-sensor', ':sample-debs', ':ECTreeIndexerAndroidLib-1.2'
+include ':library', ':ECTreeIndexerAndroidLib-1.2', ':sample-sensor', ':sample-debs', ':paams-demo'
