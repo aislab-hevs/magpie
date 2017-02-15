@@ -10,7 +10,6 @@ public abstract class Value {
     protected long id;
     long timestamp;
     protected Type type;
-
     boolean marked;
 
 

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -344,6 +343,7 @@ public class AddValueFragment extends Fragment {
         singleValue.setValue(value);
         singleValue.setTimestamp(timestamp);
         singleValue.setType(type);
+        singleValue.setMarked(false);
         return singleValue;
     }
 

@@ -37,7 +37,7 @@ public class ListValuesFragment extends ListFragment {
     private static final String BUNDLE_KEY = "items";
 
     private Type type;
-    private SingleValueAdapter singleValueAdapter;
+    private static SingleValueAdapter singleValueAdapter;
     private SingleValueDAO singleValueDAO;
     private DoubleValueAdapter doubleValueAdapter;
     private DoubleValueDAO doubleValueDAO;
@@ -59,7 +59,6 @@ public class ListValuesFragment extends ListFragment {
         super.onAttach(context);
     }
 
-    //TODO: Needs to save the state of the single values in the Bundle. Otherwise the objects are lost when recreating the fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,15 +77,14 @@ public class ListValuesFragment extends ListFragment {
                     for (int i = 0; i < singleValues.length; i++) {
                         singleValueList.add(singleValues[i]);
                     }
-                    Log.i(TAG, "Restoring the state of the fragment");
-                    singleValueAdapter = new SingleValueAdapter(getActivity(), singleValueList);
+                    singleValueAdapter = new SingleValueAdapter(singleValueList);
                     break;
             }
         } else {
             switch (type) {
                 case GLUCOSE:
                 case WEIGHT:
-                    singleValueAdapter = new SingleValueAdapter(getActivity());
+                    singleValueAdapter = new SingleValueAdapter();
                     break;
             }
         }
@@ -100,7 +98,6 @@ public class ListValuesFragment extends ListFragment {
                     singleValueAdapter.addAllItems(singleValueDAO.getAllSingleValues(type));
                 }
                 setListAdapter(singleValueAdapter);
-                Log.i(TAG, "singleValueAdapter is " + singleValueAdapter.toString() + " in method onCreate()");
                 break;
             case BLOOD_PRESSURE:
                 doubleValueDAO = new DoubleValueDAO(getContext());
@@ -137,7 +134,6 @@ public class ListValuesFragment extends ListFragment {
                 } else if (type.equals(Type.WEIGHT)) {
                     valueHeaderTextView.setText("kg");
                 }
-                Log.i(TAG, "singleValueAdapter is " + singleValueAdapter.toString() + " in method onActivityCreated()");
                 break;
             case BLOOD_PRESSURE:
                 headerLayout = (LinearLayout) LayoutInflater
@@ -152,16 +148,16 @@ public class ListValuesFragment extends ListFragment {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i(TAG, "We got the click event!");
                 SingleValue singleValue = (SingleValue) singleValueAdapter.getItem(--position);
-                Log.i(TAG, "SingleValue " + singleValue.getId() + " is " + singleValue.toString() + " in onItemClick()");
                 ImageView checkImageView = (ImageView) view.findViewById(R.id.checkImageView);
+
                 if (singleValue.isMarked()) {
                     checkImageView.setImageResource(R.mipmap.btn_check_buttonless_off);
                     singleValue.setMarked(false);
-                } else
+                } else {
                     checkImageView.setImageResource(R.mipmap.btn_check_buttonless_on);
                     singleValue.setMarked(true);
+                }
             }
         });
     }
@@ -180,7 +176,6 @@ public class ListValuesFragment extends ListFragment {
 
     @Override
     public void onDestroy() {
-        Log.i(TAG, "Warning: onDestroy() was called!");
         super.onDestroy();
     }
 
@@ -189,7 +184,6 @@ public class ListValuesFragment extends ListFragment {
         switch (type) {
             case GLUCOSE:
             case WEIGHT:
-                Log.i("ListValuesFragment", "We are going to save the state of the " + type + " fragment!");
                 SingleValue[] items = singleValueAdapter.getItems();
                 outState.putParcelableArray(BUNDLE_KEY, items);
                 break;
@@ -221,10 +215,6 @@ public class ListValuesFragment extends ListFragment {
             case R.id.deleteGlucoseButton:
             case R.id.deleteWeightButton:
                 List<SingleValue> selectedItems = singleValueAdapter.getSelectedItems();
-
-                /***** DEBUG *****/
-                Log.i("onOptionsItemSelected", "Number of selected rows: " + selectedItems.size());
-                /***** DEBUG *****/
 
                 if (selectedItems.isEmpty()) {
                     Toast.makeText(getContext(), "Select the items to delete", Toast.LENGTH_LONG).show();
