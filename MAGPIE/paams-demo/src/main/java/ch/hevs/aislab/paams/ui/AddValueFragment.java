@@ -28,26 +28,24 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import ch.hevs.aislab.paams.connector.DoubleValueDAO;
-import ch.hevs.aislab.paams.connector.SingleValueDAO;
+import ch.hevs.aislab.paams.connector.ValueDAO;
 import ch.hevs.aislab.paams.model.DoubleValue;
 import ch.hevs.aislab.paams.model.SingleValue;
 import ch.hevs.aislab.paams.model.Type;
 import ch.hevs.aislab.paamsdemo.R;
-
 
 public class AddValueFragment extends Fragment {
 
     private static final String ARG_TYPE = "TYPE_OF_PHYSIOLOGICAL_VALUE";
 
     private Type type;
-    private SingleValueDAO singleValueDAO;
-    private DoubleValueDAO doubleValueDAO;
+    private ValueDAO valueDAO;
 
     private OnAddedNewMeasurementListener callback;
 
     public interface OnAddedNewMeasurementListener {
         void addSingleValue(SingleValue measurement);
+
         void addDoubleValue(DoubleValue measurement);
     }
 
@@ -83,80 +81,50 @@ public class AddValueFragment extends Fragment {
             type = Type.valueOf(getArguments().getString(ARG_TYPE));
         }
 
-        singleValueDAO = new SingleValueDAO(getActivity());
-        doubleValueDAO = new DoubleValueDAO(getActivity());
-
+        valueDAO = new ValueDAO(getActivity());
         setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = null;
-        TextInputLayout firstValueTextInputLayout;
-        TextInputLayout secondValueTextInputLayout; // Used for the diastolic blood pressure
-        EditText dateEditText = null;
-        EditText timeEditText = null;
-        Button cancelButton;
-        Button acceptButton;
         switch (type) {
             case GLUCOSE:
-                // Instantiate the UI elements
-                view = inflater.inflate(R.layout.fragment_add_single_value, container, false);
-                firstValueTextInputLayout = (TextInputLayout) view.findViewById(R.id.singleValueTextInputLayout);
-                dateEditText = (EditText) view.findViewById(R.id.dateEditText);
-                timeEditText = (EditText) view.findViewById(R.id.timeEditText);
-                cancelButton = (Button) view.findViewById(R.id.cancelButton);
-                acceptButton = (Button) view.findViewById(R.id.acceptButton);
-                // Set actions to the UI elements
-                firstValueTextInputLayout.setHint("Value [mmol/L]");
-                removeFocus(firstValueTextInputLayout);
-                setCancelAction(cancelButton, dateEditText, timeEditText, firstValueTextInputLayout);
-                setAcceptAction(acceptButton, dateEditText, timeEditText, firstValueTextInputLayout);
+                view = populateSingleValueRow(inflater, container, "Value [mmol/L]");
                 break;
             case BLOOD_PRESSURE:
                 view = inflater.inflate(R.layout.fragment_add_double_value, container, false);
-                firstValueTextInputLayout = (TextInputLayout) view.findViewById(R.id.firstValueTextInputLayout);
-                secondValueTextInputLayout = (TextInputLayout) view.findViewById(R.id.secondValueTextInputLayout);
-                dateEditText = (EditText) view.findViewById(R.id.dateEditText);
-                timeEditText = (EditText) view.findViewById(R.id.timeEditText);
-                cancelButton = (Button) view.findViewById(R.id.cancelButton);
-                acceptButton = (Button) view.findViewById(R.id.acceptButton);
+                TextInputLayout firstValueTextInputLayout = (TextInputLayout) view.findViewById(R.id.firstValueTextInputLayout);
+                TextInputLayout secondValueTextInputLayout = (TextInputLayout) view.findViewById(R.id.secondValueTextInputLayout);
+                EditText dateEditText = (EditText) view.findViewById(R.id.dateEditText);
+                EditText timeEditText = (EditText) view.findViewById(R.id.timeEditText);
+                Button cancelButton = (Button) view.findViewById(R.id.cancelButton);
+                Button acceptButton = (Button) view.findViewById(R.id.acceptButton);
                 firstValueTextInputLayout.setHint("Systolic [mmHg]");
                 secondValueTextInputLayout.setHint("Diastolic [mmHg]");
                 removeFocus(firstValueTextInputLayout, secondValueTextInputLayout);
                 setCancelAction(cancelButton, dateEditText, timeEditText, firstValueTextInputLayout, secondValueTextInputLayout);
                 setAcceptAction(acceptButton, dateEditText, timeEditText, firstValueTextInputLayout, secondValueTextInputLayout);
+                setDatePicker(dateEditText);
+                setTimePicker(timeEditText);
                 break;
             case WEIGHT:
-                view = inflater.inflate(R.layout.fragment_add_single_value, container, false);
-                firstValueTextInputLayout = (TextInputLayout) view.findViewById(R.id.singleValueTextInputLayout);
-                dateEditText = (EditText) view.findViewById(R.id.dateEditText);
-                timeEditText = (EditText) view.findViewById(R.id.timeEditText);
-                cancelButton = (Button) view.findViewById(R.id.cancelButton);
-                acceptButton = (Button) view.findViewById(R.id.acceptButton);
-                firstValueTextInputLayout.setHint("Value [kg]");
-                removeFocus(firstValueTextInputLayout);
-                setCancelAction(cancelButton, dateEditText, timeEditText, firstValueTextInputLayout);
-                setAcceptAction(acceptButton, dateEditText, timeEditText, firstValueTextInputLayout);
+                view = populateSingleValueRow(inflater, container, "Value [kg]");
                 break;
         }
-        setDatePicker(dateEditText);
-        setTimePicker(timeEditText);
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        singleValueDAO.open();
-        doubleValueDAO.open();
+        valueDAO.open();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        singleValueDAO.close();
-        doubleValueDAO.close();
+        valueDAO.close();
     }
 
     @Override
@@ -183,10 +151,10 @@ public class AddValueFragment extends Fragment {
                     month = calendar.get(Calendar.MONTH);
                     day = calendar.get(Calendar.DAY_OF_MONTH);
                 } else {
-                    year = Integer.parseInt(dateString.substring(6,10));
-                    month = Integer.parseInt(dateString.substring(3,5));
+                    year = Integer.parseInt(dateString.substring(6, 10));
+                    month = Integer.parseInt(dateString.substring(3, 5));
                     month--;
-                    day = Integer.parseInt(dateString.substring(0,2));
+                    day = Integer.parseInt(dateString.substring(0, 2));
                 }
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
@@ -216,8 +184,8 @@ public class AddValueFragment extends Fragment {
                     hour = calendar.get(Calendar.HOUR_OF_DAY);
                     minute = calendar.get(Calendar.MINUTE);
                 } else {
-                    hour = Integer.parseInt(timeString.substring(0,2));
-                    minute = Integer.parseInt(timeString.substring(3,5));
+                    hour = Integer.parseInt(timeString.substring(0, 2));
+                    minute = Integer.parseInt(timeString.substring(3, 5));
                 }
                 TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -235,8 +203,26 @@ public class AddValueFragment extends Fragment {
 
     }
 
+    private View populateSingleValueRow(LayoutInflater inflater, ViewGroup container, String valueUnits) {
+        // Instantiate the UI elements
+        View view = inflater.inflate(R.layout.fragment_add_single_value, container, false);
+        TextInputLayout firstValueTextInputLayout = (TextInputLayout) view.findViewById(R.id.singleValueTextInputLayout);
+        EditText dateEditText = (EditText) view.findViewById(R.id.dateEditText);
+        EditText timeEditText = (EditText) view.findViewById(R.id.timeEditText);
+        Button cancelButton = (Button) view.findViewById(R.id.cancelButton);
+        Button acceptButton = (Button) view.findViewById(R.id.acceptButton);
+        // Set actions to the UI elements
+        firstValueTextInputLayout.setHint(valueUnits);
+        removeFocus(firstValueTextInputLayout);
+        setCancelAction(cancelButton, dateEditText, timeEditText, firstValueTextInputLayout);
+        setAcceptAction(acceptButton, dateEditText, timeEditText, firstValueTextInputLayout);
+        setDatePicker(dateEditText);
+        setTimePicker(timeEditText);
+        return view;
+    }
+
     private void setCancelAction(Button cancelButton, final EditText dateEditText,
-                                 final EditText timeEditText, final TextInputLayout ... textInputLayouts) {
+                                 final EditText timeEditText, final TextInputLayout... textInputLayouts) {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -254,7 +240,7 @@ public class AddValueFragment extends Fragment {
     }
 
     private void setAcceptAction(Button acceptButton, final EditText dateEditText,
-                                 final EditText timeEditText, final TextInputLayout ... textInputLayouts) {
+                                 final EditText timeEditText, final TextInputLayout... textInputLayouts) {
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -268,13 +254,13 @@ public class AddValueFragment extends Fragment {
                     case WEIGHT:
                         SingleValue newSingleValue = newSingleValueInstance(textInputLayouts[0], dateEditText, timeEditText);
                         // Store the new glucose measurement in the database
-                        singleValueDAO.createSingleValue(newSingleValue);
+                        valueDAO.createValue(newSingleValue);
                         // Send it to the ListValuesFragment
                         callback.addSingleValue(newSingleValue);
                         break;
                     case BLOOD_PRESSURE:
                         DoubleValue newDoubleValue = newDoubleValueInstance(dateEditText, timeEditText, textInputLayouts);
-                        doubleValueDAO.createDoubleValue(newDoubleValue);
+                        valueDAO.createValue(newDoubleValue);
                         callback.addDoubleValue(newDoubleValue);
                         break;
                 }
@@ -292,8 +278,8 @@ public class AddValueFragment extends Fragment {
         });
     }
 
-    private void removeFocus(TextInputLayout ... textInputLayouts) {
-        for (TextInputLayout textInputLayout: textInputLayouts) {
+    private void removeFocus(TextInputLayout... textInputLayouts) {
+        for (TextInputLayout textInputLayout : textInputLayouts) {
             textInputLayout.getEditText().setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -310,7 +296,7 @@ public class AddValueFragment extends Fragment {
     }
 
     private boolean areValuesValid(EditText dateEditText, EditText timeEditText,
-                                   TextInputLayout ... textInputLayouts) {
+                                   TextInputLayout... textInputLayouts) {
         for (TextInputLayout textInputLayout : textInputLayouts) {
             String value = textInputLayout.getEditText().getText().toString();
             if (value.isEmpty()) {
@@ -348,7 +334,7 @@ public class AddValueFragment extends Fragment {
     }
 
     private DoubleValue newDoubleValueInstance(EditText dateEditText, EditText timeEditText,
-                                               TextInputLayout ... textInputLayouts) {
+                                               TextInputLayout... textInputLayouts) {
         String firstValueString = textInputLayouts[0].getEditText().getText().toString();
         String secondValueString = textInputLayouts[1].getEditText().getText().toString();
         int firstValue = Integer.valueOf(firstValueString);

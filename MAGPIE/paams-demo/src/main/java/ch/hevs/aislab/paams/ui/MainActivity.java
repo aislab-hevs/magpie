@@ -9,7 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import ch.hevs.aislab.paams.model.DoubleValue;
@@ -136,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements AddValueFragment.
         PhysioParamFragment.SectionsAdapter adapter =
                 (PhysioParamFragment.SectionsAdapter) fragment.getViewPager().getAdapter();
         ListValuesFragment listValuesFragment = (ListValuesFragment) adapter.getItem(0);
-        listValuesFragment.getSingleValueAdapter().addItem(measurement);
+        listValuesFragment.getValueAdapter().addItem(measurement);
     }
 
     @Override
@@ -146,6 +145,6 @@ public class MainActivity extends AppCompatActivity implements AddValueFragment.
         PhysioParamFragment.SectionsAdapter adapter =
                 (PhysioParamFragment.SectionsAdapter) fragment.getViewPager().getAdapter();
         ListValuesFragment listValuesFragment = (ListValuesFragment) adapter.getItem(0);
-        listValuesFragment.getDoubleValueAdapter().addItem(measurement);
+        listValuesFragment.getValueAdapter().addItem(measurement);
     }
 }

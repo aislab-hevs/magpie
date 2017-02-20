@@ -20,12 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.hevs.aislab.paams.connector.DoubleValueAdapter;
-import ch.hevs.aislab.paams.connector.DoubleValueDAO;
 import ch.hevs.aislab.paams.connector.SingleValueAdapter;
-import ch.hevs.aislab.paams.connector.SingleValueDAO;
+import ch.hevs.aislab.paams.connector.ValueAdapter;
+import ch.hevs.aislab.paams.connector.ValueDAO;
 import ch.hevs.aislab.paams.model.DoubleValue;
 import ch.hevs.aislab.paams.model.SingleValue;
 import ch.hevs.aislab.paams.model.Type;
+import ch.hevs.aislab.paams.model.Value;
 import ch.hevs.aislab.paamsdemo.R;
 
 
@@ -37,10 +38,9 @@ public class ListValuesFragment extends ListFragment {
     private static final String BUNDLE_KEY = "items";
 
     private Type type;
-    private static SingleValueAdapter singleValueAdapter;
-    private SingleValueDAO singleValueDAO;
-    private DoubleValueAdapter doubleValueAdapter;
-    private DoubleValueDAO doubleValueDAO;
+    private static ValueAdapter valueAdapter;
+    private ValueDAO valueDAO;
+
 
     public ListValuesFragment() {
 
@@ -73,39 +73,31 @@ public class ListValuesFragment extends ListFragment {
                 case GLUCOSE:
                 case WEIGHT:
                     SingleValue[] singleValues = (SingleValue[]) savedInstanceState.getParcelableArray(BUNDLE_KEY);
-                    List<SingleValue> singleValueList = new ArrayList<>();
+                    List<Value> singleValueList = new ArrayList<>();
                     for (int i = 0; i < singleValues.length; i++) {
                         singleValueList.add(singleValues[i]);
                     }
-                    singleValueAdapter = new SingleValueAdapter(singleValueList);
+                    valueAdapter = new SingleValueAdapter(singleValueList);
+                    break;
+                case BLOOD_PRESSURE:
+                    DoubleValue[] doubleValues = (DoubleValue[]) savedInstanceState.getParcelableArray(BUNDLE_KEY);
+                    List<Value> doubleValueList = new ArrayList<>();
+                    for (int i = 0; i < doubleValues.length; i++) {
+                        doubleValueList.add(doubleValues[i]);
+                    }
+                    valueAdapter = new DoubleValueAdapter(doubleValueList);
                     break;
             }
         } else {
             switch (type) {
                 case GLUCOSE:
                 case WEIGHT:
-                    singleValueAdapter = new SingleValueAdapter();
+                    valueAdapter = new SingleValueAdapter();
+                    break;
+                case BLOOD_PRESSURE:
+                    valueAdapter = new DoubleValueAdapter();
                     break;
             }
-        }
-
-        switch (type) {
-            case GLUCOSE:
-            case WEIGHT:
-                singleValueDAO = new SingleValueDAO(getActivity());
-                singleValueDAO.open();
-                if (singleValueAdapter.getCount() == 0) {
-                    singleValueAdapter.addAllItems(singleValueDAO.getAllSingleValues(type));
-                }
-                setListAdapter(singleValueAdapter);
-                break;
-            case BLOOD_PRESSURE:
-                doubleValueDAO = new DoubleValueDAO(getContext());
-                doubleValueDAO.open();
-                List<DoubleValue> listDoubleValues = doubleValueDAO.getAllDoubleValues();
-                doubleValueAdapter = new DoubleValueAdapter(getContext(), listDoubleValues);
-                setListAdapter(doubleValueAdapter);
-                break;
         }
 
         setHasOptionsMenu(true);
@@ -113,8 +105,7 @@ public class ListValuesFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list_values, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_list_values, container, false);
     }
 
     @Override
@@ -142,35 +133,42 @@ public class ListValuesFragment extends ListFragment {
                 firstValueHeaderTextView.setText("Systolic");
                 TextView secondValueHeaderTextView = (TextView) headerLayout.findViewById(R.id.secondValueHeaderTextView);
                 secondValueHeaderTextView.setText("Diastolic");
+                break;
         }
-        getListView().addHeaderView(headerLayout);
+
+        getListView().addHeaderView(headerLayout, null, false);
 
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SingleValue singleValue = (SingleValue) singleValueAdapter.getItem(--position);
+                Value value = (Value) valueAdapter.getItem(--position);
                 ImageView checkImageView = (ImageView) view.findViewById(R.id.checkImageView);
-
-                if (singleValue.isMarked()) {
+                if (value.isMarked()) {
                     checkImageView.setImageResource(R.mipmap.btn_check_buttonless_off);
-                    singleValue.setMarked(false);
+                    value.setMarked(false);
                 } else {
                     checkImageView.setImageResource(R.mipmap.btn_check_buttonless_on);
-                    singleValue.setMarked(true);
+                    value.setMarked(true);
                 }
             }
         });
     }
 
     @Override
-    public void onPause() {
-        switch (type) {
-            case GLUCOSE:
-            case WEIGHT:
-                //TODO: Save the marked state
-                singleValueDAO.close();
-                break;
+    public void onResume() {
+        super.onResume();
+        valueDAO = new ValueDAO(getActivity());
+        valueDAO.open();
+        if (valueAdapter.getCount() == 0) {
+            valueAdapter.addAllItems(valueDAO.getAllValues(type));
         }
+        setListAdapter(valueAdapter);
+    }
+
+    @Override
+    public void onPause() {
+        //TODO: Save the marked state
+        valueDAO.close();
         super.onPause();
     }
 
@@ -181,65 +179,38 @@ public class ListValuesFragment extends ListFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        switch (type) {
-            case GLUCOSE:
-            case WEIGHT:
-                SingleValue[] items = singleValueAdapter.getItems();
-                outState.putParcelableArray(BUNDLE_KEY, items);
-                break;
-        }
+        Value[] items = valueAdapter.getItems();
+        outState.putParcelableArray(BUNDLE_KEY, items);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        Log.i("ListValuesFragment", "Fragment type in onCreateOptionsMenu(): " + type.name());
         menu.clear();
-        switch (type) {
-            case GLUCOSE:
-                menuInflater.inflate(R.menu.menu_glucose_toolbar, menu);
-                break;
-            case BLOOD_PRESSURE:
-                menuInflater.inflate(R.menu.menu_blood_pressure_toolbar, menu);
-                break;
-            case WEIGHT:
-                menuInflater.inflate(R.menu.menu_weight_toolbar, menu);
-                break;
-        }
+        menuInflater.inflate(R.menu.menu_delete_value_toolbar, menu);
         super.onCreateOptionsMenu(menu, menuInflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        String value = null;
-        switch (item.getItemId()) {
-            case R.id.deleteGlucoseButton:
-            case R.id.deleteWeightButton:
-                List<SingleValue> selectedItems = singleValueAdapter.getSelectedItems();
-
-                if (selectedItems.isEmpty()) {
-                    Toast.makeText(getContext(), "Select the items to delete", Toast.LENGTH_LONG).show();
-                    return true;
-                } else {
-                    for (SingleValue singleValue : selectedItems) {
-                        singleValueAdapter.removeItem(singleValue);
-                        singleValueDAO.deleteSingleValue(singleValue);
-                    }
-                    //TODO: Notify number of deleted rows
-                    return true;
-                }
-            case R.id.deleteBloodPressureButton:
-                value = "blood pressure";
-                break;
+        Log.i("ListValuesFragment", "Fragment type: " + type.name());
+        List<Value> values = valueAdapter.getSelectedItems();
+        if (values.isEmpty()) {
+            Toast.makeText(getContext(), "Select the items to delete", Toast.LENGTH_LONG).show();
+            return true;
+        } else {
+            for (Value value : values) {
+                valueAdapter.removeItem(value);
+                valueDAO.deleteValue(value);
+            }
+            int size = values.size();
+            Toast.makeText(getContext(), "Deleted " + size + " entries", Toast.LENGTH_LONG).show();
+            return true;
         }
-        Toast.makeText(getContext(), "Button pressed from " + value + " context", Toast.LENGTH_LONG).show();
-        return true;
     }
 
-    public SingleValueAdapter getSingleValueAdapter() {
-        return singleValueAdapter;
-    }
-
-    public DoubleValueAdapter getDoubleValueAdapter() {
-        return doubleValueAdapter;
+    public ValueAdapter getValueAdapter() {
+        return valueAdapter;
     }
 }
