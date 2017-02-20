@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.media.MediaBrowserCompat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -304,6 +305,14 @@ public class AddValueFragment extends Fragment {
                 return false;
             }
         }
+        if (textInputLayouts.length == 2) {
+            int sys = Integer.parseInt(textInputLayouts[0].getEditText().getText().toString());
+            int dias = Integer.parseInt(textInputLayouts[1].getEditText().getText().toString());
+            if (dias > sys) {
+                Toast.makeText(getActivity(), "Systolic value must be grater then diastolic one", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
         if (dateEditText.getText().toString().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the date of the measurement", Toast.LENGTH_LONG).show();
             return false;
@@ -352,7 +361,7 @@ public class AddValueFragment extends Fragment {
         String dateString = dateEditText.getText().toString();
         String timeString = timeEditText.getText().toString();
         String timestampString = dateString + " " + timeString;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy H:mm", Locale.getDefault());
         long timestamp = 0;
         try {
             Date parsedDate = dateFormat.parse(timestampString);
