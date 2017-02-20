@@ -100,6 +100,13 @@ public class ListValuesFragment extends ListFragment {
             }
         }
 
+        valueDAO = new ValueDAO(getActivity());
+        valueDAO.open();
+        if (valueAdapter.getCount() == 0) {
+            valueAdapter.addAllItems(valueDAO.getAllValues(type));
+        }
+        setListAdapter(valueAdapter);
+
         setHasOptionsMenu(true);
     }
 
@@ -155,25 +162,9 @@ public class ListValuesFragment extends ListFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        valueDAO = new ValueDAO(getActivity());
-        valueDAO.open();
-        if (valueAdapter.getCount() == 0) {
-            valueAdapter.addAllItems(valueDAO.getAllValues(type));
-        }
-        setListAdapter(valueAdapter);
-    }
-
-    @Override
-    public void onPause() {
+    public void onDestroy() {
         //TODO: Save the marked state
         valueDAO.close();
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
         super.onDestroy();
     }
 
