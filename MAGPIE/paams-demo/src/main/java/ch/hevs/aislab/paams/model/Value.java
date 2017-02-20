@@ -1,11 +1,13 @@
 package ch.hevs.aislab.paams.model;
 
 
+import android.os.Parcelable;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public abstract class Value {
+public abstract class Value implements Parcelable {
 
     protected long id;
     long timestamp;
