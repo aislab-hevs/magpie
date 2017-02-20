@@ -5,75 +5,23 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ch.hevs.aislab.paams.model.SingleValue;
+import ch.hevs.aislab.paams.model.Value;
 import ch.hevs.aislab.paamsdemo.R;
 
-public class SingleValueAdapter extends BaseAdapter {
-
-    private List<SingleValue> items;
-
+public class SingleValueAdapter extends ValueAdapter {
 
     public SingleValueAdapter() {
-        this.items = new ArrayList<>();
+        super();
     }
 
-    public SingleValueAdapter(List<SingleValue> items) {
-        this.items = items;
-    }
-
-    public void addItem(SingleValue item) {
-        items.add(item);
-        notifyDataSetChanged();
-    }
-
-    public void addAllItems(List<SingleValue> items) {
-        this.items = items;
-        notifyDataSetChanged();
-    }
-
-    public void removeItem(SingleValue item) {
-        items.remove(item);
-        notifyDataSetChanged();
-    }
-
-    public SingleValue[] getItems() {
-        SingleValue[] items = new SingleValue[this.items.size()];
-        for (int i = 0; i < this.items.size(); i++) {
-            items[i] = this.items.get(i);
-        }
-        return items;
-    }
-
-    public List<SingleValue> getSelectedItems() {
-        List<SingleValue> selectedItems = new ArrayList<>();
-        for (SingleValue singleValue : items) {
-            if (singleValue.isMarked()) {
-                selectedItems.add(singleValue);
-            }
-        }
-        return selectedItems;
-    }
-
-    @Override
-    public int getCount() {
-        return items.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return items.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return items.get(position).getId();
+    public SingleValueAdapter(List<Value> items) {
+        super(items);
     }
 
     @Override
@@ -84,7 +32,7 @@ public class SingleValueAdapter extends BaseAdapter {
         }
 
         // Populate the UI items with the values of the Object
-        final SingleValue singleValue = items.get(position);
+        final SingleValue singleValue = (SingleValue) items.get(position);
 
         TextView dateTextView = (TextView) convertView.findViewById(R.id.dateTextView);
         dateTextView.setText(singleValue.getStringTimestamp("dd.MM.yyyy"));
