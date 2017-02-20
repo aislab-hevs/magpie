@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/deleteWeightButton"
+        android:id="@+id/deleteValueButton"
         android:icon="@android:drawable/ic_menu_delete"
         android:title="Remove selected entries"
         app:showAsAction="always" />

@@ -13,13 +13,14 @@ import java.util.List;
 import ch.hevs.aislab.paams.db.DBHelper;
 import ch.hevs.aislab.paams.model.SingleValue;
 import ch.hevs.aislab.paams.model.Type;
+import ch.hevs.aislab.paams.model.Value;
 
-public class SingleValueDAO {
+public class ValueDAO {
 
     private SQLiteDatabase database;
     private DBHelper dbHelper;
 
-    public SingleValueDAO(Context context) {
+    public ValueDAO(Context context) {
         dbHelper = new DBHelper(context);
     }
 
@@ -65,8 +66,8 @@ public class SingleValueDAO {
         }
     }
 
-    public List<SingleValue> getAllSingleValues(Type type) {
-        List<SingleValue> items = new ArrayList<>();
+    public List<Value> getAllSingleValues(Type type) {
+        List<Value> items = new ArrayList<>();
         Cursor cursor = null;
         switch (type) {
             case GLUCOSE:
