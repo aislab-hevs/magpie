@@ -23,8 +23,6 @@ import ch.hevs.aislab.paams.connector.DoubleValueAdapter;
 import ch.hevs.aislab.paams.connector.SingleValueAdapter;
 import ch.hevs.aislab.paams.connector.ValueAdapter;
 import ch.hevs.aislab.paams.connector.ValueDAO;
-import ch.hevs.aislab.paams.model.DoubleValue;
-import ch.hevs.aislab.paams.model.SingleValue;
 import ch.hevs.aislab.paams.model.Type;
 import ch.hevs.aislab.paams.model.Value;
 import ch.hevs.aislab.paamsdemo.R;
@@ -68,27 +66,7 @@ public class ListValuesFragment extends ListFragment {
 
         Log.i(TAG, "onCreate() from " + type);
 
-        if (savedInstanceState != null) {
-            switch (type) {
-                case GLUCOSE:
-                case WEIGHT:
-                    SingleValue[] singleValues = (SingleValue[]) savedInstanceState.getParcelableArray(BUNDLE_KEY);
-                    List<Value> singleValueList = new ArrayList<>();
-                    for (int i = 0; i < singleValues.length; i++) {
-                        singleValueList.add(singleValues[i]);
-                    }
-                    valueAdapter = new SingleValueAdapter(singleValueList);
-                    break;
-                case BLOOD_PRESSURE:
-                    DoubleValue[] doubleValues = (DoubleValue[]) savedInstanceState.getParcelableArray(BUNDLE_KEY);
-                    List<Value> doubleValueList = new ArrayList<>();
-                    for (int i = 0; i < doubleValues.length; i++) {
-                        doubleValueList.add(doubleValues[i]);
-                    }
-                    valueAdapter = new DoubleValueAdapter(doubleValueList);
-                    break;
-            }
-        } else {
+        if (savedInstanceState == null) {
             switch (type) {
                 case GLUCOSE:
                 case WEIGHT:
@@ -97,6 +75,23 @@ public class ListValuesFragment extends ListFragment {
                 case BLOOD_PRESSURE:
                     valueAdapter = new DoubleValueAdapter();
                     break;
+            }
+        } else {
+            if (savedInstanceState.getParcelableArray(BUNDLE_KEY) != null) {
+                Value[] values = (Value[]) savedInstanceState.getParcelableArray(BUNDLE_KEY);
+                List<Value> valuesList = new ArrayList<>();
+                for (int i = 0; i < values.length; i++) {
+                    valuesList.add(values[i]);
+                }
+                switch (type) {
+                    case GLUCOSE:
+                    case WEIGHT:
+                        valueAdapter = new SingleValueAdapter(valuesList);
+                        break;
+                    case BLOOD_PRESSURE:
+                        valueAdapter = new DoubleValueAdapter(valuesList);
+                        break;
+                }
             }
         }
 
@@ -171,7 +166,10 @@ public class ListValuesFragment extends ListFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Value[] items = valueAdapter.getItems();
-        outState.putParcelableArray(BUNDLE_KEY, items);
+        Log.i("ListValuesFragment", "Number of items: " + items.length);
+        if (items.length > 0) {
+            outState.putParcelableArray(BUNDLE_KEY, items);
+        }
         super.onSaveInstanceState(outState);
     }
 
