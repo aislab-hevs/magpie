@@ -91,8 +91,9 @@ public class PhysioParamFragment extends Fragment {
 
     private void populateViewPager(ViewPager viewPager) {
         SectionsAdapter adapter = new SectionsAdapter(getFragmentManager());
-        adapter.addFragment(ListValuesFragment.newInstance(type), "Past Values");
-        adapter.addFragment(AddValueFragment.newInstance(type), "New Value");
+        adapter.addFragment(ListValuesFragment.newInstance(type), "Values");
+        adapter.addFragment(AddValueFragment.newInstance(type), "Add");
+        adapter.addFragment(RuleFragment.newInstance(type), "Rule");
         viewPager.setAdapter(adapter);
     }
 
