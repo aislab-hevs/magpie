@@ -36,7 +36,7 @@ public class DoubleValueAdapter extends ValueAdapter {
         TextView dateTextView = (TextView) convertView.findViewById(R.id.dateTextView);
         dateTextView.setText(doubleValue.getStringTimestamp("dd.MM.yyyy"));
         TextView timeTextView = (TextView) convertView.findViewById(R.id.timeTextView);
-        timeTextView.setText(doubleValue.getStringTimestamp("HH:mm"));
+        timeTextView.setText(doubleValue.getStringTimestamp("H:mm"));
         TextView firstValueTextView = (TextView) convertView.findViewById(R.id.firstValueTextView);
         firstValueTextView.setText(String.valueOf(doubleValue.getFirstValue()));
         TextView secondValueTextView = (TextView) convertView.findViewById(R.id.secondValueTextView);
