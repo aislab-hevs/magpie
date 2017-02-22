@@ -4,7 +4,6 @@ package ch.hevs.aislab.magpie.debs.agent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
@@ -39,7 +38,7 @@ public class GlucoseBehavior extends Behavior {
         LogicTupleEvent lte = (LogicTupleEvent) event;
         double value = Double.parseDouble(lte.getArguments().get(0));
 
-        GlucoseAlert glucose = new GlucoseAlert(value, lte.getTimeStamp(), GlucoseAlert.Type.UNKNOWN);
+        GlucoseAlert glucose = new GlucoseAlert(value, lte.getTimestamp(), GlucoseAlert.Type.UNKNOWN);
         if (value < HYPO_THRESHOLD) {
             showToastMessage("ALERT: Hypoglycemia detected!");
             glucose.setType(GlucoseAlert.Type.HYPOGLYCEMIA);

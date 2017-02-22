@@ -41,7 +41,6 @@ public class AlertsActivity extends ListActivity {
         progress = ProgressDialog.show(this, "", "Loading alerts ...", true);
         alertsAdapter = new AlertsListAdapter(this);
         downloadAlerts(publisher.getId());
-
     }
 
     private void downloadAlerts(final long pubId) {

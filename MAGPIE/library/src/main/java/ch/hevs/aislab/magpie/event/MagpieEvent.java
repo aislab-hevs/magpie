@@ -3,22 +3,32 @@ package ch.hevs.aislab.magpie.event;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class MagpieEvent implements Parcelable {
 
-	private long timeStamp;
+	private long timestamp;
 	protected String type;
 	 
 	
 	protected MagpieEvent() {
-		this.timeStamp = System.currentTimeMillis();
+		this.timestamp = System.currentTimeMillis();
 	}
 
-	public long getTimeStamp() {
-		return timeStamp;
+
+    public String getStringTimestamp(String format) {
+        Date date = new Date(timestamp);
+        return new SimpleDateFormat(format, Locale.getDefault()).format(date);
+    }
+
+	public long getTimestamp() {
+		return timestamp;
 	}
 
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
 	public String getType() { 
@@ -32,7 +42,7 @@ public class MagpieEvent implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeLong(timeStamp);
+        out.writeLong(timestamp);
         out.writeString(type);
     }
 
@@ -49,7 +59,7 @@ public class MagpieEvent implements Parcelable {
     };
 
     private MagpieEvent(Parcel in) {
-        timeStamp = in.readLong();
+        timestamp = in.readLong();
         type = in.readString();
     }
 }

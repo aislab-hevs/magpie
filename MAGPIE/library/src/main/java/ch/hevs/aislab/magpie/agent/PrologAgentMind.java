@@ -176,21 +176,19 @@ public class PrologAgentMind implements IPrologAgentMind {
     }
 
 	/**
-	 * This perception in the Prolog agent is going to be
-	 * processed only in the case it is a LogicTuple. Events
-	 * that are not LogicTuples cannot be handled by this
-	 * particular mind. We suggest to use the SubsumptionMind
-	 * to work with events that are not logic tuples.
+	 * This perception in the Prolog agent is going to be processed only in the case it is a
+     * LogicTuple. Events that are not LogicTuples cannot be handled by this particular mind.
+     * We suggest to use the SubsumptionMind to work with events that are not logic tuples.
 	 */
 	@Override
 	public void updatePerception(MagpieEvent event) {		
 		if(event instanceof LogicTupleEvent) {
 			try {
                 LogicTupleEvent ev = (LogicTupleEvent) event;
-				SolveInfo infoPerceive = prolog.solve("perceive(" + ev.toTuple() + "," + ev.getTimeStamp() + ").");
+				SolveInfo infoPerceive = prolog.solve("perceive(" + ev.toTuple() + "," + ev.getTimestamp() + ").");
 
                 // Print the perception and its solution
-                Log.i(TAG, "perceive(" + ev.toTuple() + "," + ev.getTimeStamp() + ").");
+                Log.i(TAG, "perceive(" + ev.toTuple() + "," + ev.getTimestamp() + ").");
                 Log.i(TAG, "perceive solution: " + infoPerceive.toString());
 
 			} catch (MalformedGoalException ex) {
@@ -244,7 +242,7 @@ public class PrologAgentMind implements IPrologAgentMind {
 	public MagpieEvent produceAction(long timeStamp) {
 		
 		LogicTupleEvent action = null;
-		timeStamp = timeStamp + 1;
+		++timeStamp;
 
 		try {
 			SolveInfo infoAct = prolog.solve("act(A," + timeStamp + ").");
@@ -257,7 +255,8 @@ public class PrologAgentMind implements IPrologAgentMind {
 
 			if (infoAct.isSuccess()) {
 				action = new LogicTupleEvent(infoAct.getSolution());
-			} 
+                // TODO: Set the proper timestamp to the alert
+			}
 		} catch (MalformedGoalException ex) {
 			Log.e(TAG, "MalformedGoalException: " + ex.getMessage());
 		} catch (NoSolutionException ex) {

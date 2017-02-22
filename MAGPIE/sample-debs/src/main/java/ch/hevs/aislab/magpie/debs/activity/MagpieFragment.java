@@ -88,7 +88,7 @@ public class MagpieFragment extends Fragment implements View.OnClickListener {
 
         String value = Double.toString(measurement.value);
         LogicTupleEvent lte = new LogicTupleEvent(type, value);
-        lte.setTimeStamp(measurement.timestamp.toDate().getTime());
+        lte.setTimestamp(measurement.timestamp.toDate().getTime());
         ((PublisherActivity) getActivity()).sendEvent(lte);
     }
 

@@ -26,14 +26,14 @@ import java.util.regex.Pattern;
 
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
-import ch.hevs.aislab.magpie.android.MagpieActivity;
+import ch.hevs.aislab.magpie.android.MagpieActivityBH;
 import ch.hevs.aislab.magpie.behavior.PriorityBehaviorAgentMind;
 import ch.hevs.aislab.magpie.bioharness.BioHarnessHandler;
 import ch.hevs.aislab.magpie.environment.Services;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 
 
-public class MainActivity extends MagpieActivity {
+public class MainActivity extends MagpieActivityBH {
 
     private static final String FRAG_TAG_DATE_PICKER = "datePickerDialogFragment";
     private static final String FRAG_TAG_TIME_PICKER = "timePickerDialogFragment";
@@ -109,7 +109,7 @@ public class MainActivity extends MagpieActivity {
             return;
         }
         LogicTupleEvent lte = new LogicTupleEvent(type, value);
-        lte.setTimeStamp(timestamp.timestamp.toDate().getTime());
+        lte.setTimestamp(timestamp.timestamp.toDate().getTime());
         sendEvent(lte);
 
         editText.setText("");

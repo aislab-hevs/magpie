@@ -123,7 +123,7 @@ public class MagpieAgent implements IAgentBody, Serializable {
 		//do something with the environment
         for (int i=0; i<this.events.size(); i++) {
             MagpieEvent alert = this.myMind.produceAction(
-                    this.events.poll().getTimeStamp()
+                    this.events.poll().getTimestamp()
             );
             if (alert != null) {
                 this.mEnv.registerAlert(alert);
