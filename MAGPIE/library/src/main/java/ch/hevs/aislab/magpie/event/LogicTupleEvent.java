@@ -26,7 +26,20 @@ public class LogicTupleEvent extends MagpieEvent {
     }
 
     /**
-     * Creates a logic tuple with format: name(arg1,arg2,...,argN)
+     * Creates a logic tuple with format: name(arg1,arg2,...,argN), and assigns the timestamp to the
+     * event
+     * @param timestamp
+     * @param name
+     * @param args
+     */
+    public LogicTupleEvent(long timestamp, String name, String ... args) {
+        this(name, args);
+        this.setTimestamp(timestamp);
+    }
+
+    /**
+     * Creates a logic tuple with format: name(arg1,arg2,...,argN), and assigns the current timestamp
+     * to the event
      * @param name
      * @param args
      */
