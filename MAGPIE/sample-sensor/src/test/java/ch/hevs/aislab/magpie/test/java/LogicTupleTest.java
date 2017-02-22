@@ -45,4 +45,19 @@ public class LogicTupleTest {
         assertEquals(arg1, ev.getArguments().get(0));
         assertEquals(arg2, ev.getArguments().get(1));
     }
+
+    @Test
+    public void getTimestampAsString() {
+
+        long timestamp = System.currentTimeMillis();
+
+        LogicTupleEvent ev1 = new LogicTupleEvent(timestamp, "glucose", "5.5");
+        LogicTupleEvent ev2 = new LogicTupleEvent("glucose", "5.5");
+
+        String dateEv1 = ev1.getStringTimestamp("dd.MM.yyyy");
+        String dateEv2 = ev2.getStringTimestamp("dd.MM.yyyy");
+
+        // Checks that both dates are the same, so the test might fail if it runs around midnight
+        assertEquals(dateEv1, dateEv2);
+    }
 }
