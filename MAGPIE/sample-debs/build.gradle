@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "23.0.3"
     //Android 6.0 release has removed support for the Apache HTTP client.
     //Use HttpURLConnection class instead.
     //To continue using the Apache HTTP APIs we have to include the compile-time dependency
@@ -11,8 +11,8 @@ android {
 
     defaultConfig {
         applicationId "ch.hevs.aislab.magpie.debs"
-        minSdkVersion 16
-        targetSdkVersion 23
+        minSdkVersion 18
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
@@ -36,8 +36,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.android.support:design:25.1.1'
     compile 'com.google.android.gms:play-services-gcm:7.5.0'
     compile 'com.google.guava:guava:18.0'
     compile 'commons-io:commons-io:2.4'

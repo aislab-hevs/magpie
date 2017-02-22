@@ -92,7 +92,7 @@ public class GcmMessageHandler extends GcmListenerService {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("MAGPIE Notification")
                 .setContentText("Subscription request from " + subUsername)
-                .addAction(R.drawable.abc_ic_clear_mtrl_alpha, "Reject", rejectPendingIntent)
+                .addAction(R.drawable.abc_ic_clear_material, "Reject", rejectPendingIntent)
                 .addAction(R.drawable.ic_done_black_24dp, "Accept", acceptPendingIntent);
 
         Notification notification = notificationBuilder.build();
