@@ -1,7 +1,7 @@
 % Example of a sequential rule
-initiates_at(alert(first)=situation('Brittle diabetes'),T):-
+initiates_at(alert(first)=situation('brittle diabetes'),T):-
         hours_ago(6,Tago,T),
-        not query_kd(happens_at(alert(first,'Brittle diabetes'),Tev0), [Tago, T]),
+        not query_kd(happens_at(alert(first,'brittle diabetes'),Tev0), [Tago, T]),
         query_kd(happens_at(glucose(Value1),Tev1), [Tago, T]),
         query_kd(happens_at(glucose(Value2),Tev2), [Tago, T]),
         Value1 =< 3.8,
@@ -9,9 +9,9 @@ initiates_at(alert(first)=situation('Brittle diabetes'),T):-
         Tev2 > Tev1.
 
 % Example of a complex rule
-initiates_at(alert(second)=situation('Pre-hypertension'),T):-
+initiates_at(alert(second)=situation('pre-hypertension'),T):-
         weeks_ago(1,Tago,T),
-        not query_kd(happens_at(alert(second,'Pre-hypertension'),Tev0), [Tago, T]),
+        not query_kd(happens_at(alert(second,'pre-hypertension'),Tev0), [Tago, T]),
         more_or_equals_to(2,(
                 query_kd(happens_at(blood_pressure(Sys,Dias),Tev), [Tago, T]),
                 Sys >= 130,

@@ -17,10 +17,9 @@ import static org.junit.Assert.assertEquals;
 
 
 @RunWith(AndroidJUnit4.class)
-@SmallTest
 public class PrologAgentMindTest {
 
-    PrologAgentMind agentMind;
+    private PrologAgentMind agentMind;
 
     @Before
     public void initAgentMind() {
@@ -50,7 +49,7 @@ public class PrologAgentMindTest {
         LogicTupleEvent alert = (LogicTupleEvent) agentMind.produceAction(tsEv2);
 
         // Internally the PrologAgentMind increments the timestamp 1L, which corresponds to 1ms
-        assertEquals(alert.toTuple(), "act(act(produce_alert(first,'Brittle diabetes'))," + ++tsEv2 + ")");
+        assertEquals(alert.toTuple(), "act('brittle diabetes'," + ++tsEv2 + ")");
     }
 
     @Test
@@ -73,7 +72,7 @@ public class PrologAgentMindTest {
         agentMind.updatePerception(ev2);
         LogicTupleEvent alert = (LogicTupleEvent) agentMind.produceAction(tsEv2);
 
-        assertEquals(alert.toTuple(), "act(act(produce_alert(second,'Pre-hypertension'))," + ++tsEv2 + ")");
+        assertEquals(alert.toTuple(), "act('pre-hypertension'," + ++tsEv2 + ")");
 
         // Blood pressure event that happens after the alert and is within the one week time window
         LogicTupleEvent ev3 = new LogicTupleEvent("blood_pressure(134,83)");
@@ -84,8 +83,6 @@ public class PrologAgentMindTest {
         LogicTupleEvent noAlert = (LogicTupleEvent) agentMind.produceAction(tsEv3);
 
         assertEquals(noAlert, null);
-
-
     }
 
     @Test
@@ -108,6 +105,6 @@ public class PrologAgentMindTest {
         agentMind.updatePerception(ev3);
         LogicTupleEvent alert = (LogicTupleEvent) agentMind.produceAction(tsEv3);
 
-        assertEquals(alert.toTuple(), "act(act(produce_alert(fourth,'DM treatment is not effective'))," + ++tsEv3 + ")");
+        assertEquals(alert.toTuple(), "act('DM treatment is not effective'," + ++tsEv3 + ")");
     }
 }
