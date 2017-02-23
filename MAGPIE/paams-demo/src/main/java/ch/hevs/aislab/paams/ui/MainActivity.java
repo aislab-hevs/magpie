@@ -1,27 +1,34 @@
 package ch.hevs.aislab.paams.ui;
 
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import ch.hevs.aislab.magpie.agent.MagpieAgent;
+import ch.hevs.aislab.magpie.agent.PrologAgentMind;
+import ch.hevs.aislab.magpie.android.MagpieActivity;
+import ch.hevs.aislab.magpie.environment.Services;
+import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.paams.model.DoubleValue;
 import ch.hevs.aislab.paams.model.SingleValue;
 import ch.hevs.aislab.paams.model.Type;
+import ch.hevs.aislab.paams.model.Value;
 import ch.hevs.aislab.paamsdemo.R;
 
-public class MainActivity extends AppCompatActivity implements AddValueFragment.OnAddedNewMeasurementListener {
+public class MainActivity extends MagpieActivity implements
+        AddValueFragment.OnAddedNewMeasurementListener, AlertFragment.OnFragmentInteractionListener {
 
-    private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements AddValueFragment.
     }
 
     private void setupToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
@@ -51,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements AddValueFragment.
     }
 
     private void setNavigationView() {
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
         if (navigationView != null) {
             prepareDrawer(navigationView);
@@ -83,13 +90,16 @@ public class MainActivity extends AppCompatActivity implements AddValueFragment.
                 genericFragment = PhysioParamFragment.newInstance(Type.GLUCOSE);
                 fragmentTag = Type.GLUCOSE.name();
                 break;
-            case R.id.item_bloodpressure:
+            case R.id.item_blood_pressure:
                 genericFragment = PhysioParamFragment.newInstance(Type.BLOOD_PRESSURE);
                 fragmentTag = Type.BLOOD_PRESSURE.name();
                 break;
             case R.id.item_weight:
                 genericFragment = PhysioParamFragment.newInstance(Type.WEIGHT);
                 fragmentTag = Type.WEIGHT.name();
+                break;
+            case R.id.item_alerts:
+                genericFragment = AlertFragment.newInstance("", "");
                 break;
         }
 
@@ -136,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements AddValueFragment.
                 (PhysioParamFragment.SectionsAdapter) fragment.getViewPager().getAdapter();
         ListValuesFragment listValuesFragment = (ListValuesFragment) adapter.getItem(0);
         listValuesFragment.getValueAdapter().addItem(measurement);
+        // Send also the measurement to MAGPIE
+        sendEvent(measurement);
     }
 
     @Override
@@ -146,5 +158,46 @@ public class MainActivity extends AppCompatActivity implements AddValueFragment.
                 (PhysioParamFragment.SectionsAdapter) fragment.getViewPager().getAdapter();
         ListValuesFragment listValuesFragment = (ListValuesFragment) adapter.getItem(0);
         listValuesFragment.getValueAdapter().addItem(measurement);
+        // Send also the measurement to MAGPIE
+        sendEvent(measurement);
+    }
+
+    /**
+     * MAGPIE related methods
+     */
+    @Override
+    public void onEnvironmentConnected() {
+        MagpieAgent agent = new MagpieAgent("demo-agent", Services.LOGIC_TUPLE);
+        PrologAgentMind mind = new PrologAgentMind(getApplicationContext(), R.raw.demo_rules);
+        agent.setMind(mind);
+        registerAgent(agent);
+    }
+
+    @Override
+    public void onAlertProduced(LogicTupleEvent alert) {
+        Log.i("MainActivity", "Alert name: " + alert.getName());
+        Log.i("MainActivity", "Alert tuple: " + alert.toTuple());
+        Log.i("MainActivity" , alert.getArguments().get(0));
+        Log.i("MainActivity", "Alert date: " + alert.getStringTimestamp("dd.MM.yyyy H:mm"));
+    }
+
+    private void sendEvent(Value measurement) {
+        LogicTupleEvent event = null;
+        long timestamp = measurement.getTimestamp();
+        String name = measurement.getType().name().toLowerCase();
+        if (measurement instanceof SingleValue) {
+            String value = String.valueOf(((SingleValue)measurement).getValue());
+            event = new LogicTupleEvent(timestamp, name, value);
+        } else if (measurement instanceof DoubleValue) {
+            String sys = String.valueOf(((DoubleValue)measurement).getFirstValue());
+            String dias = String.valueOf(((DoubleValue)measurement).getSecondValue());
+            event = new LogicTupleEvent(timestamp, name, sys, dias);
+        }
+        sendEvent(event);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/physio_params_group"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/item_glucose"
             android:checked="true"
             android:icon="@drawable/ic_syringe"
             android:title="@string/glucose" />
         <item
-            android:id="@+id/item_bloodpressure"
+            android:id="@+id/item_blood_pressure"
             android:icon="@drawable/ic_pressure"
             android:title="@string/blood_pressure" />
         <item
             android:id="@+id/item_weight"
             android:icon="@drawable/ic_weight"
             android:title="@string/weight" />
+    </group>
+
+    <group android:id="@+id/bottom_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/item_alerts"
+            android:icon="@drawable/ic_siren"
+            android:title="Alerts" />
     </group>
 
 </menu>
