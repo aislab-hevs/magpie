@@ -16,13 +16,13 @@ perceive(P,T):-
 
 act(A,T):-
     holds_at(alert(Number)=situation(Something),T),
-    A = act(produce_alert(Number,Something)),
+    A = Something,
     not Something = no_alert,
-    revise_me(A,T).
+    revise_me(A,Number,T).
 
 
-revise_me(A,T):-!,
-    A = act(produce_alert(Number,Something)),
+revise_me(A,Number,T):-!,
+    A = Something,
     add(happensAt(alert(Number,Something),T)).
 
 initiates_at(alert(Number)=situation(no_alert),T):-
