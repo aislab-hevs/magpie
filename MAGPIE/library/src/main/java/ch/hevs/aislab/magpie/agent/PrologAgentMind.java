@@ -239,23 +239,23 @@ public class PrologAgentMind implements IPrologAgentMind {
 	}
 
     @Override
-	public MagpieEvent produceAction(long timeStamp) {
+	public MagpieEvent produceAction(long timestamp) {
 		
 		LogicTupleEvent action = null;
-		++timeStamp;
+		++timestamp;
 
 		try {
-			SolveInfo infoAct = prolog.solve("act(A," + timeStamp + ").");
+			SolveInfo infoAct = prolog.solve("act(A," + timestamp + ").");
 
             //Print the act and its solution
-            Log.i(TAG, "act(A," + timeStamp + ").");
+            Log.i(TAG, "act(A," + timestamp + ").");
             Log.i(TAG, "act solution: " + infoAct.toString());
 
             // TODO: Fix open alternatives
 
 			if (infoAct.isSuccess()) {
 				action = new LogicTupleEvent(infoAct.getSolution());
-                // TODO: Set the proper timestamp to the alert
+                action.setTimestamp(timestamp);
 			}
 		} catch (MalformedGoalException ex) {
 			Log.e(TAG, "MalformedGoalException: " + ex.getMessage());
