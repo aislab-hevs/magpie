@@ -191,25 +191,22 @@ public class Environment extends Handler implements IEnvironment {
 			}
 		}
 
-		if (!mQueueOfAlerts.isEmpty()) {
-			Iterator<MagpieEvent> alertsIt = mQueueOfAlerts.iterator();
-			while (alertsIt.hasNext()) {
-				// Take the alert
-				LogicTupleEvent alert = (LogicTupleEvent) alertsIt.next();
+		while (!mQueueOfAlerts.isEmpty()) {
+			// Take the alert
+			LogicTupleEvent alert = (LogicTupleEvent) mQueueOfAlerts.poll();
 
-				// Prepare the message containg the alert to be sent to the MagpieActivity
-				Message reply = Message.obtain();
-				reply.what = Environment.NEW_EVENT;
-				Bundle alertBundle = new Bundle();
-				alertBundle.putParcelable(MagpieActivity.MAGPIE_EVENT, alert);
-				reply.setData(alertBundle);
+			// Prepare the message containg the alert to be sent to the MagpieActivity
+			Message reply = Message.obtain();
+			reply.what = Environment.NEW_EVENT;
+			Bundle alertBundle = new Bundle();
+			alertBundle.putParcelable(MagpieActivity.MAGPIE_EVENT, alert);
+			reply.setData(alertBundle);
 
-				// Send back the alert
-				try {
-					replyMessenger.send(reply);
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
+			// Send back the alert
+			try {
+				replyMessenger.send(reply);
+			} catch (RemoteException e) {
+				e.printStackTrace();
 			}
 		}
 	}
