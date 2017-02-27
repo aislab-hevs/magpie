@@ -17,6 +17,11 @@ public class LogicTupleEvent extends MagpieEvent {
 		this.logicRepresentation = term.toString();
 	}
 
+    public LogicTupleEvent(long timestamp, String logicEvent) {
+        this(logicEvent);
+        this.setTimestamp(timestamp);
+    }
+
     public LogicTupleEvent(String logicEvent) {
         this.type = Services.LOGIC_TUPLE;
 
