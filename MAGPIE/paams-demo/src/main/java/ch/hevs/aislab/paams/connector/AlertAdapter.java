@@ -18,6 +18,15 @@ public class AlertAdapter extends BaseAdapter {
         this.items = new ArrayList<>();
     }
 
+    public AlertAdapter(List<Alert> items) {
+        this.items = items;
+    }
+
+    public void addAllItems(List<Alert> items) {
+        this.items = items;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return items.size();

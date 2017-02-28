@@ -6,14 +6,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.paams.db.DBHelper;
+import ch.hevs.aislab.paams.model.Alert;
 
 public class AlertDAO {
-
-    private final String TAG = getClass().getName();
 
     private SQLiteDatabase database;
     private DBHelper dbHelper;
@@ -43,5 +44,26 @@ public class AlertDAO {
                 null, DBHelper.COLUMN_ID + " = " + insertId, null, null, null, null);
         cursor.moveToFirst();
         cursor.close();
+    }
+
+    public List<Alert> getAllAlerts() {
+        List<Alert> items = new ArrayList<>();
+        Cursor cursor = database.query(DBHelper.TABLE_ALERT, null, null, null, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Alert alert = cursorToAlert(cursor);
+            items.add(alert);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return items;
+    }
+
+    private Alert cursorToAlert(Cursor cursor) {
+        Alert alert = new Alert();
+        alert.setId(cursor.getLong(0));
+        alert.setName(cursor.getString(1));
+        alert.setTimestamp(cursor.getLong(2));
+        return alert;
     }
 }

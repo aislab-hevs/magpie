@@ -44,7 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private final static String CREATE_TABLE_ALERT =
             "CREATE TABLE " + TABLE_ALERT + "("
                     + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + COLUMN_NAME + " STRING NOT NULL,"
+                    + COLUMN_NAME + " TEXT NOT NULL,"
                     + COLUMN_TIMESTAMP + " INTEGER NOT NULL);";
 
     public DBHelper(Context context) {

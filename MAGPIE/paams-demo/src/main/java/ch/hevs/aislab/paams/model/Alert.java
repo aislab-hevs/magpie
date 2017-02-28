@@ -1,15 +1,30 @@
 package ch.hevs.aislab.paams.model;
 
 
-public class Alert {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Alert implements Parcelable {
 
     private long id;
     private String name;
     private long timestamp;
+    private boolean marked;
+
+    public Alert() {
+
+    }
 
     public Alert(String name, long timestamp) {
         this.name = name;
         this.timestamp = timestamp;
+    }
+
+    private Alert(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        timestamp = in.readLong();
+        marked = (in.readByte() == 1);
     }
 
     public long getId() {
@@ -36,4 +51,36 @@ public class Alert {
         this.timestamp = timestamp;
     }
 
+    public boolean isMarked() {
+        return marked;
+    }
+
+    public void setMarked(boolean marked) {
+        this.marked = marked;
+    }
+
+    public static final Creator<Alert> CREATOR = new Creator<Alert>() {
+        @Override
+        public Alert createFromParcel(Parcel parcel) {
+            return new Alert(parcel);
+        }
+
+        @Override
+        public Alert[] newArray(int size) {
+            return new Alert[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeLong(timestamp);
+        dest.writeByte((byte) (marked? 1 : 0));
+    }
 }
