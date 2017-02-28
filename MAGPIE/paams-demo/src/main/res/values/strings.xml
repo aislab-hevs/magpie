@@ -14,8 +14,8 @@
     </string>
     <string name="blood_pressure_rule_english">
         A \'pre-hypertension\' alert is triggered if at least in one week two blood pressure
-        measurements (in mmHg) have either systolic component between 120 and 139 or diastolic
-        component between 80 and 89.\n\n
+        measurements (in mmHg) have systolic component between 120 and 139 and diastolic component
+        between 80 and 89.\n\n
     </string>
     <string name="weight_rule_english">
         A \'gaining weight\' alert is triggered if the weight (in kg) goes from 2\u0025 lost with
@@ -52,7 +52,7 @@
         \u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020
         happensAt(blood_pressure(Sys,Dias),Tev),\n
         \u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020
-        (120 =&lt; Sys =&lt; 139; 80 =&lt; Dias =&lt; 89),\n
+        (120 =&lt; Sys =&lt; 139, 80 =&lt; Dias =&lt; 89),\n
         \u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020
         last_week(Tev,T))).
     </string>

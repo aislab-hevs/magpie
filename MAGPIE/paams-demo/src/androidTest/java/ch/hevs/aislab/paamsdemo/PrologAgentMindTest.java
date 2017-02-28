@@ -64,8 +64,8 @@ public class PrologAgentMindTest {
         long tsEv3 = convertDateToMills("22-02-2017 09:00");
         LogicTupleEvent event3 = new LogicTupleEvent(tsEv3, "blood_pressure(137,87)");
 
-        agentMind.updatePerception(event1);
-        LogicTupleEvent noAlert = (LogicTupleEvent)agentMind.produceAction(tsEv1);
+        agentMind.updatePerception(event3);
+        LogicTupleEvent noAlert = (LogicTupleEvent)agentMind.produceAction(tsEv3);
         assertNull(noAlert);
     }
 
