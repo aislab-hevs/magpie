@@ -25,8 +25,7 @@ import ch.hevs.aislab.paams.model.Type;
 import ch.hevs.aislab.paams.model.Value;
 import ch.hevs.aislab.paamsdemo.R;
 
-public class MainActivity extends MagpieActivity implements
-        AddValueFragment.OnAddedNewMeasurementListener, AlertFragment.OnFragmentInteractionListener {
+public class MainActivity extends MagpieActivity implements AddValueFragment.OnAddedNewMeasurementListener {
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -115,7 +114,8 @@ public class MainActivity extends MagpieActivity implements
                 fragmentTag = Type.WEIGHT.name();
                 break;
             case R.id.item_alerts:
-                genericFragment = AlertFragment.newInstance("", "");
+                genericFragment = AlertFragment.newInstance();
+                fragmentTag = "ALERT";
                 break;
         }
 
@@ -207,10 +207,5 @@ public class MainActivity extends MagpieActivity implements
             event = new LogicTupleEvent(timestamp, name, sys, dias);
         }
         sendEvent(event);
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 }
