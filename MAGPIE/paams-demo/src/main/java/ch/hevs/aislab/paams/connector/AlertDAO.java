@@ -32,7 +32,8 @@ public class AlertDAO {
     }
 
     public void createAlert(LogicTupleEvent alert) {
-        String alertName = alert.getName();
+        String alertName = alert.getArguments().get(0);
+        alertName = alertName.substring(1, alertName.length() - 1); // Remove the wrapping ''
         long timestamp = alert.getTimestamp();
 
         ContentValues values = new ContentValues();

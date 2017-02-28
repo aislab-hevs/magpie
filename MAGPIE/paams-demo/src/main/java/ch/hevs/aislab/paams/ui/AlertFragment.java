@@ -3,6 +3,7 @@ package ch.hevs.aislab.paams.ui;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,14 +36,14 @@ public class AlertFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
-            alertAdapter = new AlertAdapter();
+            alertAdapter = new AlertAdapter(getActivity());
         } else {
             Alert[] alerts = (Alert[]) savedInstanceState.getParcelableArray(BUNDLE_KEY);
             List<Alert> alertsList = new ArrayList<>();
             for (Alert alert : alerts) {
                 alertsList.add(alert);
             }
-            alertAdapter = new AlertAdapter(alertsList);
+            alertAdapter = new AlertAdapter(getActivity(), alertsList);
         }
 
         alertDAO = new AlertDAO(getActivity());
@@ -50,6 +51,7 @@ public class AlertFragment extends ListFragment {
         if (alertAdapter.getCount() == 0) {
             alertAdapter.addAllItems(alertDAO.getAllAlerts());
         }
+        setListAdapter(alertAdapter);
     }
 
     @Override

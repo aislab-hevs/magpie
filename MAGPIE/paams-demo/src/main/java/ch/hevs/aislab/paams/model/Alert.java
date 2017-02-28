@@ -4,6 +4,10 @@ package ch.hevs.aislab.paams.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Alert implements Parcelable {
 
     private long id;
@@ -57,6 +61,11 @@ public class Alert implements Parcelable {
 
     public void setMarked(boolean marked) {
         this.marked = marked;
+    }
+
+    public String getStringTimestamp(String format) {
+        Date date = new Date(timestamp);
+        return new SimpleDateFormat(format, Locale.getDefault()).format(date);
     }
 
     public static final Creator<Alert> CREATOR = new Creator<Alert>() {

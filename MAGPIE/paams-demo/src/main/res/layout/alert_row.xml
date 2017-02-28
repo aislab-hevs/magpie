@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/row_horizontal_margin"
+    android:paddingRight="@dimen/row_horizontal_margin"
+    android:paddingTop="@dimen/row_horizontal_margin"
+    android:paddingBottom="@dimen/row_horizontal_margin">
+
+    <TextView
+        android:id="@+id/dateAlertTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.28"
+        android:textAppearance="@style/RowText" />
+
+    <TextView
+        android:id="@+id/timeAlertTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.15"
+        android:freezesText="true"
+        android:textAppearance="@style/RowText" />
+
+    <TextView
+        android:id="@+id/nameAlertTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.47"
+        android:textAppearance="@style/RowText" />
+
+    <ImageView
+        android:id="@+id/checkAlertImageView"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.10" />
+
+</LinearLayout>
