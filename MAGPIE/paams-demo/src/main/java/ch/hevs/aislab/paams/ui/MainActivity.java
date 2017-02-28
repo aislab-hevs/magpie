@@ -18,6 +18,7 @@ import ch.hevs.aislab.magpie.agent.PrologAgentMind;
 import ch.hevs.aislab.magpie.android.MagpieActivity;
 import ch.hevs.aislab.magpie.environment.Services;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
+import ch.hevs.aislab.paams.connector.AlertDAO;
 import ch.hevs.aislab.paams.model.DoubleValue;
 import ch.hevs.aislab.paams.model.SingleValue;
 import ch.hevs.aislab.paams.model.Type;
@@ -29,16 +30,31 @@ public class MainActivity extends MagpieActivity implements
 
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
+    private AlertDAO alertDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Setup navigation
         setupToolbar();
         setupInstances();
         setNavigationView();
 
+        alertDAO = new AlertDAO(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        alertDAO.open();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        alertDAO.close();
     }
 
     private void setupToolbar() {
@@ -175,10 +191,7 @@ public class MainActivity extends MagpieActivity implements
 
     @Override
     public void onAlertProduced(LogicTupleEvent alert) {
-        Log.i("MainActivity", "Alert name: " + alert.getName());
-        Log.i("MainActivity", "Alert tuple: " + alert.toTuple());
-        Log.i("MainActivity" , alert.getArguments().get(0));
-        Log.i("MainActivity", "Alert date: " + alert.getStringTimestamp("dd.MM.yyyy H:mm"));
+        alertDAO.createAlert(alert);
     }
 
     private void sendEvent(Value measurement) {
