@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,15 +124,24 @@ public class AlertFragment extends ListFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        Log.i(TAG, "WE ENTERED HERE!");
         menu.clear();
-        menuInflater.inflate(R.menu.menu_delete_value_toolbar, menu);
+        menuInflater.inflate(R.menu.menu_delete_alert_toolbar, menu);
         super.onCreateOptionsMenu(menu, menuInflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i(TAG, "onOptionsItemSelected()");
-        return false;
+        List<Alert> alerts = alertAdapter.getSelectedItems();
+        if (alerts.isEmpty()) {
+            Toast.makeText(getContext(), "Select the items to delete", Toast.LENGTH_LONG).show();
+        } else {
+            for (Alert alert : alerts) {
+                alertAdapter.removeItem(alert);
+                alertDAO.deleteAlert(alert);
+            }
+            int size = alerts.size();
+            Toast.makeText(getContext(), "Deleted " + size + " entries", Toast.LENGTH_LONG).show();
+        }
+        return true;
     }
 }

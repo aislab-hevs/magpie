@@ -184,18 +184,23 @@ public class ListValuesFragment extends ListFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i("ListValuesFragment", "Fragment type: " + type.name());
-        List<Value> values = valueAdapter.getSelectedItems();
-        if (values.isEmpty()) {
-            Toast.makeText(getContext(), "Select the items to delete", Toast.LENGTH_LONG).show();
-            return true;
-        } else {
-            for (Value value : values) {
-                valueAdapter.removeItem(value);
-                valueDAO.deleteValue(value);
-            }
-            int size = values.size();
-            Toast.makeText(getContext(), "Deleted " + size + " entries", Toast.LENGTH_LONG).show();
-            return true;
+        switch (item.getItemId()) {
+            case R.id.deleteValueButton:
+                List<Value> values = valueAdapter.getSelectedItems();
+                if (values.isEmpty()) {
+                    Toast.makeText(getContext(), "Select the items to delete", Toast.LENGTH_LONG).show();
+                    return true;
+                } else {
+                    for (Value value : values) {
+                        valueAdapter.removeItem(value);
+                        valueDAO.deleteValue(value);
+                    }
+                    int size = values.size();
+                    Toast.makeText(getContext(), "Deleted " + size + " entries", Toast.LENGTH_LONG).show();
+                    return true;
+                }
+            default:
+                return false;
         }
     }
 

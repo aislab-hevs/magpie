@@ -47,6 +47,10 @@ public class AlertDAO {
         cursor.close();
     }
 
+    public void deleteAlert(Alert alert) {
+        database.delete(DBHelper.TABLE_ALERT, DBHelper.COLUMN_ID + " = " + alert.getId(), null);
+    }
+
     public List<Alert> getAllAlerts() {
         List<Alert> items = new ArrayList<>();
         Cursor cursor = database.query(DBHelper.TABLE_ALERT, null, null, null, null, null, null);

@@ -35,12 +35,27 @@ public class AlertAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void removeItem(Alert item) {
+        items.remove(item);
+        notifyDataSetChanged();
+    }
+
     public Alert[] getItems() {
         Alert[] items = new Alert[this.items.size()];
         for (int i = 0; i < this.items.size(); i++) {
             items[i] = this.items.get(i);
         }
         return items;
+    }
+
+    public List<Alert> getSelectedItems() {
+        List<Alert> selectedItems = new ArrayList<>();
+        for (Alert alert : items) {
+            if (alert.isMarked()) {
+                selectedItems.add(alert);
+            }
+        }
+        return selectedItems;
     }
 
     @Override
