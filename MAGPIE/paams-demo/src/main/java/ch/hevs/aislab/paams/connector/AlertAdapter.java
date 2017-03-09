@@ -35,6 +35,14 @@ public class AlertAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public Alert[] getItems() {
+        Alert[] items = new Alert[this.items.size()];
+        for (int i = 0; i < this.items.size(); i++) {
+            items[i] = this.items.get(i);
+        }
+        return items;
+    }
+
     @Override
     public int getCount() {
         return items.size();
