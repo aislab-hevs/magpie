@@ -3,7 +3,7 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "23.0.3"
+    buildToolsVersion '25.0.0'
     //Android 6.0 release has removed support for the Apache HTTP client.
     //Use HttpURLConnection class instead.
     //To continue using the Apache HTTP APIs we have to include the compile-time dependency
