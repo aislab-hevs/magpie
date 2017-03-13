@@ -76,4 +76,9 @@
         last_week(Ta,T).
     </string>
 
+    <string name="about_title">About this Application</string>
+    <string name="about_app">\nDemonstration of the MAGPIE agent platform presented at PAAMS\'17.\n</string>
+    <string name="about_icons">Icons from Icons8.</string>
+    <string name="about_url">https://www.icons8.com</string>
+
 </resources>

@@ -1,7 +1,6 @@
 package ch.hevs.aislab.paams.ui;
 
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -9,9 +8,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.util.Linkify;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.TextView;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ch.hevs.aislab.magpie.agent.MagpieAgent;
 import ch.hevs.aislab.magpie.agent.PrologAgentMind;
@@ -117,6 +120,9 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
                 genericFragment = AlertFragment.newInstance();
                 fragmentTag = "ALERT";
                 break;
+            case R.id.item_about:
+                showAboutDialog();
+                return;
         }
 
         if (genericFragment != null) {
@@ -126,6 +132,32 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
         }
 
         setTitle(itemDrawer.getTitle());
+    }
+
+    private void showAboutDialog() {
+        View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, null, false);
+
+        TextView iconsTextView = (TextView) aboutView.findViewById(R.id.iconsTextView);
+        Pattern pattern = Pattern.compile("Icons8");
+        String url = getString(R.string.about_url);
+
+        Linkify.TransformFilter urlFilter = new Linkify.TransformFilter() {
+            @Override
+            public String transformUrl(Matcher matcher, String url) {
+                return getString(R.string.about_url)   ;
+            }
+        };
+
+        Linkify.addLinks(iconsTextView, pattern, url, null, urlFilter);
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
+                new android.view.ContextThemeWrapper(
+                        this,
+                        android.R.style.Theme_Material_Light_NoActionBar_Fullscreen));
+        builder.setTitle(getString(R.string.about_title))
+                .setView(aboutView)
+                .create()
+                .show();
     }
 
     @Override
