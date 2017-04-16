@@ -27,7 +27,7 @@
     </group>
 
     <group android:id="@+id/about_group"
-        android:checkableBehavior="single">
+        android:checkableBehavior="none">
         <item
             android:id="@+id/item_about"
             android:icon="@drawable/ic_about"
