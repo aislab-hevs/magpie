@@ -3,28 +3,33 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/activity_horizontal_margin">
+    android:padding="@dimen/activity_horizontal_margin"
+    android:textSize="@dimen/font_size">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:text="@string/label_english" />
+        android:text="@string/label_english"
+        android:textSize="@dimen/font_size"/>
 
     <TextView
         android:id="@+id/ruleEnglishTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/font_size"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:text="@string/label_ec"/>
+        android:text="@string/label_ec"
+        android:textSize="@dimen/font_size"/>
 
     <TextView
         android:id="@+id/ruleECTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/font_size"/>
 
 </LinearLayout>

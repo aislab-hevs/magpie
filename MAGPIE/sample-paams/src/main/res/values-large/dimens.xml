@@ -5,9 +5,9 @@
 
     <dimen name="row_horizontal_margin">8dp</dimen>
 
-    <dimen name="font_size">16sp</dimen>
-    <dimen name="layout_marginBottom">16dp</dimen>
-    <dimen name="layout_marginEnd">16dp</dimen>
-    <dimen name="floatingButton_layout_width">75dp</dimen>
-    <dimen name="floatingButton_layout_height">75dp</dimen>
+    <dimen name="font_size">19sp</dimen>
+    <dimen name="layout_marginBottom">24dp</dimen>
+    <dimen name="layout_marginEnd">24dp</dimen>
+    <dimen name="floatingButton_layout_width">100dp</dimen>
+    <dimen name="floatingButton_layout_height">100dp</dimen>
 </resources>
