@@ -2,9 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusableInTouchMode = "true"
-    tools:context="ch.hevs.aislab.paamsdemo.ch.hevs.aislab.paams.ui.AddValueFragment"
-    android:orientation="vertical">
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context="ch.hevs.aislab.paams.ui.AddValueFragment">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/singleValueTextInputLayout"
@@ -17,8 +17,8 @@
             android:inputType="numberDecimal" />
     </android.support.design.widget.TextInputLayout>
 
-    <include layout="@layout/input_date_time"/>
+    <include layout="@layout/input_date_time" />
 
-    <include layout="@layout/input_new_value"/>
+    <include layout="@layout/input_new_value" />
 
 </LinearLayout>

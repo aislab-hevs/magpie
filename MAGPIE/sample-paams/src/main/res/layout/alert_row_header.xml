@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:paddingLeft="@dimen/row_horizontal_margin"
     android:paddingRight="@dimen/row_horizontal_margin">
 
@@ -9,22 +10,25 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.28"
+        android:text="Date"
         android:textAppearance="@style/RowHeaderText"
-        android:text="Date"/>
+        android:textSize="@dimen/font_size" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.15"
+        android:text="Time"
         android:textAppearance="@style/RowHeaderText"
-        android:text="Time"/>
+        android:textSize="@dimen/font_size" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.47"
+        android:text="Alert"
         android:textAppearance="@style/RowHeaderText"
-        android:text="Alert"/>
+        android:textSize="@dimen/font_size" />
 
     <TextView
         android:layout_width="0dp"

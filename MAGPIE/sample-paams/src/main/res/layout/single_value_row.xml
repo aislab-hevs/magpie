@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/row_horizontal_margin"
     android:paddingLeft="@dimen/row_horizontal_margin"
     android:paddingRight="@dimen/row_horizontal_margin"
-    android:paddingTop="@dimen/row_horizontal_margin"
-    android:paddingBottom="@dimen/row_horizontal_margin">
+    android:paddingTop="@dimen/row_horizontal_margin">
 
     <TextView
         android:id="@+id/dateTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.5"
-        android:textAppearance="@style/RowText" />
+        android:textAppearance="@style/RowText"
+        android:textSize="@dimen/font_size" />
 
     <TextView
         android:id="@+id/timeTextView"
@@ -20,14 +22,16 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:freezesText="true"
-        android:textAppearance="@style/RowText" />
+        android:textAppearance="@style/RowText"
+        android:textSize="@dimen/font_size" />
 
     <TextView
         android:id="@+id/valueTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textAppearance="@style/RowText" />
+        android:textAppearance="@style/RowText"
+        android:textSize="@dimen/font_size" />
 
     <ImageView
         android:id="@+id/checkImageView"
