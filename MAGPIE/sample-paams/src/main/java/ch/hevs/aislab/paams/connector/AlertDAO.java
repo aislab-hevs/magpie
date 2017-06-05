@@ -69,6 +69,7 @@ public class AlertDAO {
         alert.setId(cursor.getLong(0));
         alert.setName(cursor.getString(1));
         alert.setTimestamp(cursor.getLong(2));
+        alert.setDummy((cursor.getInt(3) == 1));
         return alert;
     }
 }
