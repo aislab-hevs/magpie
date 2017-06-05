@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -14,5 +15,25 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout="@layout/empty_list_values" />
+
+    <FrameLayout
+        android:layout_width="@dimen/floatingButton_layout_width"
+        android:layout_height="@dimen/floatingButton_layout_height"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_addValue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/layout_marginBottom"
+            android:layout_marginEnd="@dimen/layout_marginEnd"
+            android:clickable="true"
+            app:fabSize="auto"
+            app:srcCompat="@drawable/ic_add_white_48dp" />
+    </FrameLayout>
+
 
 </RelativeLayout>

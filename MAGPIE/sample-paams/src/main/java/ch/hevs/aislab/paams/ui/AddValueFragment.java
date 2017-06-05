@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -112,6 +113,7 @@ public class AddValueFragment extends Fragment {
                 view = populateSingleValueRow(inflater, container, "Value [kg]");
                 break;
         }
+        setBackStack(view);
         return view;
     }
 
@@ -235,6 +237,7 @@ public class AddValueFragment extends Fragment {
                 }
                 dateEditText.setText("");
                 timeEditText.setText("");
+                getFragmentManager().beginTransaction().replace(R.id.main_container, PhysioParamFragment.newInstance(type)).commit();
             }
         });
     }
@@ -274,6 +277,22 @@ public class AddValueFragment extends Fragment {
                 }
                 dateEditText.setText("");
                 timeEditText.setText("");
+            }
+        });
+    }
+
+
+    private void setBackStack(View view) {
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        view.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    getFragmentManager().beginTransaction().replace(R.id.main_container, PhysioParamFragment.newInstance(type)).commit();
+                    return true;
+                }
+                return false;
             }
         });
     }

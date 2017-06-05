@@ -1,5 +1,7 @@
 package ch.hevs.aislab.paams.ui;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -9,8 +11,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.regex.Matcher;
@@ -30,9 +35,17 @@ import ch.hevs.aislab.paamsdemo.R;
 
 public class MainActivity extends MagpieActivity implements AddValueFragment.OnAddedNewMeasurementListener {
 
+    private static final String TAG = "MainActivity";
+
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private AlertDAO alertDAO;
+
+    private OnChangeDummyDataDisplayListener callback;
+
+    public interface OnChangeDummyDataDisplayListener {
+        void displayDummyData(Boolean display);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +53,7 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
         setContentView(R.layout.activity_main);
 
         // Setup navigation
+        setupSharedPrefs();
         setupToolbar();
         setupInstances();
         setNavigationView();
@@ -73,6 +87,13 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.app_name, R.string.app_name);
         drawerLayout.addDrawerListener(drawerToggle);
+    }
+
+    private void setupSharedPrefs() {
+        Log.i(TAG, "setupSharedPrefs();");
+        if (!getPreferences(Context.MODE_PRIVATE).contains(getString(R.string.pref_showMocked))) {
+            updateSharedPrefs(true);
+        }
     }
 
     private void setNavigationView() {
@@ -137,6 +158,17 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
     private void showAboutDialog() {
         View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, null, false);
 
+        Switch dummyDataSwitch = (Switch) aboutView.findViewById(R.id.dummyDataSwitch);
+        dummyDataSwitch.setChecked(getPreferences(Context.MODE_PRIVATE).getBoolean(getString(R.string.pref_showMocked), true));
+        dummyDataSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.i(TAG, "callback.displayDummyData() with " + isChecked);
+                updateSharedPrefs(isChecked);
+                callback.displayDummyData(isChecked);
+            }
+        });
+
         TextView iconsTextView = (TextView) aboutView.findViewById(R.id.iconsTextView);
         Pattern pattern = Pattern.compile("Icons8");
         String url = getString(R.string.about_url);
@@ -160,6 +192,24 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
                 .show();
     }
 
+    private void updateSharedPrefs(boolean showMocked) {
+        SharedPreferences.Editor editor = getPreferences(Context.MODE_PRIVATE).edit();
+        editor.putBoolean(getString(R.string.pref_showMocked), showMocked);
+        Log.i(TAG, "updateSharedPrefs() with " + showMocked);
+        editor.commit();
+    }
+
+    public Boolean setOnChangeDummyDataDisplayListener(OnChangeDummyDataDisplayListener listener) {
+        this.callback = listener;
+        Log.i(TAG, "setOnChangeDummyDataDisplayListener() from " + listener.getClass());
+        return getPreferences(Context.MODE_PRIVATE).getBoolean(getString(R.string.pref_showMocked), true);
+    }
+
+    public Boolean getCurrentDisplayState(OnChangeDummyDataDisplayListener listener) {
+        Log.i(TAG, "getCurrentDisplayState() from " + listener.getClass());
+        return getPreferences(Context.MODE_PRIVATE).getBoolean(getString(R.string.pref_showMocked), true);
+    }
+
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -179,33 +229,14 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
 
     @Override
     public void addSingleValue(SingleValue measurement) {
-        PhysioParamFragment fragment = null;
-        switch (measurement.getType()) {
-            case GLUCOSE:
-                fragment = (PhysioParamFragment)
-                        getSupportFragmentManager().findFragmentByTag(Type.GLUCOSE.name());
-                break;
-            case WEIGHT:
-                fragment = (PhysioParamFragment)
-                        getSupportFragmentManager().findFragmentByTag(Type.WEIGHT.name());
-                break;
-        }
-        PhysioParamFragment.SectionsAdapter adapter =
-                (PhysioParamFragment.SectionsAdapter) fragment.getViewPager().getAdapter();
-        ListValuesFragment listValuesFragment = (ListValuesFragment) adapter.getItem(0);
-        listValuesFragment.getValueAdapter().addItem(measurement);
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, PhysioParamFragment.newInstance(measurement.getType()), measurement.getType().name()).commit();
         // Send also the measurement to MAGPIE
         sendEvent(measurement);
     }
 
     @Override
     public void addDoubleValue(DoubleValue measurement) {
-        PhysioParamFragment fragment = (PhysioParamFragment)
-                getSupportFragmentManager().findFragmentByTag(Type.BLOOD_PRESSURE.name());
-        PhysioParamFragment.SectionsAdapter adapter =
-                (PhysioParamFragment.SectionsAdapter) fragment.getViewPager().getAdapter();
-        ListValuesFragment listValuesFragment = (ListValuesFragment) adapter.getItem(0);
-        listValuesFragment.getValueAdapter().addItem(measurement);
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, PhysioParamFragment.newInstance(measurement.getType()), measurement.getType().name()).commit();
         // Send also the measurement to MAGPIE
         sendEvent(measurement);
     }

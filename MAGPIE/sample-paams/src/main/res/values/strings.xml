@@ -80,5 +80,10 @@
     <string name="about_app">\nDemonstration of the MAGPIE agent platform presented at PAAMS\'17.\n</string>
     <string name="about_icons">Icons from Icons8.</string>
     <string name="about_url">https://www.icons8.com</string>
+    <string name="pref_showMocked">showMocked</string>
+    <string name="switchDummyData">Dummy Data</string>
+    <string name="switchOff">OFF</string>
+    <string name="switchOn">ON</string>
+    <string name="about_dummyData">Display dummy Data</string>
 
 </resources>

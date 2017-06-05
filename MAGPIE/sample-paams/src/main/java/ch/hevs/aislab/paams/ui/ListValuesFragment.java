@@ -2,6 +2,7 @@ package ch.hevs.aislab.paams.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +29,7 @@ import ch.hevs.aislab.paams.model.Value;
 import ch.hevs.aislab.paamsdemo.R;
 
 
-public class ListValuesFragment extends ListFragment {
+public class ListValuesFragment extends ListFragment implements MainActivity.OnChangeDummyDataDisplayListener {
 
     private static final String TAG = "ListValuesFragment";
 
@@ -38,6 +39,8 @@ public class ListValuesFragment extends ListFragment {
     private Type type;
     private static ValueAdapter valueAdapter;
     private ValueDAO valueDAO;
+    private FloatingActionButton addValueButton;
+    private Boolean displayDummyData;
 
 
     public ListValuesFragment() {
@@ -54,6 +57,8 @@ public class ListValuesFragment extends ListFragment {
 
     @Override
     public void onAttach(Context context) {
+        Log.i(TAG, "onAttach()");
+        displayDummyData = ((MainActivity) getActivity()).setOnChangeDummyDataDisplayListener(this);
         super.onAttach(context);
     }
 
@@ -101,18 +106,47 @@ public class ListValuesFragment extends ListFragment {
             valueAdapter.addAllItems(valueDAO.getAllValues(type));
         }
         setListAdapter(valueAdapter);
+        valueAdapter.displayDummyData(displayDummyData);
 
         setHasOptionsMenu(true);
     }
 
     @Override
+    public void onStart() {
+        Log.i(TAG, "onStart() from " + type);
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        Log.i(TAG, "onResume() from " + type);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        Log.i(TAG, "onPause() from " + type);
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        Log.i(TAG, "onStop() from " + type);
+        super.onStop();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_list_values, container, false);
+        View view = inflater.inflate(R.layout.fragment_list_values, container, false);
+        addValueButton = (FloatingActionButton) view.findViewById(R.id.fab_addValue);
+        setAddAction(addValueButton);
+        return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.i(TAG, "onActivityCreated() from " + type);
 
         getListView().setHeaderDividersEnabled(true);
         LinearLayout headerLayout = null;
@@ -159,6 +193,7 @@ public class ListValuesFragment extends ListFragment {
     @Override
     public void onDestroy() {
         //TODO: Save the marked state
+        Log.i(TAG, "onDestroy() from " + type);
         valueDAO.close();
         super.onDestroy();
     }
@@ -166,7 +201,8 @@ public class ListValuesFragment extends ListFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Value[] items = valueAdapter.getItems();
-        Log.i("ListValuesFragment", "Number of items: " + items.length);
+        Log.i(TAG, "onSaveInstanceState() from " + type);
+        Log.i(TAG, "Number of items: " + items.length);
         if (items.length > 0) {
             outState.putParcelableArray(BUNDLE_KEY, items);
         }
@@ -175,7 +211,7 @@ public class ListValuesFragment extends ListFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        Log.i("ListValuesFragment", "Fragment type in onCreateOptionsMenu(): " + type.name());
+        Log.i(TAG, "Fragment type in onCreateOptionsMenu(): " + type.name());
         menu.clear();
         menuInflater.inflate(R.menu.menu_delete_value_toolbar, menu);
         super.onCreateOptionsMenu(menu, menuInflater);
@@ -183,7 +219,7 @@ public class ListValuesFragment extends ListFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i("ListValuesFragment", "Fragment type: " + type.name());
+        Log.i(TAG, "Fragment type: " + type.name());
         switch (item.getItemId()) {
             case R.id.deleteValueButton:
                 List<Value> values = valueAdapter.getSelectedItems();
@@ -191,12 +227,18 @@ public class ListValuesFragment extends ListFragment {
                     Toast.makeText(getContext(), "Select the items to delete", Toast.LENGTH_LONG).show();
                     return true;
                 } else {
+                    int size = 0;
+                    String dummy = "";
                     for (Value value : values) {
-                        valueAdapter.removeItem(value);
-                        valueDAO.deleteValue(value);
+                        if (!value.isDummy()) {
+                            size++;
+                            valueAdapter.removeItem(value);
+                            valueDAO.deleteValue(value);
+                        } else {
+                            dummy += " Dummy data cannot be deleted.";
+                        }
                     }
-                    int size = values.size();
-                    Toast.makeText(getContext(), "Deleted " + size + " entries", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Deleted " + size + " entries." + dummy, Toast.LENGTH_LONG).show();
                     return true;
                 }
             default:
@@ -206,5 +248,20 @@ public class ListValuesFragment extends ListFragment {
 
     public ValueAdapter getValueAdapter() {
         return valueAdapter;
+    }
+
+    private void setAddAction(FloatingActionButton button) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().beginTransaction().replace(R.id.main_container, AddValueFragment.newInstance(type), "Add").commit();
+            }
+        });
+    }
+
+    @Override
+    public void displayDummyData(Boolean display) {
+        Log.i(TAG, "displayDummyData() with " + display);
+        valueAdapter.displayDummyData(display);
     }
 }
