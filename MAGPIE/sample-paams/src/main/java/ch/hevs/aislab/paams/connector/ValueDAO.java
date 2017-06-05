@@ -122,6 +122,7 @@ public class ValueDAO {
         measurement.setId(cursor.getLong(0));
         measurement.setValue(cursor.getDouble(1));
         measurement.setTimestamp(cursor.getLong(2));
+        measurement.setDummy((cursor.getInt(3) == 1));
         measurement.setType(type);
         return measurement;
     }
@@ -132,6 +133,7 @@ public class ValueDAO {
         measurement.setFirstValue(cursor.getInt(1));
         measurement.setSecondValue(cursor.getInt(2));
         measurement.setTimestamp(cursor.getLong(3));
+        measurement.setDummy((cursor.getInt(3) == 1));
         measurement.setType(type);
         return measurement;
     }
