@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ch.hevs.aislab.paams.model.Alert;
@@ -28,10 +29,12 @@ public class AlertAdapter extends BaseAdapter {
     public AlertAdapter(Context context, List<Alert> items) {
         this.context = context;
         this.items = items;
+        sortItemsByDate();
     }
 
     public void addAllItems(List<Alert> items) {
         this.items = items;
+        sortItemsByDate();
         notifyDataSetChanged();
     }
 
@@ -45,6 +48,7 @@ public class AlertAdapter extends BaseAdapter {
         for (int i = 0; i < this.items.size(); i++) {
             items[i] = this.items.get(i);
         }
+        sortItemsByDate();
         return items;
     }
 
@@ -56,6 +60,10 @@ public class AlertAdapter extends BaseAdapter {
             }
         }
         return selectedItems;
+    }
+
+    private void sortItemsByDate() {
+        Collections.sort(this.items);
     }
 
     @Override
