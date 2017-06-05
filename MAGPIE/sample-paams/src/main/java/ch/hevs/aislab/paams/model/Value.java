@@ -2,17 +2,19 @@ package ch.hevs.aislab.paams.model;
 
 
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public abstract class Value implements Parcelable {
+public abstract class Value implements Parcelable, Comparable<Value> {
 
     protected long id;
     long timestamp;
     protected Type type;
     boolean marked;
+    boolean dummy;
 
 
     public long getId() {
@@ -47,8 +49,22 @@ public abstract class Value implements Parcelable {
         this.marked = marked;
     }
 
+    public boolean isDummy() {
+        return dummy;
+    }
+
+    public void setDummy(boolean dummy) {
+        this.dummy = dummy;
+    }
+
     public String getStringTimestamp(String format) {
         Date date = new Date(timestamp);
         return new SimpleDateFormat(format, Locale.getDefault()).format(date);
+    }
+
+    @Override
+    public int compareTo(@NonNull Value v) {
+        return this.timestamp < v.timestamp ? -1 :
+                this.timestamp > v.timestamp ? 1 : 0;
     }
 }

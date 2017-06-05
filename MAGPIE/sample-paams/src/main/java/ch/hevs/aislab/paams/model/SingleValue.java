@@ -18,6 +18,7 @@ public class SingleValue extends Value implements Parcelable {
         timestamp = in.readLong();
         type = Type.valueOf(in.readString());
         marked = (in.readByte() == 1);
+        dummy = (in.readByte() == 1);
     }
 
 
@@ -48,6 +49,7 @@ public class SingleValue extends Value implements Parcelable {
         dest.writeLong(timestamp);
         dest.writeString(type.name());
         dest.writeByte((byte) (marked? 1 : 0));
+        dest.writeByte((byte) (dummy ? 1 : 0));
     }
 
     @Override
