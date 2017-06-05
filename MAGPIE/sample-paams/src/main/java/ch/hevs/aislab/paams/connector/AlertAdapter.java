@@ -2,6 +2,7 @@ package ch.hevs.aislab.paams.connector;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,17 +19,24 @@ import ch.hevs.aislab.paamsdemo.R;
 
 public class AlertAdapter extends BaseAdapter {
 
+    private static final String TAG = "AlertAdapter";
+
     private Context context;
     private List<Alert> items;
+    private List<Alert> hiddenItems;
 
     public AlertAdapter(Context context) {
         this.context = context;
         this.items = new ArrayList<>();
+        this.hiddenItems = new ArrayList<>();
     }
 
     public AlertAdapter(Context context, List<Alert> items) {
         this.context = context;
         this.items = items;
+        if (this.hiddenItems == null) {
+            this.hiddenItems = new ArrayList<>();
+        }
         sortItemsByDate();
     }
 
@@ -60,6 +68,25 @@ public class AlertAdapter extends BaseAdapter {
             }
         }
         return selectedItems;
+    }
+
+    public void displayDummyData(boolean show) {
+        Log.i(TAG, "displayDummyData with " + show);
+        if (show) {
+            if (!this.hiddenItems.isEmpty()) {
+                this.items.addAll(this.hiddenItems);
+                this.hiddenItems.clear();
+            }
+        } else {
+            for (Alert alert : this.items) {
+                if (alert.isDummy()) {
+                    this.hiddenItems.add(alert);
+                }
+            }
+            this.items.removeAll(this.hiddenItems);
+        }
+        sortItemsByDate();
+        notifyDataSetChanged();
     }
 
     private void sortItemsByDate() {

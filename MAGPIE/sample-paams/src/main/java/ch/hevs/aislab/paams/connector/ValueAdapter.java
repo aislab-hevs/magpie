@@ -15,15 +15,18 @@ public abstract class ValueAdapter extends BaseAdapter {
     private static final String TAG = "ValueAdapter";
 
     List<Value> items;
-    List<Value> hiddenPositions;
+    List<Value> hiddenItems;
 
     ValueAdapter() {
         this.items = new ArrayList<>();
-        this.hiddenPositions = new ArrayList<>();
+        this.hiddenItems = new ArrayList<>();
     }
 
     ValueAdapter(List<Value> items) {
         this.items = items;
+        if (this.hiddenItems == null) {
+            this.hiddenItems = new ArrayList<>();
+        }
         sortItemsByDate();
     }
 
@@ -47,17 +50,17 @@ public abstract class ValueAdapter extends BaseAdapter {
     public void displayDummyData(boolean show) {
         Log.i(TAG, "displayDummyData with " + show);
         if (show) {
-            if (!this.hiddenPositions.isEmpty()) {
-                this.items.addAll(this.hiddenPositions);
-                this.hiddenPositions.clear();
+            if (!this.hiddenItems.isEmpty()) {
+                this.items.addAll(this.hiddenItems);
+                this.hiddenItems.clear();
             }
         } else {
             for (Value value : this.items) {
                 if (value.isDummy()) {
-                    this.hiddenPositions.add(value);
+                    this.hiddenItems.add(value);
                 }
             }
-            this.items.removeAll(this.hiddenPositions);
+            this.items.removeAll(this.hiddenItems);
         }
         sortItemsByDate();
         notifyDataSetChanged();
