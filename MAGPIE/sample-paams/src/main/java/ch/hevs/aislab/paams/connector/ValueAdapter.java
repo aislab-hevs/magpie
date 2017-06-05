@@ -1,32 +1,41 @@
 package ch.hevs.aislab.paams.connector;
 
 
+import android.util.Log;
 import android.widget.BaseAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ch.hevs.aislab.paams.model.Value;
 
 public abstract class ValueAdapter extends BaseAdapter {
 
+    private static final String TAG = "ValueAdapter";
+
     List<Value> items;
+    List<Value> hiddenPositions;
 
     ValueAdapter() {
         this.items = new ArrayList<>();
+        this.hiddenPositions = new ArrayList<>();
     }
 
     ValueAdapter(List<Value> items) {
         this.items = items;
+        sortItemsByDate();
     }
 
     public void addItem(Value item) {
         items.add(item);
+        sortItemsByDate();
         notifyDataSetChanged();
     }
 
     public void addAllItems(List<Value> items) {
         this.items = items;
+        sortItemsByDate();
         notifyDataSetChanged();
     }
 
@@ -35,11 +44,31 @@ public abstract class ValueAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void displayDummyData(boolean show) {
+        Log.i(TAG, "displayDummyData with " + show);
+        if (show) {
+            if (!this.hiddenPositions.isEmpty()) {
+                this.items.addAll(this.hiddenPositions);
+                this.hiddenPositions.clear();
+            }
+        } else {
+            for (Value value : this.items) {
+                if (value.isDummy()) {
+                    this.hiddenPositions.add(value);
+                }
+            }
+            this.items.removeAll(this.hiddenPositions);
+        }
+        sortItemsByDate();
+        notifyDataSetChanged();
+    }
+
     public Value[] getItems() {
         Value[] items = new Value[this.items.size()];
         for (int i = 0; i < this.items.size(); i++) {
             items[i] = this.items.get(i);
         }
+        sortItemsByDate();
         return items;
     }
 
@@ -51,6 +80,10 @@ public abstract class ValueAdapter extends BaseAdapter {
             }
         }
         return selectedItems;
+    }
+
+    private void sortItemsByDate() {
+        Collections.sort(this.items);
     }
 
     @Override
@@ -67,4 +100,5 @@ public abstract class ValueAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return items.get(position).getId();
     }
+
 }
