@@ -2,9 +2,17 @@ package ch.hevs.aislab.paams.db;
 
 
 import android.content.Context;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import ch.hevs.aislab.paamsdemo.R;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -55,18 +63,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     + COLUMN_TIMESTAMP + " INTEGER NOT NULL,"
                     + COLUMN_DUMMY + " INTEGER DEFAULT 0);";
 
-    private final static String INSERT_DUMMY_DATA_WEIGHT1 =
-            "INSERT INTO " + TABLE_WEIGHT + " ("
-                    + COLUMN_FIRST_VALUE + "," + COLUMN_TIMESTAMP + "," + COLUMN_DUMMY
-                    + ") VALUES ("
-                    + "100," + "1496304180000," + "1);";
-
-    private final static String INSERT_DUMMY_DATA_WEIGHT2 =
-            "INSERT INTO " + TABLE_WEIGHT + " ("
-                    + COLUMN_FIRST_VALUE + "," + COLUMN_TIMESTAMP + "," + COLUMN_DUMMY
-                    + ") VALUES ("
-                    + "102," + "1496649780000," + "1);";
-
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -78,8 +74,6 @@ public class DBHelper extends SQLiteOpenHelper {
         database.execSQL(CREATE_TABLE_BLOOD_PRESSURE);
         database.execSQL(CREATE_TABLE_WEIGHT);
         database.execSQL(CREATE_TABLE_ALERT);
-        database.execSQL(INSERT_DUMMY_DATA_WEIGHT1);
-        database.execSQL(INSERT_DUMMY_DATA_WEIGHT2);
     }
 
     @Override
@@ -90,5 +84,29 @@ public class DBHelper extends SQLiteOpenHelper {
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_WEIGHT);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_ALERT);
         onCreate(database);
+    }
+
+    public void insertFromFile(Context context) throws IOException {
+        Log.i(TAG, "insertFromFile() from " + context.getClass());
+        // Resetting Counter
+        int rows = 0;
+
+        // Open the resource
+        InputStream insertsStream = context.getResources().openRawResource(R.raw.dummy_data);
+        BufferedReader insertReader = new BufferedReader(new InputStreamReader(insertsStream));
+
+        // Iterate through lines (assuming each insert has its own line and theres no other stuff)
+        while (insertReader.ready()) {
+            String insertStmt = insertReader.readLine();
+            getWritableDatabase().execSQL(insertStmt);
+            rows++;
+        }
+        insertReader.close();
+        Log.i(TAG, "Inserted " + rows + " rows.");
+    }
+
+    public boolean hasData() {
+        Log.i(TAG, "hasData() " + DatabaseUtils.queryNumEntries(getReadableDatabase(), TABLE_WEIGHT, null, null) + " rows.");
+        return DatabaseUtils.queryNumEntries(getReadableDatabase(), TABLE_WEIGHT, null, null) > 0 ? true : false;
     }
 }
