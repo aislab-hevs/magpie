@@ -86,17 +86,17 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(database);
     }
 
-    public void initializeDummyData(Context context, int number) {
+    public void initializeDummyData(Context context, int dataSetSize, int entriesToLoad) {
         try {
-            insertFromFile(context, R.raw.dummy_weight, number);
-            //insertFromFile(context, R.raw.dummy_glucose, number);
-            //insertFromFile(context, R.raw.dummy_blood_presure, number);
+            insertFromFile(context, R.raw.dummy_weight, dataSetSize, entriesToLoad);
+            //insertFromFile(context, R.raw.dummy_glucose, dataSetSize, entriesToLoad);
+            //insertFromFile(context, R.raw.dummy_blood_presure, dataSetSize, entriesToLoad);
         } catch (IOException e) {
             Log.e(TAG, e.toString());
         }
     }
 
-    public void insertFromFile(Context context, int resourceId, int number) throws IOException {
+    public void insertFromFile(Context context, int resourceId, int dataSetSize, int entriesToLoad) throws IOException {
         Log.i(TAG, "insertFromFile() from " + context.getClass());
         int rows = 0;
 
@@ -104,8 +104,10 @@ public class DBHelper extends SQLiteOpenHelper {
         BufferedReader insertReader = new BufferedReader(new InputStreamReader(insertsStream));
 
         while (insertReader.ready()) {
-            if (rows == number) return;
+            if (rows == dataSetSize) return;
             String insertStmt = insertReader.readLine();
+            if (rows++ < dataSetSize - entriesToLoad) continue;
+            Log.i(TAG, "Insert row: " + insertStmt);
             getWritableDatabase().execSQL(insertStmt);
             rows++;
         }

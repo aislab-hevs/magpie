@@ -25,7 +25,7 @@ initiates_at(alert(third)=situation('Gaining weight'),T):-
         not query_kd(happens_at(alert(third,'Gaining weight'),Tev0), [Tago, T]),
         query_kd(happens_at(weight(Value1),Tev1), [Tago, T]),
         query_kd(happens_at(weight(Value2),Tev2), [Tago, T]),
-        Value1 =< 78.4,
-        Value2 >= 79.2,
+        Value1 =< 93.7,
+        Value2 >= 94.6,
         Tev2 > Tev1,
         T = Tev2.
