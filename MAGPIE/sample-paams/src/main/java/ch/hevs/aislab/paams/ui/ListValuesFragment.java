@@ -260,8 +260,8 @@ public class ListValuesFragment extends ListFragment implements MainActivity.OnC
     }
 
     @Override
-    public void displayDummyData(Boolean displayDummyData) {
-        Log.i(TAG, "displayDummyData() with " + displayDummyData);
-        valueAdapter.displayDummyData(displayDummyData);
+    public void displayDummyData(Boolean display) {
+        Log.i(TAG, "displayDummyData() with " + display);
+        valueAdapter.displayDummyData(display);
     }
 }

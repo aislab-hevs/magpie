@@ -18,6 +18,9 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +30,7 @@ import ch.hevs.aislab.magpie.android.MagpieActivity;
 import ch.hevs.aislab.magpie.environment.Services;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.paams.connector.AlertDAO;
+import ch.hevs.aislab.paams.db.DBHelper;
 import ch.hevs.aislab.paams.model.DoubleValue;
 import ch.hevs.aislab.paams.model.SingleValue;
 import ch.hevs.aislab.paams.model.Type;
@@ -41,7 +45,7 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
     private ActionBarDrawerToggle drawerToggle;
     private AlertDAO alertDAO;
 
-    private OnChangeDummyDataDisplayListener callback;
+    private List<OnChangeDummyDataDisplayListener> callbacks;
 
     public interface OnChangeDummyDataDisplayListener {
         void displayDummyData(Boolean display);
@@ -49,10 +53,13 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        callbacks = new ArrayList<>();
 
-        // Setup navigation
+        // Setup MainActivity
+        setupDummyDatabase();
         setupSharedPrefs();
         setupToolbar();
         setupInstances();
@@ -63,6 +70,7 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
 
     @Override
     protected void onStart() {
+        Log.i(TAG, "onStart()");
         super.onStart();
         alertDAO.open();
     }
@@ -90,9 +98,22 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
     }
 
     private void setupSharedPrefs() {
-        Log.i(TAG, "setupSharedPrefs();");
+        Log.i(TAG, "setupSharedPrefs()");
         if (!getPreferences(Context.MODE_PRIVATE).contains(getString(R.string.pref_showMocked))) {
             updateSharedPrefs(true);
+        }
+    }
+
+    private void setupDummyDatabase() {
+        Log.i(TAG, "setupDummyDatabase()");
+        DBHelper dbHelper = new DBHelper(this);
+        if (!dbHelper.hasData()) {
+            Log.i(TAG, "inserting dummy data..");
+            try {
+                dbHelper.insertFromFile(this);
+            } catch (IOException e) {
+                Log.e(TAG, e.toString());
+            }
         }
     }
 
@@ -165,7 +186,7 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Log.i(TAG, "callback.displayDummyData() with " + isChecked);
                 updateSharedPrefs(isChecked);
-                callback.displayDummyData(isChecked);
+                notifyCallbacks(isChecked);
             }
         });
 
@@ -200,13 +221,8 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
     }
 
     public Boolean setOnChangeDummyDataDisplayListener(OnChangeDummyDataDisplayListener listener) {
-        this.callback = listener;
+        this.callbacks.add(listener);
         Log.i(TAG, "setOnChangeDummyDataDisplayListener() from " + listener.getClass());
-        return getPreferences(Context.MODE_PRIVATE).getBoolean(getString(R.string.pref_showMocked), true);
-    }
-
-    public Boolean getCurrentDisplayState(OnChangeDummyDataDisplayListener listener) {
-        Log.i(TAG, "getCurrentDisplayState() from " + listener.getClass());
         return getPreferences(Context.MODE_PRIVATE).getBoolean(getString(R.string.pref_showMocked), true);
     }
 
@@ -270,5 +286,11 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
             event = new LogicTupleEvent(timestamp, name, sys, dias);
         }
         sendEvent(event);
+    }
+
+    private void notifyCallbacks(boolean isChecked) {
+        for (OnChangeDummyDataDisplayListener callback : callbacks) {
+            callback.displayDummyData(isChecked);
+        }
     }
 }

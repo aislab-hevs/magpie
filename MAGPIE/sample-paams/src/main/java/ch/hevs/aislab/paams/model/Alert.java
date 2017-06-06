@@ -3,7 +3,6 @@ package ch.hevs.aislab.paams.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -106,7 +105,7 @@ public class Alert implements Parcelable, Comparable<Alert> {
     }
 
     @Override
-    public int compareTo(@NonNull Alert a) {
+    public int compareTo(Alert a) {
         return this.timestamp < a.timestamp ? -1 :
                 this.timestamp > a.timestamp ? 1 : 0;
     }
