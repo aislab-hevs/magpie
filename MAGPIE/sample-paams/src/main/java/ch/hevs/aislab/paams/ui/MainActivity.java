@@ -30,6 +30,7 @@ import ch.hevs.aislab.magpie.android.MagpieActivity;
 import ch.hevs.aislab.magpie.environment.Services;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.paams.connector.AlertDAO;
+import ch.hevs.aislab.paams.connector.ValueDAO;
 import ch.hevs.aislab.paams.db.DBHelper;
 import ch.hevs.aislab.paams.model.DoubleValue;
 import ch.hevs.aislab.paams.model.SingleValue;
@@ -109,11 +110,7 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
         DBHelper dbHelper = new DBHelper(this);
         if (!dbHelper.hasData()) {
             Log.i(TAG, "inserting dummy data..");
-            try {
-                dbHelper.insertFromFile(this);
-            } catch (IOException e) {
-                Log.e(TAG, e.toString());
-            }
+            dbHelper.initializeDummyData(this, 10);
         }
     }
 
@@ -266,6 +263,13 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
         PrologAgentMind mind = new PrologAgentMind(getApplicationContext(), R.raw.demo_rules);
         agent.setMind(mind);
         registerAgent(agent);
+
+        ValueDAO valueDAO = new ValueDAO(this);
+        valueDAO.open();
+        List<Value> weightValues = valueDAO.getAllValues(Type.WEIGHT);
+        for (Value value : weightValues) {
+            sendEvent(value);
+        }
     }
 
     @Override

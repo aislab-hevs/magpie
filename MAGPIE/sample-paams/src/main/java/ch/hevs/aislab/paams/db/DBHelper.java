@@ -86,17 +86,25 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(database);
     }
 
-    public void insertFromFile(Context context) throws IOException {
+    public void initializeDummyData(Context context, int number) {
+        try {
+            insertFromFile(context, R.raw.dummy_weight, number);
+            //insertFromFile(context, R.raw.dummy_glucose, number);
+            //insertFromFile(context, R.raw.dummy_blood_presure, number);
+        } catch (IOException e) {
+            Log.e(TAG, e.toString());
+        }
+    }
+
+    public void insertFromFile(Context context, int resourceId, int number) throws IOException {
         Log.i(TAG, "insertFromFile() from " + context.getClass());
-        // Resetting Counter
         int rows = 0;
 
-        // Open the resource
-        InputStream insertsStream = context.getResources().openRawResource(R.raw.dummy_data);
+        InputStream insertsStream = context.getResources().openRawResource(resourceId);
         BufferedReader insertReader = new BufferedReader(new InputStreamReader(insertsStream));
 
-        // Iterate through lines (assuming each insert has its own line and theres no other stuff)
         while (insertReader.ready()) {
+            if (rows == number) return;
             String insertStmt = insertReader.readLine();
             getWritableDatabase().execSQL(insertStmt);
             rows++;
