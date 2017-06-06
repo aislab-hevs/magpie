@@ -110,7 +110,7 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
         DBHelper dbHelper = new DBHelper(this);
         if (!dbHelper.hasData()) {
             Log.i(TAG, "inserting dummy data..");
-            dbHelper.initializeDummyData(this, 10);
+            dbHelper.initializeDummyData(this, 500, 30);
         }
     }
 
