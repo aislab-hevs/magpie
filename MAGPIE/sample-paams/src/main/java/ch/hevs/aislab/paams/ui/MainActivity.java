@@ -18,7 +18,6 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -108,9 +107,9 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
     private void setupDummyDatabase() {
         Log.i(TAG, "setupDummyDatabase()");
         DBHelper dbHelper = new DBHelper(this);
-        if (!dbHelper.hasData()) {
+        if (!dbHelper.containsData()) {
             Log.i(TAG, "inserting dummy data..");
-            dbHelper.initializeDummyData(this, 500, 30);
+            dbHelper.initializeDummyData(this);
         }
     }
 
@@ -263,13 +262,18 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
         PrologAgentMind mind = new PrologAgentMind(getApplicationContext(), R.raw.demo_rules);
         agent.setMind(mind);
         registerAgent(agent);
-
+        /*
         ValueDAO valueDAO = new ValueDAO(this);
         valueDAO.open();
         List<Value> weightValues = valueDAO.getAllValues(Type.WEIGHT);
+        List<Value> bloodPresureValues = valueDAO.getAllValues(Type.BLOOD_PRESSURE);
         for (Value value : weightValues) {
             sendEvent(value);
         }
+        for (Value value : bloodPresureValues) {
+            sendEvent(value);
+        }
+        */
     }
 
     @Override

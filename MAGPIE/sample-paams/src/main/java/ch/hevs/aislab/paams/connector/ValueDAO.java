@@ -133,7 +133,7 @@ public class ValueDAO {
         measurement.setFirstValue(cursor.getInt(1));
         measurement.setSecondValue(cursor.getInt(2));
         measurement.setTimestamp(cursor.getLong(3));
-        measurement.setDummy((cursor.getInt(3) == 1));
+        measurement.setDummy((cursor.getInt(4) == 1));
         measurement.setType(type);
         return measurement;
     }

@@ -86,17 +86,18 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(database);
     }
 
-    public void initializeDummyData(Context context, int dataSetSize, int entriesToLoad) {
+    public void initializeDummyData(Context context) {
         try {
-            insertFromFile(context, R.raw.dummy_weight, dataSetSize, entriesToLoad);
-            //insertFromFile(context, R.raw.dummy_glucose, dataSetSize, entriesToLoad);
-            //insertFromFile(context, R.raw.dummy_blood_presure, dataSetSize, entriesToLoad);
+            insertFromFile(context, R.raw.dummy_weight);
+            //insertFromFile(context, R.raw.dummy_glucose);
+            insertFromFile(context, R.raw.dummy_blood_presure);
+            insertFromFile(context, R.raw.dummy_alerts);
         } catch (IOException e) {
             Log.e(TAG, e.toString());
         }
     }
 
-    public void insertFromFile(Context context, int resourceId, int dataSetSize, int entriesToLoad) throws IOException {
+    public void insertFromFile(Context context, int resourceId) throws IOException {
         Log.i(TAG, "insertFromFile() from " + context.getClass());
         int rows = 0;
 
@@ -104,19 +105,16 @@ public class DBHelper extends SQLiteOpenHelper {
         BufferedReader insertReader = new BufferedReader(new InputStreamReader(insertsStream));
 
         while (insertReader.ready()) {
-            if (rows == dataSetSize) return;
-            String insertStmt = insertReader.readLine();
-            if (rows++ < dataSetSize - entriesToLoad) continue;
-            Log.i(TAG, "Insert row: " + insertStmt);
-            getWritableDatabase().execSQL(insertStmt);
+            String insertStatement = insertReader.readLine();
+            getWritableDatabase().execSQL(insertStatement);
             rows++;
         }
         insertReader.close();
         Log.i(TAG, "Inserted " + rows + " rows.");
     }
 
-    public boolean hasData() {
-        Log.i(TAG, "hasData() " + DatabaseUtils.queryNumEntries(getReadableDatabase(), TABLE_WEIGHT, null, null) + " rows.");
+    public boolean containsData() {
+        Log.i(TAG, "containsData() " + DatabaseUtils.queryNumEntries(getReadableDatabase(), TABLE_WEIGHT, null, null) + " rows.");
         return DatabaseUtils.queryNumEntries(getReadableDatabase(), TABLE_WEIGHT, null, null) > 0 ? true : false;
     }
 }

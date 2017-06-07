@@ -235,7 +235,7 @@ public class ListValuesFragment extends ListFragment implements MainActivity.OnC
                             valueAdapter.removeItem(value);
                             valueDAO.deleteValue(value);
                         } else {
-                            dummy += " Dummy data cannot be deleted.";
+                            dummy = " Dummy data cannot be deleted.";
                         }
                     }
                     Toast.makeText(getContext(), "Deleted " + size + " entries." + dummy, Toast.LENGTH_LONG).show();
@@ -261,7 +261,7 @@ public class ListValuesFragment extends ListFragment implements MainActivity.OnC
 
     @Override
     public void displayDummyData(Boolean display) {
-        Log.i(TAG, "displayDummyData() with " + display);
+        Log.i(TAG, "displayDummyData() for type " + type + " with " + display);
         valueAdapter.displayDummyData(display);
     }
 }
