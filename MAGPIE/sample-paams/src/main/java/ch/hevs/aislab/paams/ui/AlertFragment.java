@@ -24,7 +24,7 @@ import ch.hevs.aislab.paams.model.Alert;
 import ch.hevs.aislab.paamsdemo.R;
 
 
-public class AlertFragment extends ListFragment {
+public class AlertFragment extends ListFragment implements MainActivity.OnChangeDummyDataDisplayListener {
 
     private final String TAG = getClass().getName();
 
@@ -32,6 +32,7 @@ public class AlertFragment extends ListFragment {
 
     private AlertAdapter alertAdapter;
     private AlertDAO alertDAO;
+    private Boolean displayDummyData;
 
     public AlertFragment() {
         // Required empty public constructor
@@ -61,6 +62,7 @@ public class AlertFragment extends ListFragment {
             alertAdapter.addAllItems(alertDAO.getAllAlerts());
         }
         setListAdapter(alertAdapter);
+        alertAdapter.displayDummyData(displayDummyData);
 
         setHasOptionsMenu(true);
     }
@@ -99,6 +101,7 @@ public class AlertFragment extends ListFragment {
 
     @Override
     public void onAttach(Context context) {
+        displayDummyData = ((MainActivity) getActivity()).setOnChangeDummyDataDisplayListener(this);
         super.onAttach(context);
     }
 
@@ -135,13 +138,26 @@ public class AlertFragment extends ListFragment {
         if (alerts.isEmpty()) {
             Toast.makeText(getContext(), "Select the items to delete", Toast.LENGTH_LONG).show();
         } else {
+            int size = 0;
+            String dummy = "";
             for (Alert alert : alerts) {
-                alertAdapter.removeItem(alert);
-                alertDAO.deleteAlert(alert);
+                if (!alert.isDummy()) {
+                    size++;
+                    alertAdapter.removeItem(alert);
+                    alertDAO.deleteAlert(alert);
+                } else {
+                    dummy = " Dummy data cannot be deleted.";
+                }
             }
-            int size = alerts.size();
-            Toast.makeText(getContext(), "Deleted " + size + " entries", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Deleted " + size + " entries." + dummy, Toast.LENGTH_LONG).show();
+            return true;
         }
         return true;
+    }
+
+    @Override
+    public void displayDummyData(Boolean display) {
+        Log.i(TAG, "displayDummyData() with " + display);
+        alertAdapter.displayDummyData(display);
     }
 }

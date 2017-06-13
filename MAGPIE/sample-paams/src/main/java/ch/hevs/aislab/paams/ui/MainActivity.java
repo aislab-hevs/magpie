@@ -196,8 +196,19 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
                 return getString(R.string.about_url)   ;
             }
         };
-
         Linkify.addLinks(iconsTextView, pattern, url, null, urlFilter);
+
+        TextView chartsTextView = (TextView) aboutView.findViewById(R.id.MPAndroidChartTextView);
+        pattern = Pattern.compile("MPAndroidChart");
+        url = getString(R.string.about_url2);
+
+        urlFilter = new Linkify.TransformFilter() {
+            @Override
+            public String transformUrl(Matcher matcher, String url) {
+                return getString(R.string.about_url2)   ;
+            }
+        };
+        Linkify.addLinks(chartsTextView, pattern, url, null, urlFilter);
 
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
                 new android.view.ContextThemeWrapper(

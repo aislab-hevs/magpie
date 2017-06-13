@@ -36,6 +36,13 @@
         android:textSize="@dimen/font_size" />
 
     <TextView
+        android:id="@+id/MPAndroidChartTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_mpAndroidChart"
+        android:textSize="@dimen/font_size" />
+    
+    <TextView
         android:id="@+id/iconsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
