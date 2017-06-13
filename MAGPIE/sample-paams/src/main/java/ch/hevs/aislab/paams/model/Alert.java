@@ -4,6 +4,7 @@ package ch.hevs.aislab.paams.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -100,7 +101,7 @@ public class Alert implements Parcelable, Comparable<Alert> {
         dest.writeLong(id);
         dest.writeString(name);
         dest.writeLong(timestamp);
-        dest.writeByte((byte) (marked? 1 : 0));
+        dest.writeByte((byte) (marked ? 1 : 0));
         dest.writeByte((byte) (dummy ? 1 : 0));
     }
 
@@ -108,5 +109,10 @@ public class Alert implements Parcelable, Comparable<Alert> {
     public int compareTo(Alert a) {
         return this.timestamp < a.timestamp ? -1 :
                 this.timestamp > a.timestamp ? 1 : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "INSERT INTO alert (name, timestamp, dummy_data) VALUES (" + name + ", " + timestamp + ", 1); -- " + new SimpleDateFormat("dd-MM-yyyy HH.mm.ss").format(new Timestamp(timestamp));
     }
 }

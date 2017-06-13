@@ -19,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
 
     public static final String TABLE_GLUCOSE = "glucose";
-    public static final String TABLE_BLOOD_PRESURE = "blood_pressure";
+    public static final String TABLE_BLOOD_PRESSURE = "blood_pressure";
     public static final String TABLE_WEIGHT = "weight";
     public static final String TABLE_ALERT = "alert";
 
@@ -42,7 +42,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     + COLUMN_DUMMY + " INTEGER DEFAULT 0);";
 
     private final static String CREATE_TABLE_BLOOD_PRESSURE =
-            "CREATE TABLE " + TABLE_BLOOD_PRESURE + "("
+            "CREATE TABLE " + TABLE_BLOOD_PRESSURE + "("
                     + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COLUMN_FIRST_VALUE + " INTEGER NOT NULL,"
                     + COLUMN_SECOND_VALUE + " INTEGER NOT NULL,"
@@ -80,7 +80,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         Log.i(TAG, "onUpgrade()");
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_GLUCOSE);
-        database.execSQL("DROP TABLE IF EXISTS " + TABLE_BLOOD_PRESURE);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_BLOOD_PRESSURE);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_WEIGHT);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_ALERT);
         onCreate(database);
@@ -90,7 +90,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             insertFromFile(context, R.raw.dummy_weight);
             //insertFromFile(context, R.raw.dummy_glucose);
-            insertFromFile(context, R.raw.dummy_blood_presure);
+            insertFromFile(context, R.raw.dummy_blood_pressure);
             insertFromFile(context, R.raw.dummy_alerts);
         } catch (IOException e) {
             Log.e(TAG, e.toString());
