@@ -112,6 +112,39 @@ public class PrologAgentMindTest {
         Assert.assertNull(secondAlert);
     }
 
+    @Test
+    public void preHypertenstionAlertTest() {
+        // Blood pressure events that trigger the alert
+        LogicTupleEvent ev1 = new LogicTupleEvent("blood_pressure", "139", "89");
+        LogicTupleEvent ev2 = new LogicTupleEvent("blood_pressure", "134", "82");
+
+        // Timestamps of the events
+        long tsEv1 = 1407778799000L; // Mon, 11 Aug 2014 19:39:59
+        long tsEv2 = 1407900429000L; // Wed, 13 Aug 2014 05:27:09
+        ev1.setTimestamp(tsEv1);
+        ev2.setTimestamp(tsEv2);
+
+        // The mind perceives the first event
+        agentMind.updatePerception(ev1);
+        agentMind.produceAction(tsEv1);
+
+        // The mind perceives the second event
+        agentMind.updatePerception(ev2);
+        LogicTupleEvent alert = (LogicTupleEvent) agentMind.produceAction(tsEv2);
+
+        Assert.assertEquals("act('Pre-hypertension'," + ++tsEv2 + ")", alert.toTuple());
+
+        // Blood pressure event that happens after the alert and is within the one week time window
+        LogicTupleEvent ev3 = new LogicTupleEvent("blood_pressure(135,85)");
+        long tsEv3 = 1407951178000L; // Wed, 13 Aug 2014 19:32:58
+        ev3.setTimestamp(tsEv3);
+
+        agentMind.updatePerception(ev3);
+        LogicTupleEvent noAlert = (LogicTupleEvent) agentMind.produceAction(tsEv3);
+
+        Assert.assertEquals(noAlert, null);
+    }
+
     private long convertDateToMills(String dateString) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
         Date date = null;
