@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 import ch.hevs.aislab.magpie.event.LogicTupleEvent;
 import ch.hevs.aislab.paams.db.DBHelper;
 import ch.hevs.aislab.paams.model.Alert;
+import ch.hevs.aislab.paams.model.Type;
 
 public class AlertDAO {
 
@@ -61,6 +63,39 @@ public class AlertDAO {
             cursor.moveToNext();
         }
         cursor.close();
+        for (Alert alert : items) {
+            Log.d("AlertDAO", alert.toString());
+        }
+        return items;
+    }
+
+    public List<Alert> getAlertsByType(Type type) {
+        String queryParam = "";
+
+        switch (type) {
+            case GLUCOSE:
+                queryParam = "DM treatment is not effective";
+                break;
+            case WEIGHT:
+                queryParam = "Gaining weight";
+                break;
+            case BLOOD_PRESSURE:
+                queryParam = "Pre-hypertension";
+                break;
+        }
+
+        List<Alert> items = new ArrayList<>();
+        Cursor cursor = database.query(DBHelper.TABLE_ALERT, null, DBHelper.COLUMN_NAME + "=?", new String[] { queryParam }, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Alert alert = cursorToAlert(cursor);
+            items.add(alert);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        for (Alert alert : items) {
+            Log.d("AlertDAO", alert.toString());
+        }
         return items;
     }
 

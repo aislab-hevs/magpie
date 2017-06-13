@@ -61,8 +61,8 @@ public class ValueDAO {
                         null, DBHelper.COLUMN_ID + " = " + insertId, null, null, null, null);
                 break;
             case BLOOD_PRESSURE:
-                insertId = database.insert(DBHelper.TABLE_BLOOD_PRESURE, null, values);
-                cursor = database.query(DBHelper.TABLE_BLOOD_PRESURE,
+                insertId = database.insert(DBHelper.TABLE_BLOOD_PRESSURE, null, values);
+                cursor = database.query(DBHelper.TABLE_BLOOD_PRESSURE,
                         null, DBHelper.COLUMN_ID + " = " + insertId, null, null, null, null);
                 break;
         }
@@ -80,7 +80,7 @@ public class ValueDAO {
                 database.delete(DBHelper.TABLE_WEIGHT, DBHelper.COLUMN_ID + " = " + value.getId(), null);
                 break;
             case BLOOD_PRESSURE:
-                database.delete(DBHelper.TABLE_BLOOD_PRESURE, DBHelper.COLUMN_ID + " = " + value.getId(), null);
+                database.delete(DBHelper.TABLE_BLOOD_PRESSURE, DBHelper.COLUMN_ID + " = " + value.getId(), null);
                 break;
         }
     }
@@ -96,7 +96,7 @@ public class ValueDAO {
                 cursor = database.query(DBHelper.TABLE_WEIGHT, null, null, null, null, null, null);
                 break;
             case BLOOD_PRESSURE:
-                cursor = database.query(DBHelper.TABLE_BLOOD_PRESURE, null, null, null, null, null, null);
+                cursor = database.query(DBHelper.TABLE_BLOOD_PRESSURE, null, null, null, null, null, null);
                 break;
         }
         cursor.moveToFirst();

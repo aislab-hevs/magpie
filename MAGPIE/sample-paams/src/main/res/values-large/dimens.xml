@@ -8,6 +8,6 @@
     <dimen name="font_size">19sp</dimen>
     <dimen name="layout_marginBottom">24dp</dimen>
     <dimen name="layout_marginEnd">24dp</dimen>
-    <dimen name="floatingButton_layout_width">100dp</dimen>
-    <dimen name="floatingButton_layout_height">100dp</dimen>
+    <dimen name="floatingButton_layout_width">90dp</dimen>
+    <dimen name="floatingButton_layout_height">90dp</dimen>
 </resources>
