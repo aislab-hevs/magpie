@@ -96,6 +96,7 @@ public class TrendsFragment extends Fragment implements MainActivity.OnChangeDum
         alertDAO = new AlertDAO(getActivity());
         alertDAO.open();
         valueChartAdapter.addAllAlerts(alertDAO.getAlertsByType(type), getContext());
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -163,33 +164,43 @@ public class TrendsFragment extends Fragment implements MainActivity.OnChangeDum
         YAxis yAxisRight = chart.getAxisRight();
         yAxisLeft.setTextSize(12f);
         yAxisRight.setTextSize(12f);
-        if (type == Type.BLOOD_PRESSURE) {
-            // Systolic: Over threshold
-            yAxisLeft.addLimitLine(new LimitLine(139f));
-            yAxisLeft.addLimitLine(new LimitLine(142f));
-            // Systolic: In threshold
-            yAxisLeft.addLimitLine(new LimitLine(139f));
-            yAxisLeft.addLimitLine(new LimitLine(120f));
-            // Systolic: Under threshold
-            yAxisLeft.addLimitLine(new LimitLine(120f));
-            yAxisLeft.addLimitLine(new LimitLine(89f));
-            // Diastolic: In threshold
-            yAxisLeft.addLimitLine(new LimitLine(89f));
-            yAxisLeft.addLimitLine(new LimitLine(80f));
-            // Diastolic: Under threshold
-            yAxisLeft.addLimitLine(new LimitLine(80f));
-            yAxisLeft.addLimitLine(new LimitLine(63f));
-        }
-        if (type == Type.GLUCOSE) {
-            // Glucose: Over threshold
-            yAxisLeft.addLimitLine(new LimitLine(10.0f));
-            yAxisLeft.addLimitLine(new LimitLine(8.0f));
-            // Glucose: In threshold
-            yAxisLeft.addLimitLine(new LimitLine(8.0f));
-            yAxisLeft.addLimitLine(new LimitLine(3.8f));
-            // Glucose: Under threshold
-            yAxisLeft.addLimitLine(new LimitLine(3.8f));
-            yAxisLeft.addLimitLine(new LimitLine(0.0f));
+        switch (type) {
+            case GLUCOSE:
+                // Glucose: Over threshold
+                yAxisLeft.addLimitLine(new LimitLine(10.0f));
+                yAxisLeft.addLimitLine(new LimitLine(8.0f));
+                // Glucose: In threshold
+                yAxisLeft.addLimitLine(new LimitLine(8.0f));
+                yAxisLeft.addLimitLine(new LimitLine(3.8f));
+                // Glucose: Under threshold
+                yAxisLeft.addLimitLine(new LimitLine(3.8f));
+                yAxisLeft.addLimitLine(new LimitLine(0.0f));
+                break;
+            case BLOOD_PRESSURE:
+                // Systolic: Over threshold
+                yAxisLeft.addLimitLine(new LimitLine(139f));
+                yAxisLeft.addLimitLine(new LimitLine(142f));
+                // Systolic: In threshold
+                yAxisLeft.addLimitLine(new LimitLine(139f));
+                yAxisLeft.addLimitLine(new LimitLine(120f));
+                // Systolic: Under threshold
+                yAxisLeft.addLimitLine(new LimitLine(120f));
+                yAxisLeft.addLimitLine(new LimitLine(89f));
+                // Diastolic: In threshold
+                yAxisLeft.addLimitLine(new LimitLine(89f));
+                yAxisLeft.addLimitLine(new LimitLine(80f));
+                // Diastolic: Under threshold
+                yAxisLeft.addLimitLine(new LimitLine(80f));
+                yAxisLeft.addLimitLine(new LimitLine(63f));
+                break;
+            case WEIGHT:
+                // Weight: Over threshold
+                yAxisLeft.addLimitLine(new LimitLine(95.2f));
+                yAxisLeft.addLimitLine(new LimitLine(94.6f));
+                // Weight: In threshold
+                yAxisLeft.addLimitLine(new LimitLine(94.6f));
+                yAxisLeft.addLimitLine(new LimitLine(92.8f));
+                break;
         }
         chart.getDescription().setEnabled(false);
         chart.setTouchEnabled(true);

@@ -54,9 +54,35 @@ public class ThresholdLineChart extends LineChart {
         }
 
         // Weight:
-        if (limitLines == null) {
-            super.onDraw(canvas);
-            return;
+        if (limitLines.size() == 4) {
+            LimitLine l0 = limitLines.get(0);
+            LimitLine l1 = limitLines.get(1);
+            LimitLine l2 = limitLines.get(2);
+            LimitLine l3 = limitLines.get(3);
+
+            float[] pts1 = new float[4];
+            pts1[1] = l0.getLimit();
+            pts1[3] = l1.getLimit();
+
+            float[] pts2 = new float[4];
+            pts2[1] = l2.getLimit();
+            pts2[3] = l3.getLimit();
+
+            l0.setEnabled(false);
+            l1.setEnabled(false);
+            l2.setEnabled(false);
+            l3.setEnabled(false);
+
+            mLeftAxisTransformer.pointValuesToPixel(pts1);
+            mLeftAxisTransformer.pointValuesToPixel(pts2);
+
+            // Weight: Over threshold
+            mYAxisSafeZonePaint.setColor(Color.rgb(255, 204, 204));
+            canvas.drawRect(mViewPortHandler.contentLeft(), pts1[1], mViewPortHandler.contentRight(), pts1[3], mYAxisSafeZonePaint);
+
+            // Weight: In threshold
+            mYAxisSafeZonePaint.setColor(Color.rgb(204, 255, 204));
+            canvas.drawRect(mViewPortHandler.contentLeft(), pts2[1], mViewPortHandler.contentRight(), pts2[3], mYAxisSafeZonePaint);
         }
 
         // Glucose:
