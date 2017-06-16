@@ -74,7 +74,7 @@ public class AlertDAO {
 
         switch (type) {
             case GLUCOSE:
-                queryParam = "DM treatment is not effective";
+                queryParam = "Brittle diabetes";
                 break;
             case WEIGHT:
                 queryParam = "Gaining weight";

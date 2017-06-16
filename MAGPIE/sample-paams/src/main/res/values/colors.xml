@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="colorSet1">#0080FF</color>
-    <color name="colorSet2">#99CCFF</color>
-    <color name="colorSetAlert">#FF0000</color>
+    <color name="primary">#3F51B5</color>
+    <color name="primaryDark">#303F9F</color>
+    <color name="accent">#FF4081</color>
+    <color name="set1">#0080FF</color>
+    <color name="set2">#99CCFF</color>
+    <color name="setAlert">#FF0000</color>
+
 </resources>

@@ -42,3 +42,9 @@ INSERT INTO alert (name, timestamp, dummy_data) VALUES ('Pre-hypertension', 1495
 INSERT INTO alert (name, timestamp, dummy_data) VALUES ('Pre-hypertension', 1496460060001, 1); -- 03-06-2017 05.21.00
 INSERT INTO alert (name, timestamp, dummy_data) VALUES ('Pre-hypertension', 1497066660001, 1); -- 10-06-2017 05.51.00
 INSERT INTO alert (name, timestamp, dummy_data) VALUES ('Pre-hypertension', 1497678300001, 1); -- 17-06-2017 07.45.00
+INSERT INTO alert (name, timestamp, dummy_data) VALUES ('Brittle diabetes', 1488307682001, 1); -- 28-02-2017 19.48.02
+INSERT INTO alert (name, timestamp, dummy_data) VALUES ('Brittle diabetes', 1488454723001, 1); -- 02-03-2017 12.38.43
+INSERT INTO alert (name, timestamp, dummy_data) VALUES ('Brittle diabetes', 1488735749001, 1); -- 05-03-2017 18.42.29
+INSERT INTO alert (name, timestamp, dummy_data) VALUES ('Brittle diabetes', 1488816362001, 1); -- 06-03-2017 17.06.02
+INSERT INTO alert (name, timestamp, dummy_data) VALUES ('Brittle diabetes', 1488895507001, 1); -- 07-03-2017 15.05.07
+INSERT INTO alert (name, timestamp, dummy_data) VALUES ('Brittle diabetes', 1488721040001, 1); -- 05-03-2017 14.37.20

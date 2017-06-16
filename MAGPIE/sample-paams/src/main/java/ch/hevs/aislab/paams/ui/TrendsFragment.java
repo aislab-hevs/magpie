@@ -2,6 +2,7 @@ package ch.hevs.aislab.paams.ui;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -67,13 +68,13 @@ public class TrendsFragment extends Fragment implements MainActivity.OnChangeDum
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate() for " + type);
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
             type = Type.valueOf(getArguments().getString(ARG_TYPE));
         }
 
-        Log.i(TAG, "onCreate() for " + type);
 
         if (savedInstanceState == null) {
             valueChartAdapter = new ValueChartAdapter(type);
@@ -96,6 +97,8 @@ public class TrendsFragment extends Fragment implements MainActivity.OnChangeDum
         alertDAO = new AlertDAO(getActivity());
         alertDAO.open();
         valueChartAdapter.addAllAlerts(alertDAO.getAlertsByType(type), getContext());
+        if (chart != null)
+            chart.invalidate();
         setHasOptionsMenu(true);
     }
 
@@ -108,6 +111,8 @@ public class TrendsFragment extends Fragment implements MainActivity.OnChangeDum
     @Override
     public void onResume() {
         Log.i(TAG, "onResume() from " + type);
+        if (chart != null)
+            chart.invalidate();
         super.onResume();
     }
 
@@ -162,19 +167,25 @@ public class TrendsFragment extends Fragment implements MainActivity.OnChangeDum
         chart = (ThresholdLineChart) view.findViewById(R.id.chart);
         YAxis yAxisLeft = chart.getAxisLeft();
         YAxis yAxisRight = chart.getAxisRight();
+        XAxis xAxis = chart.getXAxis();
         yAxisLeft.setTextSize(12f);
         yAxisRight.setTextSize(12f);
+        chart.getDescription().setEnabled(false);
+        chart.setTouchEnabled(true);
+        chart.setData(valueChartAdapter.getLineData());
+        chart.setExtraTopOffset(5f);
+        LimitLine l0;
+        LimitLine l1;
         switch (type) {
             case GLUCOSE:
                 // Glucose: Over threshold
-                yAxisLeft.addLimitLine(new LimitLine(10.0f));
-                yAxisLeft.addLimitLine(new LimitLine(8.0f));
-                // Glucose: In threshold
-                yAxisLeft.addLimitLine(new LimitLine(8.0f));
-                yAxisLeft.addLimitLine(new LimitLine(3.8f));
+                l0 = new LimitLine(8.0f);
+                setupLimitLine(l0);
+                yAxisLeft.addLimitLine(l0);
                 // Glucose: Under threshold
-                yAxisLeft.addLimitLine(new LimitLine(3.8f));
-                yAxisLeft.addLimitLine(new LimitLine(0.0f));
+                l1 = new LimitLine(3.8f);
+                setupLimitLine(l1);
+                yAxisLeft.addLimitLine(l1);
                 break;
             case BLOOD_PRESSURE:
                 // Systolic: Over threshold
@@ -195,27 +206,35 @@ public class TrendsFragment extends Fragment implements MainActivity.OnChangeDum
                 break;
             case WEIGHT:
                 // Weight: Over threshold
-                yAxisLeft.addLimitLine(new LimitLine(95.2f));
-                yAxisLeft.addLimitLine(new LimitLine(94.6f));
+                l0 = new LimitLine(94.6f);
+                setupLimitLine(l0);
+                yAxisLeft.addLimitLine(l0);
                 // Weight: In threshold
-                yAxisLeft.addLimitLine(new LimitLine(94.6f));
-                yAxisLeft.addLimitLine(new LimitLine(92.8f));
+                l1 = new LimitLine(93.7f);
+                setupLimitLine(l1);
+                yAxisLeft.addLimitLine(l1);
                 break;
         }
-        chart.getDescription().setEnabled(false);
-        chart.setTouchEnabled(true);
-        chart.setData(valueChartAdapter.getLineData());
-        chart.setExtraTopOffset(5f);
+        xAxis.setAxisMaximum(xAxis.getAxisMaximum() + 300f);
+        xAxis.setAxisMinimum(xAxis.getAxisMinimum() - 300f);
         XAxisFormatter formatter = new XAxisFormatter();
-        XAxis xAxis = chart.getXAxis();
         xAxis.setValueFormatter(formatter);
         xAxis.setGranularity(1f);
         xAxis.setDrawAxisLine(false);
         xAxis.setDrawGridLines(true);
         xAxis.setTextSize(12f);
+        xAxis.setDrawLimitLinesBehindData(true);
+        yAxisLeft.setDrawLimitLinesBehindData(true);
+        yAxisRight.setDrawLimitLinesBehindData(true);
         ValueMarkerView markerView = new ValueMarkerView(getContext(), R.layout.fragment_trends);
         chart.setMarker(markerView);
         chart.invalidate();
+    }
+
+    private void setupLimitLine(LimitLine limitLine) {
+        limitLine.setLineWidth(2);
+        limitLine.setLineColor(Color.rgb(76, 153, 0));
+        limitLine.enableDashedLine(15f, 5f, 0f);
     }
 
     private void setupLegend() {
@@ -223,10 +242,10 @@ public class TrendsFragment extends Fragment implements MainActivity.OnChangeDum
         List<LegendEntry> legendEntries = new ArrayList<>();
         if (legend.getEntries().length == 0)
             return;
-        legendEntries.add(new LegendEntry(legend.getEntries()[0].label, Legend.LegendForm.DEFAULT, Float.NaN, Float.NaN, null, ContextCompat.getColor(getContext(), R.color.colorSet1)));
+        legendEntries.add(new LegendEntry(legend.getEntries()[0].label, Legend.LegendForm.DEFAULT, Float.NaN, Float.NaN, null, ContextCompat.getColor(getContext(), R.color.set1)));
         if (type == Type.BLOOD_PRESSURE)
-            legendEntries.add(new LegendEntry(legend.getEntries()[1].label, Legend.LegendForm.DEFAULT, Float.NaN, Float.NaN, null, ContextCompat.getColor(getContext(), R.color.colorSet2)));
-        legendEntries.add(new LegendEntry("Alert", Legend.LegendForm.DEFAULT, Float.NaN, Float.NaN, null, ContextCompat.getColor(getContext(), R.color.colorSetAlert)));
+            legendEntries.add(new LegendEntry(legend.getEntries()[1].label, Legend.LegendForm.DEFAULT, Float.NaN, Float.NaN, null, ContextCompat.getColor(getContext(), R.color.set2)));
+        legendEntries.add(new LegendEntry("Alert", Legend.LegendForm.DEFAULT, Float.NaN, Float.NaN, null, ContextCompat.getColor(getContext(), R.color.setAlert)));
         legend.setCustom(legendEntries);
         legend.setTextSize(15f);
         chart.invalidate();

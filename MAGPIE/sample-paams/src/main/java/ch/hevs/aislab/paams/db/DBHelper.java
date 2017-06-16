@@ -89,7 +89,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void initializeDummyData(Context context) {
         try {
             insertFromFile(context, R.raw.dummy_weight);
-            //insertFromFile(context, R.raw.dummy_glucose);
+            insertFromFile(context, R.raw.dummy_glucose);
             insertFromFile(context, R.raw.dummy_blood_pressure);
             insertFromFile(context, R.raw.dummy_alerts);
         } catch (IOException e) {

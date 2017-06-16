@@ -277,11 +277,15 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
         ValueDAO valueDAO = new ValueDAO(this);
         valueDAO.open();
         List<Value> weightValues = valueDAO.getAllValues(Type.WEIGHT);
-        List<Value> bloodPressureValues = valueDAO.getAllValues(Type.BLOOD_PRESSURE);
         for (Value value : weightValues) {
             sendEvent(value);
         }
+        List<Value> bloodPressureValues = valueDAO.getAllValues(Type.BLOOD_PRESSURE);
         for (Value value : bloodPressureValues) {
+            sendEvent(value);
+        }
+        List<Value> glucoseValues = valueDAO.getAllValues(Type.GLUCOSE);
+        for (Value value : glucoseValues) {
             sendEvent(value);
         }
         */

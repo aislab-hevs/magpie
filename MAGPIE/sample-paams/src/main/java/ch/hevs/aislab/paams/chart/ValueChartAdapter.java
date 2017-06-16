@@ -62,37 +62,37 @@ public class ValueChartAdapter {
         int index = 0;
         switch (type) {
             case GLUCOSE:
-                Arrays.fill(colorsSet1, R.color.colorSet1);
+                Arrays.fill(colorsSet1, R.color.set1);
                 dataSet1 = (LineDataSet) lineData.getDataSetByLabel(LABEL_GLUCOSE, false);
                 for (Alert alert : alerts) {
                     alert.setTimestamp(alert.getTimestamp() - 1);
                     index = dataSet1.getEntryIndex(convertTimestamp(alert.getTimestamp()), 0f, DataSet.Rounding.CLOSEST);
-                    colorsSet1[index] = R.color.colorSetAlert;
+                    colorsSet1[index] = R.color.setAlert;
                 }
                 dataSet1.setCircleColors(colorsSet1, context);
                 dataSet1.setCircleRadius(5f);
                 break;
             case WEIGHT:
-                Arrays.fill(colorsSet1, R.color.colorSet1);
+                Arrays.fill(colorsSet1, R.color.set1);
                 dataSet1 = (LineDataSet) lineData.getDataSetByLabel(LABEL_WEIGHT, false);
                 for (Alert alert : alerts) {
                     alert.setTimestamp(alert.getTimestamp() - 1);
                     index = dataSet1.getEntryIndex(convertTimestamp(alert.getTimestamp()), 0f, DataSet.Rounding.CLOSEST);
-                    colorsSet1[index] = R.color.colorSetAlert;
+                    colorsSet1[index] = R.color.setAlert;
                 }
                 dataSet1.setCircleColors(colorsSet1, context);
                 dataSet1.setCircleRadius(5f);
                 break;
             case BLOOD_PRESSURE:
-                Arrays.fill(colorsSet1, R.color.colorSet1);
-                Arrays.fill(colorsSet2, R.color.colorSet2);
+                Arrays.fill(colorsSet1, R.color.set1);
+                Arrays.fill(colorsSet2, R.color.set2);
                 dataSet1 = (LineDataSet) lineData.getDataSetByLabel(LABEL_SYSTOLIC, false);
                 dataSet2 = (LineDataSet) lineData.getDataSetByLabel(LABEL_DIASTOLIC, false);
                 for (Alert alert : alerts) {
                     alert.setTimestamp(alert.getTimestamp() - 1);
                     index = dataSet1.getEntryIndex(convertTimestamp(alert.getTimestamp()), 0f, DataSet.Rounding.CLOSEST);
-                    colorsSet1[index] = R.color.colorSetAlert;
-                    colorsSet2[index] = R.color.colorSetAlert;
+                    colorsSet1[index] = R.color.setAlert;
+                    colorsSet2[index] = R.color.setAlert;
                 }
                 dataSet1.setCircleColors(colorsSet1, context);
                 dataSet1.setCircleRadius(5f);
