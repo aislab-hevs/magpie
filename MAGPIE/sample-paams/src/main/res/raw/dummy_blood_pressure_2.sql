@@ -1,0 +1,11 @@
+INSERT INTO blood_pressure (first_value, second_value, timestamp, dummy_data) VALUES (132, 76, 1488279960000, 1); -- 2017-02-28 11:06
+INSERT INTO blood_pressure (first_value, second_value, timestamp, dummy_data) VALUES (125, 75, 1488367440000, 1); -- 2017-02-29 11:24
+INSERT INTO blood_pressure (first_value, second_value, timestamp, dummy_data) VALUES (129, 82, 1488452760000, 1); -- 2017-02-30 11:06
+INSERT INTO blood_pressure (first_value, second_value, timestamp, dummy_data) VALUES (132, 78, 1488450900000, 1); -- 2017-03-02 10:35
+INSERT INTO blood_pressure (first_value, second_value, timestamp, dummy_data) VALUES (131, 82, 1489577160000, 1); -- 2017-03-15 11:26
+INSERT INTO blood_pressure (first_value, second_value, timestamp, dummy_data) VALUES (113, 72, 1490092080000, 1); -- 2017-03-21 10:28
+INSERT INTO blood_pressure (first_value, second_value, timestamp, dummy_data) VALUES (120, 74, 1490354880000, 1); -- 2017-03-24 11:28
+INSERT INTO blood_pressure (first_value, second_value, timestamp, dummy_data) VALUES (127, 75, 1488710760000, 1); -- 2017-03-05 10:46
+INSERT INTO blood_pressure (first_value, second_value, timestamp, dummy_data) VALUES (133, 66, 1489059480000, 1); -- 2017-03-09 11:38
+INSERT INTO blood_pressure (first_value, second_value, timestamp, dummy_data) VALUES (119, 66, 1489404300000, 1); -- 2017-03-13 11:25
+INSERT INTO blood_pressure (first_value, second_value, timestamp, dummy_data) VALUES (126, 75, 1489832280000, 1); -- 2017-03-18 10:18

@@ -1,6 +1,7 @@
 package ch.hevs.aislab.paams.chart;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.github.mikephil.charting.data.DataSet;
@@ -44,12 +45,12 @@ public class ValueChartAdapter {
         }
     }
 
-    public ValueChartAdapter(List<Value> values) {
-        initializeChartData(values);
+    public ValueChartAdapter(List<Value> values, Context context) {
+        initializeChartData(values, context);
     }
 
-    public void addAllItems(List<Value> values) {
-        initializeChartData(values);
+    public void addAllItems(List<Value> values, Context context) {
+        initializeChartData(values, context);
     }
 
     public void addAllAlerts(List<Alert> alerts, Context context) {
@@ -153,7 +154,7 @@ public class ValueChartAdapter {
         }
     }
 
-    private void initializeChartData(List<Value> values) {
+    private void initializeChartData(List<Value> values, Context context) {
         if (values.isEmpty()) {
             return;
         }
@@ -162,6 +163,8 @@ public class ValueChartAdapter {
         }
         colorsSet1 = new int[values.size()];
         colorsSet2 = new int[values.size()];
+        Arrays.fill(colorsSet1, R.color.set1);
+        Arrays.fill(colorsSet2, R.color.set2);
         sortItemsByDate(values);
         dataSets = new ArrayList<>();
         List<Entry> entries1 = new ArrayList<>();
@@ -171,21 +174,33 @@ public class ValueChartAdapter {
                 for (Value value : values) {
                     entries1.add(new Entry(convertTimestamp(value.getTimestamp()), (float) (((SingleValue) value).getValue()), value));
                 }
-                dataSets.add(new LineDataSet(entries1, LABEL_GLUCOSE));
+                LineDataSet glucoseSet = new LineDataSet(entries1, LABEL_GLUCOSE);
+                glucoseSet.setCircleColors(colorsSet1, context);
+                glucoseSet.setCircleRadius(5f);
+                dataSets.add(glucoseSet);
                 break;
             case WEIGHT:
                 for (Value value : values) {
                     entries1.add(new Entry(convertTimestamp(value.getTimestamp()), (float) (((SingleValue) value).getValue()), value));
                 }
-                dataSets.add(new LineDataSet(entries1, LABEL_WEIGHT));
+                LineDataSet weightSet = new LineDataSet(entries1, LABEL_WEIGHT);
+                weightSet.setCircleColors(colorsSet1, context);
+                weightSet.setCircleRadius(5f);
+                dataSets.add(weightSet);
                 break;
             case BLOOD_PRESSURE:
                 for (Value value : values) {
                     entries1.add(new Entry(convertTimestamp(value.getTimestamp()), (float) (((DoubleValue) value).getFirstValue()), value));
                     entries2.add(new Entry(convertTimestamp(value.getTimestamp()), (float) (((DoubleValue) value).getSecondValue()), value));
                 }
-                dataSets.add(new LineDataSet(entries1, LABEL_SYSTOLIC));
-                dataSets.add(new LineDataSet(entries2, LABEL_DIASTOLIC));
+                LineDataSet systolicSet = new LineDataSet(entries1, LABEL_SYSTOLIC);
+                systolicSet.setCircleColors(colorsSet1, context);
+                systolicSet.setCircleRadius(5f);
+                LineDataSet diastolicSet = new LineDataSet(entries2, LABEL_DIASTOLIC);
+                diastolicSet.setCircleColors(colorsSet2, context);
+                diastolicSet.setCircleRadius(5f);
+                dataSets.add(systolicSet);
+                dataSets.add(diastolicSet);
                 break;
         }
         lineData = new LineData();

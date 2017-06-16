@@ -85,14 +85,14 @@ public class TrendsFragment extends Fragment implements MainActivity.OnChangeDum
                 for (int i = 0; i < values.length; i++) {
                     valuesList.add(values[i]);
                 }
-                valueChartAdapter = new ValueChartAdapter(valuesList);
+                valueChartAdapter = new ValueChartAdapter(valuesList, getContext());
             }
         }
 
         valueDAO = new ValueDAO(getActivity());
         valueDAO.open();
         if (valueChartAdapter.getCount() == 0) {
-            valueChartAdapter.addAllItems(valueDAO.getAllValues(type));
+            valueChartAdapter.addAllItems(valueDAO.getAllValues(type), getContext());
         }
         alertDAO = new AlertDAO(getActivity());
         alertDAO.open();
