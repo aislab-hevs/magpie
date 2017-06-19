@@ -273,24 +273,6 @@ public class MainActivity extends MagpieActivity implements AddValueFragment.OnA
         PrologAgentMind mind = new PrologAgentMind(getApplicationContext(), R.raw.demo_rules);
         agent.setMind(mind);
         registerAgent(agent);
-        /*
-        ValueDAO valueDAO = new ValueDAO(this);
-        valueDAO.open();
-        List<Value> weightValues = valueDAO.getAllValues(Type.WEIGHT);
-        for (Value value : weightValues) {
-            sendEvent(value);
-        }
-
-        List<Value> bloodPressureValues = valueDAO.getAllValues(Type.BLOOD_PRESSURE);
-        for (Value value : bloodPressureValues) {
-            sendEvent(value);
-        }
-
-        List<Value> glucoseValues = valueDAO.getAllValues(Type.GLUCOSE);
-        for (Value value : glucoseValues) {
-            sendEvent(value);
-        }
-        */
     }
 
     @Override

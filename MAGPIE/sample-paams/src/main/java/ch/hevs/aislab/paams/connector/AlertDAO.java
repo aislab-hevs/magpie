@@ -18,6 +18,8 @@ import ch.hevs.aislab.paams.model.Type;
 
 public class AlertDAO {
 
+    public final String TAG = "AlertDAO";
+
     private SQLiteDatabase database;
     private DBHelper dbHelper;
 
@@ -94,7 +96,7 @@ public class AlertDAO {
         }
         cursor.close();
         for (Alert alert : items) {
-            Log.d("AlertDAO", alert.toString());
+            Log.d(TAG, alert.toString());
         }
         return items;
     }

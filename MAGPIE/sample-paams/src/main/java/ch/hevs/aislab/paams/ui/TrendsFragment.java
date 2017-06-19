@@ -190,7 +190,7 @@ public class TrendsFragment extends Fragment implements MainActivity.OnChangeDum
             case BLOOD_PRESSURE:
                 // Systolic: Over threshold
                 yAxisLeft.addLimitLine(new LimitLine(139f));
-                yAxisLeft.addLimitLine(new LimitLine(142f));
+                yAxisLeft.addLimitLine(new LimitLine(149f));
                 // Systolic: In threshold
                 yAxisLeft.addLimitLine(new LimitLine(139f));
                 yAxisLeft.addLimitLine(new LimitLine(120f));
@@ -202,7 +202,7 @@ public class TrendsFragment extends Fragment implements MainActivity.OnChangeDum
                 yAxisLeft.addLimitLine(new LimitLine(80f));
                 // Diastolic: Under threshold
                 yAxisLeft.addLimitLine(new LimitLine(80f));
-                yAxisLeft.addLimitLine(new LimitLine(63f));
+                yAxisLeft.addLimitLine(new LimitLine(53f));
                 break;
             case WEIGHT:
                 // Weight: Over threshold
