@@ -6,7 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,11 +33,14 @@ import ch.hevs.aislab.paams.connector.ValueDAO;
 import ch.hevs.aislab.paams.model.DoubleValue;
 import ch.hevs.aislab.paams.model.SingleValue;
 import ch.hevs.aislab.paams.model.Type;
+import ch.hevs.aislab.paams.ui.utils.AnimationUtils;
+import ch.hevs.aislab.paams.ui.utils.RevealAnimationSetting;
 import ch.hevs.aislab.paamsdemo.R;
 
 public class AddValueFragment extends Fragment {
 
     private static final String ARG_TYPE = "TYPE_OF_PHYSIOLOGICAL_VALUE";
+    private static final String ARG_REVEAL_SETTINGS = "REVEAL_SETTINGS";
 
     private Type type;
     private ValueDAO valueDAO;
@@ -55,10 +58,11 @@ public class AddValueFragment extends Fragment {
 
     }
 
-    public static AddValueFragment newInstance(Type type) {
+    public static AddValueFragment newInstance(Type type, RevealAnimationSetting revealSettings) {
         AddValueFragment fragment = new AddValueFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TYPE, type.name());
+        args.putParcelable(ARG_REVEAL_SETTINGS, revealSettings);
         fragment.setArguments(args);
         return fragment;
     }
@@ -114,6 +118,11 @@ public class AddValueFragment extends Fragment {
                 break;
         }
         setBackStack(view);
+        // Register a listener for the Circular Reveal Animation
+        RevealAnimationSetting animmationSettings = getArguments().getParcelable(ARG_REVEAL_SETTINGS);
+        int startColor = ContextCompat.getColor(getContext(), R.color.accent);
+        int endColor = ContextCompat.getColor(getContext(), android.R.color.white);
+        AnimationUtils.registerCircularRevealAnimation(getContext(), view, animmationSettings, startColor, endColor);
         return view;
     }
 

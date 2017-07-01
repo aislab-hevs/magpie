@@ -26,6 +26,7 @@ import ch.hevs.aislab.paams.connector.ValueAdapter;
 import ch.hevs.aislab.paams.connector.ValueDAO;
 import ch.hevs.aislab.paams.model.Type;
 import ch.hevs.aislab.paams.model.Value;
+import ch.hevs.aislab.paams.ui.utils.RevealAnimationSetting;
 import ch.hevs.aislab.paamsdemo.R;
 
 
@@ -254,9 +255,22 @@ public class ListValuesFragment extends ListFragment implements MainActivity.OnC
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().beginTransaction().replace(R.id.main_container, AddValueFragment.newInstance(type), "Add").commit();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.main_container, AddValueFragment.newInstance(type, constructRevealSettings()), "Add")
+                        .commit();
             }
         });
+    }
+
+    private RevealAnimationSetting constructRevealSettings() {
+        // Coordinates of FAB's parent
+        int offsetX = (int) ((ViewGroup) addValueButton.getParent()).getX();
+        int offsetY = (int) ((ViewGroup) addValueButton.getParent()).getY();
+        return RevealAnimationSetting.with(
+                (int) (offsetX + addValueButton.getX() + addValueButton.getWidth() / 2),
+                (int) (offsetY + addValueButton.getY() + addValueButton.getHeight() / 2),
+                ((ViewGroup) getView().getParent()).getWidth(),
+                ((ViewGroup) getView().getParent()).getHeight());
     }
 
     @Override
