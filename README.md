@@ -5,7 +5,7 @@
 MAGPIE agent platform for Android
 
 ## Table of contents
-- [Contents of MAGPIE] (#contents-of-magpie)
+- [Contents of MAGPIE](#contents-of-magpie)
 - [Required dependencies](#required-dependencies)
 - [Quick start](#quick-start)
 - [How to import the project in Android Studio](#how-to-import-the-project-in-android-studio)
@@ -16,6 +16,7 @@ MAGPIE agent platform for Android
 ## Contents of MAGPIE
 - [library](https://github.com/aislab-hevs/magpie/tree/master/MAGPIE/library): the MAGPIE agent platform.
 - [sample-debs](https://github.com/aislab-hevs/magpie/tree/master/MAGPIE/sample-debs): a demo application integrating the use of MAGPIE in a Distributed Event Based System.
+- [sample-paams](https://github.com/aislab-hevs/magpie/tree/master/MAGPIE/sample-paams): a demo application presented at PAAMS'17.
 - [sample-sensor](https://github.com/aislab-hevs/magpie/tree/master/MAGPIE/sample-sensor): a demo application showing how to use MAGPIE with a BioHarness sensor.
 - [server](https://github.com/aislab-hevs/magpie/tree/master/MAGPIE/server): a Spring based server to be used with the sample-debs application. 
  
@@ -59,4 +60,4 @@ Two quick start options are available:
  For testing a running emulator or a connected device is needed.
   
 ## Copyright and license
-Code and documentation copyright 2014-2015 [AISLab HES-SO Valais](http://www.hevs.ch/fr/mini-sites/projets-produits/aislab/). Code released under [the BSD license](https://github.com/aislab-hevs/magpie/blob/master/LICENSE).
+Code and documentation copyright 2014-2017 [AISLab HES-SO Valais](http://www.hevs.ch/fr/mini-sites/projets-produits/aislab/). Code released under [the BSD license](https://github.com/aislab-hevs/magpie/blob/master/LICENSE).
