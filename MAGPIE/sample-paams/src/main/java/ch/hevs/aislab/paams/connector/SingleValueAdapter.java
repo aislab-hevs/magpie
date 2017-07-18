@@ -12,6 +12,7 @@ import java.util.List;
 
 import ch.hevs.aislab.paams.model.SingleValue;
 import ch.hevs.aislab.paams.model.Value;
+import ch.hevs.aislab.paams.ui.utils.DateUtils;
 import ch.hevs.aislab.paamsdemo.R;
 
 public class SingleValueAdapter extends ValueAdapter {
@@ -35,7 +36,7 @@ public class SingleValueAdapter extends ValueAdapter {
         final SingleValue singleValue = (SingleValue) items.get(position);
 
         TextView dateTextView = (TextView) convertView.findViewById(R.id.dateTextView);
-        dateTextView.setText(singleValue.getStringTimestamp("dd.MM.yyyy"));
+        dateTextView.setText(DateUtils.formatDate(convertView.getContext(), "dd.MM.yyyy", singleValue.getTimestamp()));
         TextView timeTextView = (TextView) convertView.findViewById(R.id.timeTextView);
         timeTextView.setText(singleValue.getStringTimestamp("H:mm"));
         TextView valueTextView = (TextView) convertView.findViewById(R.id.valueTextView);

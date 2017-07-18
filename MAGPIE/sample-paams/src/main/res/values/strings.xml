@@ -5,6 +5,8 @@
     <string name="glucose">Glucose</string>
     <string name="weight">Weight</string>
 
+    <string name="today">Today</string>
+
     <string name="label_english">English Text:</string>
     <string name="label_ec">Event Calculus:</string>
 
