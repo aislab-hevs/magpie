@@ -36,7 +36,7 @@ public class SingleValueAdapter extends ValueAdapter {
         final SingleValue singleValue = (SingleValue) items.get(position);
 
         TextView dateTextView = (TextView) convertView.findViewById(R.id.dateTextView);
-        dateTextView.setText(DateUtils.formatDate(convertView.getContext(), "dd.MM.yyyy", singleValue.getTimestamp()));
+        dateTextView.setText(DateUtils.formatDate(convertView.getContext(), singleValue.getTimestamp()));
         TextView timeTextView = (TextView) convertView.findViewById(R.id.timeTextView);
         timeTextView.setText(singleValue.getStringTimestamp("H:mm"));
         TextView valueTextView = (TextView) convertView.findViewById(R.id.valueTextView);
